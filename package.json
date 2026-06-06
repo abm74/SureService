@@ -1,0 +1,20 @@
+{
+  "name": "sureservice",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "build": "npm run build:server && npm run build:client",
+    "dev:client": "npm run dev --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "build:client": "npm run build --prefix client",
+    "build:server": "npm run build --prefix server",
+    "install:client": "npm install --prefix client",
+    "install:server": "npm install --prefix server",
+    "seed": "npm run seed --prefix server"
+  }
+}
