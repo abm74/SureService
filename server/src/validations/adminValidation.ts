@@ -20,6 +20,48 @@ export const providerIdParamValidationRules = [
     .withMessage("Invalid Provider ID format"),
 ];
 
+export const userIdParamValidationRules = [
+  param("userId")
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid User ID format"),
+];
+
+export const toggleUserStatusValidationRules = [
+  param("userId")
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid User ID format"),
+  body("isSuspended")
+    .isBoolean()
+    .withMessage("isSuspended must be a boolean value"),
+  body("reason")
+    .optional()
+    .trim(),
+];
+
+export const updateUserValidationRules = [
+  param("userId")
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid User ID format"),
+  body("email")
+    .optional()
+    .trim()
+    .isEmail()
+    .withMessage("Invalid email address"),
+  body("name")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Name cannot be empty"),
+  body("role")
+    .optional()
+    .isIn(["customer", "provider", "admin"])
+    .withMessage("Role must be customer, provider, or admin"),
+  body("hourlyRate")
+    .optional()
+    .isNumeric()
+    .withMessage("Hourly rate must be a number"),
+];
+
 export const validateAdminRequest = (
   req: Request,
   res: Response,

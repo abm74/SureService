@@ -187,3 +187,9 @@ export const demoLogin = async (
     return next(error);
   }
 };
+
+export const getDemoStatus = (_req: Request, res: Response) => {
+  const val = process.env.ENABLE_DEMO_LOGIN?.trim().toLowerCase();
+  const enabled = val === "true" || val === "1" || val === "yes";
+  return res.status(200).json({ enabled });
+};

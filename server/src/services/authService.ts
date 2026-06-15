@@ -54,7 +54,7 @@ export const sanitizeUser = (user: any) => ({
   skills: user.skills || [],
   verificationStatus: user.verificationStatus || "unverified",
   verificationDocUrl: user.verificationDocUrl || "",
-  verificationDocType: user.verificationDocType || "National ID",
+  verificationDocType: user.verificationDocType || "Kebele ID",
   verificationRejectionReason: user.verificationRejectionReason || "",
   trustScore: user.trustScore ?? 15,
   trustBreakdown: user.trustBreakdown || {
@@ -67,6 +67,11 @@ export const sanitizeUser = (user: any) => ({
   completedJobsCount: user.completedJobsCount || 0,
   repeatCustomerCount: user.repeatCustomerCount || 0,
   providerCancelledCount: user.providerCancelledCount || 0,
+  isActive: user.isActive !== false,
+  isSuspended: Boolean(user.isSuspended),
+  suspensionReason: user.suspensionReason || "",
+  suspendedAt: user.suspendedAt || null,
+  createdAt: user.createdAt || null,
 });
 
 export const loginUser = async (email: string, password: string) => {
@@ -84,6 +89,13 @@ export const loginUser = async (email: string, password: string) => {
   const passwordMatch = await user.verifyPassword(password);
   if (!passwordMatch) {
     throw Object.assign(new Error("Invalid credentials"), { statusCode: 401 });
+  }
+
+  if (user.isSuspended || user.isActive === false) {
+    const msg = user.suspensionReason
+      ? `Your account has been suspended: ${user.suspensionReason}`
+      : "Your account has been suspended by an administrator.";
+    throw Object.assign(new Error(msg), { statusCode: 403 });
   }
 
   const payload: UserPayload = {
@@ -176,6 +188,13 @@ export const refreshUserToken = async (oldRefreshToken: string) => {
     throw Object.assign(new Error("User not found"), { statusCode: 404 });
   }
 
+  if (user.isSuspended || user.isActive === false) {
+    await RefreshTokenModel.deleteMany({ userId: user._id.toString() });
+    throw Object.assign(new Error("Your account has been suspended by an administrator."), {
+      statusCode: 403,
+    });
+  }
+
   const storedRefreshToken = await RefreshTokenModel.findOne({
     token: oldRefreshToken,
   });
@@ -213,17 +232,29 @@ export const getCurrentUser = async (userId: string) => {
 };
 
 export const demoLoginUser = async (requestedRole: UserRole = "customer") => {
-  let demoEmail = "customer@sureservice.com";
-  if (requestedRole === "provider") {
-    demoEmail = "provider@sureservice.com";
-  } else if (requestedRole === "admin") {
-    demoEmail = "admin@sureservice.com";
+  const val = process.env.ENABLE_DEMO_LOGIN?.trim().toLowerCase();
+  const isDemoEnabled = val === "true" || val === "1" || val === "yes";
+
+  if (!isDemoEnabled) {
+    throw Object.assign(
+      new Error("Demo logins are disabled in this environment."),
+      { statusCode: 403 },
+    );
   }
 
-  let user = await UserModel.findOne({ email: demoEmail });
+  const envEmailMap: Partial<Record<UserRole, string | undefined>> = {
+    customer: process.env.DEMO_CUSTOMER_EMAIL,
+    provider: process.env.DEMO_PROVIDER_EMAIL,
+    admin: process.env.DEMO_ADMIN_EMAIL,
+  };
+
+  const configuredEmail = envEmailMap[requestedRole];
+  let user = configuredEmail
+    ? await UserModel.findOne({ email: configuredEmail, isSuspended: { $ne: true } })
+    : null;
 
   if (!user) {
-    user = await UserModel.findOne({ role: requestedRole });
+    user = await UserModel.findOne({ role: requestedRole, isSuspended: { $ne: true } });
   }
 
   if (!user) {

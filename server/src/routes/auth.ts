@@ -6,6 +6,7 @@ import {
   logout,
   getCurrentUser,
   demoLogin,
+  getDemoStatus,
 } from "../controllers/authController.js";
 import { authenticateToken, optionalAuthenticateToken } from "../middleware/authMiddleware.js";
 import {
@@ -18,6 +19,7 @@ import {
 
 const authRouter = Router();
 
+authRouter.get("/demo-status", getDemoStatus);
 authRouter.post("/login", loginValidationRules, validateAuthRequest, login);
 authRouter.post("/demo-login", demoLogin);
 authRouter.post("/signup", signupValidationRules, validateAuthRequest, signup);
