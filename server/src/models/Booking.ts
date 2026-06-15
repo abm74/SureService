@@ -39,7 +39,7 @@ const bookingSchema = new Schema(
     },
     subCity: {
       type: String,
-      default: "Bole",
+      default: "",
     },
     notes: {
       type: String,

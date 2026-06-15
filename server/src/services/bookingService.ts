@@ -43,6 +43,14 @@ export const gateBookingContacts = (booking: any, viewerId: string, viewerRole: 
 };
 
 export const createBooking = async (customerId: string, data: CreateBookingDTO) => {
+  const customer = await UserModel.findById(customerId);
+  if (!customer || customer.role !== "customer") {
+    throw Object.assign(
+      new Error("Only registered customer accounts can book service requests. Service providers and administrators cannot create bookings."),
+      { statusCode: 403 }
+    );
+  }
+
   if (customerId === data.providerId) {
     throw Object.assign(new Error("You cannot book a service with yourself"), {
       statusCode: 400,

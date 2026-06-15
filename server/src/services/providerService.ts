@@ -2,6 +2,7 @@ import UserModel, { User } from "../models/User.js";
 import ReviewModel from "../models/Review.js";
 import BookingModel from "../models/Booking.js";
 import { recalculateProviderTrust } from "./trustScoreService.js";
+import { getCategoryNames } from "./categoryService.js";
 
 export interface ProviderQueryFilters {
   category?: string;
@@ -16,19 +17,21 @@ export interface ProviderQueryFilters {
   limit?: number;
 }
 
+const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export const getProviders = async (filters: ProviderQueryFilters = {}) => {
   const query: Record<string, any> = { role: "provider" };
 
   if (filters.category) {
-    query.category = { $regex: new RegExp(`^${filters.category}$`, "i") };
+    query.category = { $regex: new RegExp(`^${escapeRegex(filters.category)}$`, "i") };
   }
 
   if (filters.city) {
-    query["location.city"] = { $regex: new RegExp(filters.city, "i") };
+    query["location.city"] = { $regex: new RegExp(escapeRegex(filters.city), "i") };
   }
 
   if (filters.subCity) {
-    query["location.subCity"] = { $regex: new RegExp(filters.subCity, "i") };
+    query["location.subCity"] = { $regex: new RegExp(escapeRegex(filters.subCity), "i") };
   }
 
   if (filters.minScore !== undefined && !isNaN(Number(filters.minScore))) {
@@ -44,7 +47,7 @@ export const getProviders = async (filters: ProviderQueryFilters = {}) => {
   }
 
   if (filters.search && filters.search.trim()) {
-    const searchRegex = new RegExp(filters.search.trim(), "i");
+    const searchRegex = new RegExp(escapeRegex(filters.search.trim()), "i");
     query.$or = [
       { name: searchRegex },
       { category: searchRegex },
@@ -219,7 +222,7 @@ export const updateProviderProfile = async (
 export const submitVerification = async (
   providerId: string,
   docUrl: string,
-  docType: string = "National ID",
+  docType: string = "Kebele ID",
 ) => {
   const provider = await UserModel.findOne({ _id: providerId, role: "provider" });
   if (!provider) {
@@ -238,23 +241,5 @@ export const submitVerification = async (
 };
 
 export const getCategories = async () => {
-  const defaultCategories = [
-    "Electrician",
-    "Plumber",
-    "Home Cleaner",
-    "Tutor",
-    "Carpenter",
-    "HVAC / Appliance Tech",
-    "Painter",
-    "Mechanic",
-    "Gardener",
-  ];
-
-  const dbCategories = await UserModel.distinct("category", {
-    role: "provider",
-    category: { $ne: "" },
-  });
-
-  const merged = Array.from(new Set([...defaultCategories, ...dbCategories])).filter(Boolean);
-  return merged;
+  return getCategoryNames();
 };

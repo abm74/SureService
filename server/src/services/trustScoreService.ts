@@ -15,6 +15,21 @@ export interface TrustCalculationResult {
   breakdown: TrustBreakdown;
 }
 
+const calculateCompletedJobsScore = (count: number): number => {
+  if (count <= 0) return 0;
+  if (count <= 3) return Math.round(count * 5.0 * 10) / 10;
+  if (count <= 6) return Math.round((15 + (count - 3) * 3.5) * 10) / 10;
+  if (count <= 10) return Math.round((25.5 + (count - 6) * 2.375) * 10) / 10;
+  return 35;
+};
+
+const calculateRepeatBonusScore = (repeatClientCount: number): number => {
+  if (repeatClientCount <= 0) return 0;
+  if (repeatClientCount === 1) return 6;
+  if (repeatClientCount === 2) return 11;
+  return 15;
+};
+
 export const computeTrustScore = (provider: Partial<User>): TrustCalculationResult => {
   let profileScore = 0;
 
@@ -45,10 +60,10 @@ export const computeTrustScore = (provider: Partial<User>): TrustCalculationResu
   const verificationScore = provider.verificationStatus === "approved" ? 25 : 0;
 
   const completedCount = provider.completedJobsCount || 0;
-  const completedJobsScore = Math.min(35, Math.round(completedCount * 3.5 * 10) / 10);
+  const completedJobsScore = calculateCompletedJobsScore(completedCount);
 
   const repeatCount = provider.repeatCustomerCount || 0;
-  const repeatBonusScore = Math.min(15, repeatCount * 5);
+  const repeatBonusScore = calculateRepeatBonusScore(repeatCount);
 
   const cancelledCount = provider.providerCancelledCount || 0;
   const cancellationPenalty = cancelledCount * 10;

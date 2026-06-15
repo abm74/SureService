@@ -1,5 +1,6 @@
 import mongoose, { Schema, InferSchemaType } from "mongoose";
 import bcrypt from "bcryptjs";
+import { generateDefaultAvatar } from "../utils/avatar.js";
 
 export type UserRole = "customer" | "provider" | "admin";
 export type VerificationStatus = "unverified" | "pending" | "approved" | "rejected";
@@ -83,7 +84,7 @@ const userSchema = new Schema(
     },
     verificationDocType: {
       type: String,
-      default: "National ID",
+      default: "Kebele ID",
     },
     verificationSubmittedAt: {
       type: Date,
@@ -122,6 +123,22 @@ const userSchema = new Schema(
       type: Number,
       default: 0,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    isSuspended: {
+      type: Boolean,
+      default: false,
+    },
+    suspensionReason: {
+      type: String,
+      default: "",
+    },
+    suspendedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -150,8 +167,7 @@ const userSchema = new Schema(
 
 userSchema.pre("save", async function () {
   if (!this.avatar || this.avatar === "https://i.pravatar.cc/100") {
-    const seed = encodeURIComponent(this.name || this.username);
-    this.avatar = `https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=ffb545,98fdce,2563eb`;
+    this.avatar = generateDefaultAvatar(this.name || this.username);
   }
 
   if (!this.isModified("password")) return;

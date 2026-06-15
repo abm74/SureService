@@ -1,6 +1,7 @@
 import { body, param, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
+import { getAllowedVerificationDocTypes } from "../services/configService.js";
 
 export const updateProviderProfileValidationRules = [
   body("bio")
@@ -42,8 +43,13 @@ export const submitVerificationValidationRules = [
   body("verificationDocType")
     .optional()
     .trim()
-    .isIn(["National ID", "Trade License", "Passport", "Driver's License", "Certification"])
-    .withMessage("Invalid verification document type"),
+    .custom(async (val) => {
+      const allowed = await getAllowedVerificationDocTypes();
+      if (allowed.length > 0 && !allowed.includes(val)) {
+        throw new Error(`Invalid verification document type. Allowed types: ${allowed.join(", ")}`);
+      }
+      return true;
+    }),
 ];
 
 export const providerIdValidationRules = [
