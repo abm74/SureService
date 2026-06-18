@@ -45,6 +45,10 @@ export interface User {
   completedJobsCount?: number;
   repeatCustomerCount?: number;
   providerCancelledCount?: number;
+  isActive?: boolean;
+  isSuspended?: boolean;
+  suspensionReason?: string;
+  suspendedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -169,6 +173,9 @@ export interface PlatformStats {
   totalBookings: number;
   completedBookings: number;
   pendingVerifications: number;
+  verifiedProviders?: number;
+  activeBookings?: number;
+  averageTrustScore?: number;
 }
 
 export type AsyncData<T> = {
@@ -177,27 +184,68 @@ export type AsyncData<T> = {
   error: null | string;
 };
 
-export interface City {
-  cityName: string;
-  country: string;
-  emoji: string;
-  date: string;
-  notes: string;
-  position: {
-    lat: number;
-    lng: number;
+export interface CategoryItem {
+  name: string;
+  slug: string;
+  icon: string;
+  color: string;
+  description?: string;
+  isPopular?: boolean;
+  providerCount?: number;
+}
+
+export interface AdminUserFilters {
+  role?: "all" | "customer" | "provider" | "admin";
+  status?: "all" | "active" | "suspended";
+  verificationStatus?: "all" | "approved" | "pending" | "rejected" | "unverified";
+  search?: string;
+  city?: string;
+  sortBy?: "newest" | "oldest" | "nameAsc" | "nameDesc" | "trustScore" | "completedJobs";
+  page?: number;
+  limit?: number;
+}
+
+export interface AdminUsersResponse {
+  users: User[];
+  total: number;
+  page: number;
+  totalPages: number;
+  counts: {
+    total: number;
+    customers: number;
+    providers: number;
+    admins: number;
+    suspended: number;
   };
-  id: string;
 }
 
-export interface Country {
-  countryName: string;
-  emoji: string;
+export interface AdminUserDetailsResponse {
+  user: User;
+  stats: {
+    totalBookingsCustomer: number;
+    totalBookingsProvider: number;
+    completedBookings: number;
+    activeBookings: number;
+    cancelledBookings: number;
+    reviewCount: number;
+    averageRating: number;
+  };
+  recentReviews?: Review[];
 }
 
-export type MapSelectedCity = {
-  cityName: string;
-  country: string;
-  flagEmoji: string;
-  position: { lat: number; lng: number } | null;
-};
+export interface AdminUpdateUserPayload {
+  name?: string;
+  username?: string;
+  email?: string;
+  phone?: string;
+  bio?: string;
+  role?: UserRole;
+  category?: string;
+  hourlyRate?: number;
+  experienceYears?: number;
+  skills?: string[];
+  avatar?: string;
+  location?: Partial<UserLocation>;
+  verificationStatus?: VerificationStatus;
+  verificationRejectionReason?: string;
+}
