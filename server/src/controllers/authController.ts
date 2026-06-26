@@ -176,7 +176,7 @@ export const demoLogin = async (
   next: NextFunction,
 ) => {
   try {
-    const requestedRole = (req.body.role || req.query.role || "customer") as UserRole;
+    const requestedRole = (req.body?.role || req.query.role || "customer") as UserRole;
     const { user, accessToken, refreshToken } = await demoLoginUser(requestedRole);
     setAuthCookies(res, accessToken, refreshToken);
     return res.status(200).json({

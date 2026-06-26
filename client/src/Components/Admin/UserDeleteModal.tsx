@@ -9,7 +9,7 @@ import {
 import { Button } from "@/Components/UI/button";
 import { Input } from "@/Components/UI/input";
 import { Label } from "@/Components/UI/label";
-import { Trash2, AlertTriangle } from "lucide-react";
+import { Trash2, AlertTriangle, Loader2 } from "lucide-react";
 import { useAdminDeleteUser } from "@/hooks/useAdmin";
 import { getErrorMessage } from "@/utils/helpers";
 import type { User } from "@/types";
@@ -99,6 +99,7 @@ export const UserDeleteModal: React.FC<UserDeleteModalProps> = ({
               variant="outline"
               size="sm"
               onClick={onClose}
+              disabled={deleteMutation.isPending}
               className="rounded-xl text-xs h-9"
             >
               Cancel
@@ -108,9 +109,16 @@ export const UserDeleteModal: React.FC<UserDeleteModalProps> = ({
               variant="destructive"
               size="sm"
               disabled={!isConfirmed || deleteMutation.isPending}
-              className="rounded-xl text-xs h-9"
+              className="rounded-xl text-xs h-9 flex items-center gap-1.5 disabled:opacity-50"
             >
-              {deleteMutation.isPending ? "Deleting..." : "Permanently Delete"}
+              {deleteMutation.isPending ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Deleting...</span>
+                </>
+              ) : (
+                "Permanently Delete"
+              )}
             </Button>
           </DialogFooter>
         </form>

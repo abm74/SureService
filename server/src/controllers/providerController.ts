@@ -82,7 +82,7 @@ export const submitVerification = async (
 ) => {
   try {
     const providerId = req.user!.userId;
-    const { verificationDocUrl, verificationDocType } = req.body;
+    const { verificationDocUrl, verificationDocType } = req.body || {};
 
     const provider = await providerService.submitVerification(
       providerId,

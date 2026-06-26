@@ -9,7 +9,7 @@ import {
 import { Button } from "@/Components/UI/button";
 import { Label } from "@/Components/UI/label";
 import { Textarea } from "@/Components/UI/textarea";
-import { Ban, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Ban, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 import { useAdminToggleUserStatus } from "@/hooks/useAdmin";
 import { getErrorMessage } from "@/utils/helpers";
 import type { User } from "@/types";
@@ -115,6 +115,7 @@ export const UserStatusModal: React.FC<UserStatusModalProps> = ({
               variant="outline"
               size="sm"
               onClick={onClose}
+              disabled={toggleMutation.isPending}
               className="rounded-xl text-xs h-9"
             >
               Cancel
@@ -124,13 +125,18 @@ export const UserStatusModal: React.FC<UserStatusModalProps> = ({
               size="sm"
               variant={isSuspending ? "destructive" : "default"}
               disabled={toggleMutation.isPending}
-              className="rounded-xl text-xs h-9"
+              className="rounded-xl text-xs h-9 flex items-center gap-1.5 disabled:opacity-50"
             >
-              {toggleMutation.isPending
-                ? "Processing..."
-                : isSuspending
-                ? "Confirm Suspension"
-                : "Reactivate User"}
+              {toggleMutation.isPending ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Processing...</span>
+                </>
+              ) : isSuspending ? (
+                "Confirm Suspension"
+              ) : (
+                "Reactivate User"
+              )}
             </Button>
           </DialogFooter>
         </form>

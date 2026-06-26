@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Star, AlertCircle, CheckCircle2, Info } from "lucide-react";
+import { Star, AlertCircle, CheckCircle2, Info, Loader2 } from "lucide-react";
 import type { Booking, User } from "@/types";
 import { useCreateReview } from "@/hooks/useReviews";
 import { Modal } from "@/Components/UI/Modal";
@@ -163,9 +163,16 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                 type="submit"
                 size="sm"
                 disabled={isSubmitting}
-                className="rounded-xl text-xs bg-primary hover:bg-brand-primary-active text-white shadow-xs font-bold cursor-pointer"
+                className="rounded-xl text-xs bg-primary hover:bg-brand-primary-active text-white shadow-xs font-bold cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
               >
-                {isSubmitting ? "Submitting..." : "Submit Review"}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="size-3.5 animate-spin" />
+                    <span>Submitting...</span>
+                  </>
+                ) : (
+                  "Submit Review"
+                )}
               </Button>
             </div>
           </form>

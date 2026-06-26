@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ShieldCheck,
   ShieldAlert,
@@ -8,6 +8,7 @@ import {
   Briefcase,
   AlertCircle,
   CheckCircle2,
+  Loader2,
 } from "lucide-react";
 import type { User } from "@/types";
 import { Button } from "@/Components/UI/button";
@@ -33,9 +34,18 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
   const [selectedProvider, setSelectedProvider] = useState<User | null>(null);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [previewDocProvider, setPreviewDocProvider] = useState<User | null>(null);
+  const [isDocLoading, setIsDocLoading] = useState(true);
+  const [docLoadError, setDocLoadError] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState("");
+
+  useEffect(() => {
+    if (previewDocProvider?.verificationDocUrl) {
+      setIsDocLoading(true);
+      setDocLoadError(false);
+    }
+  }, [previewDocProvider?.id, previewDocProvider?.verificationDocUrl]);
 
   const handleApprove = async (provider: User) => {
     setActionError("");
@@ -225,8 +235,8 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                     size="sm"
                     variant="destructive"
                     onClick={() => handleOpenRejectModal(provider)}
-                    disabled={isProcessing}
-                    className="rounded-xl text-xs h-9 px-3.5 font-bold bg-red-600 hover:bg-red-700 text-white cursor-pointer flex items-center gap-1.5 shadow-xs"
+                    disabled={Boolean(processingId)}
+                    className="rounded-xl text-xs h-9 px-3.5 font-bold bg-red-600 hover:bg-red-700 text-white cursor-pointer flex items-center gap-1.5 shadow-xs disabled:opacity-50"
                   >
                     <ShieldAlert className="size-3.5" />
                     <span>Reject</span>
@@ -235,11 +245,20 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                   <Button
                     size="sm"
                     onClick={() => handleApprove(provider)}
-                    disabled={isProcessing}
-                    className="rounded-xl text-xs h-9 px-4 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer"
+                    disabled={Boolean(processingId)}
+                    className="rounded-xl text-xs h-9 px-4 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
-                    <ShieldCheck className="size-4" />
-                    <span>{isProcessing ? "Approving..." : "Approve"}</span>
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        <span>Approving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="size-4" />
+                        <span>Approve</span>
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
@@ -251,28 +270,67 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
       {/* DOCUMENT PREVIEW MODAL */}
       <Modal
         isOpen={Boolean(previewDocProvider)}
-        onClose={() => setPreviewDocProvider(null)}
+        onClose={() => !processingId && setPreviewDocProvider(null)}
         title={`${previewDocProvider?.name || "Provider"} — Verification Document`}
         description={previewDocProvider?.verificationDocType || "Government Issued Document"}
         className="sm:max-w-[600px]"
       >
         <div className="space-y-4 pt-2">
           {previewDocProvider?.verificationDocUrl && (
-            <div className="rounded-2xl border border-hairline bg-surface-soft p-2 overflow-hidden flex items-center justify-center">
-              {previewDocProvider.verificationDocUrl.toLowerCase().endsWith(".pdf") ||
-              previewDocProvider.verificationDocUrl.toLowerCase().includes("/raw/upload/") ? (
-                <iframe
-                  src={previewDocProvider.verificationDocUrl}
-                  title="Document Preview"
-                  className="w-full h-96 rounded-xl border border-hairline bg-background"
-                />
-              ) : (
-                <img
-                  src={previewDocProvider.verificationDocUrl}
-                  alt="Document Preview"
-                  className="max-h-[65vh] w-auto mx-auto rounded-xl object-contain"
-                />
+            <div className="relative rounded-2xl border border-hairline bg-surface-soft p-2 overflow-hidden min-h-[260px] sm:min-h-[320px] flex items-center justify-center">
+              {isDocLoading && (
+                <div className="w-full h-64 sm:h-80 flex flex-col items-center justify-center gap-3 text-muted-foreground animate-pulse">
+                  <div className="size-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                    <Loader2 className="size-6 animate-spin" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs font-bold text-ink">Loading Document Preview...</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      Fetching high-resolution asset from secure storage
+                    </p>
+                  </div>
+                </div>
               )}
+
+              {docLoadError && !isDocLoading && (
+                <div className="w-full h-56 flex flex-col items-center justify-center gap-2 p-6 text-center">
+                  <AlertCircle className="size-8 text-amber-500" />
+                  <p className="text-xs font-bold text-ink">Unable to preview document inline</p>
+                  <p className="text-[11px] text-muted-foreground max-w-sm">
+                    The file may be in an unsupported inline format. Please click "Open in New Tab" below to inspect.
+                  </p>
+                </div>
+              )}
+
+              {!docLoadError &&
+                (previewDocProvider.verificationDocUrl.toLowerCase().endsWith(".pdf") ||
+                previewDocProvider.verificationDocUrl.toLowerCase().includes("/raw/upload/") ? (
+                  <iframe
+                    src={previewDocProvider.verificationDocUrl}
+                    title="Document Preview"
+                    onLoad={() => setIsDocLoading(false)}
+                    onError={() => {
+                      setIsDocLoading(false);
+                      setDocLoadError(true);
+                    }}
+                    className={`w-full h-96 rounded-xl border border-hairline bg-background transition-opacity duration-300 ${
+                      isDocLoading ? "hidden" : "block"
+                    }`}
+                  />
+                ) : (
+                  <img
+                    src={previewDocProvider.verificationDocUrl}
+                    alt="Document Preview"
+                    onLoad={() => setIsDocLoading(false)}
+                    onError={() => {
+                      setIsDocLoading(false);
+                      setDocLoadError(true);
+                    }}
+                    className={`max-h-[65vh] w-auto mx-auto rounded-xl object-contain transition-opacity duration-300 ${
+                      isDocLoading ? "hidden" : "block"
+                    }`}
+                  />
+                ))}
             </div>
           )}
 
@@ -298,6 +356,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => setPreviewDocProvider(null)}
+                disabled={Boolean(processingId)}
                 className="rounded-xl text-xs h-9 px-4 border-hairline hover:border-ink cursor-pointer"
               >
                 Close
@@ -312,22 +371,29 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                       setPreviewDocProvider(null);
                       handleOpenRejectModal(p);
                     }}
-                    className="rounded-xl text-xs h-9 px-3.5 font-bold bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5 shadow-xs cursor-pointer"
+                    disabled={Boolean(processingId)}
+                    className="rounded-xl text-xs h-9 px-3.5 font-bold bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-50"
                   >
                     <ShieldAlert className="size-3.5" />
                     <span>Reject</span>
                   </Button>
                   <Button
                     size="sm"
-                    onClick={() => {
-                      const p = previewDocProvider;
-                      setPreviewDocProvider(null);
-                      handleApprove(p);
-                    }}
-                    className="rounded-xl text-xs h-9 px-4 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer"
+                    onClick={() => handleApprove(previewDocProvider)}
+                    disabled={Boolean(processingId)}
+                    className="rounded-xl text-xs h-9 px-4 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
-                    <ShieldCheck className="size-4" />
-                    <span>Approve</span>
+                    {processingId === previewDocProvider.id ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        <span>Approving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="size-4" />
+                        <span>Approve</span>
+                      </>
+                    )}
                   </Button>
                 </>
               )}
@@ -339,7 +405,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
       {/* REJECT MODAL */}
       <Modal
         isOpen={isRejectModalOpen}
-        onClose={() => setIsRejectModalOpen(false)}
+        onClose={() => !processingId && setIsRejectModalOpen(false)}
         title="Reject Document Verification"
         description={`Specify a reason why ${selectedProvider?.name}'s document submission was rejected.`}
       >
@@ -354,6 +420,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
               onChange={(e) => setRejectionReason(e.target.value)}
               rows={3}
               required
+              disabled={Boolean(processingId)}
             />
           </div>
 
@@ -372,10 +439,19 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
               size="sm"
               onClick={handleConfirmReject}
               disabled={!rejectionReason.trim() || Boolean(processingId)}
-              className="rounded-xl text-xs h-9 px-4 font-bold bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5 shadow-xs cursor-pointer"
+              className="rounded-xl text-xs h-9 px-4 font-bold bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-50"
             >
-              <ShieldAlert className="size-3.5" />
-              <span>{processingId ? "Rejecting..." : "Confirm Rejection"}</span>
+              {processingId ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Rejecting...</span>
+                </>
+              ) : (
+                <>
+                  <ShieldAlert className="size-3.5" />
+                  <span>Confirm Rejection</span>
+                </>
+              )}
             </Button>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { Button } from "@/Components/UI/button";
 import { Input } from "@/Components/UI/input";
 import { Label } from "@/Components/UI/label";
 import { Textarea } from "@/Components/UI/textarea";
+import { Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -336,6 +337,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
               variant="outline"
               size="sm"
               onClick={onClose}
+              disabled={updateMutation.isPending}
               className="rounded-xl text-xs h-9"
             >
               Cancel
@@ -344,9 +346,16 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
               type="submit"
               size="sm"
               disabled={updateMutation.isPending}
-              className="rounded-xl text-xs h-9"
+              className="rounded-xl text-xs h-9 flex items-center gap-1.5 disabled:opacity-50"
             >
-              {updateMutation.isPending ? "Saving..." : "Save Changes"}
+              {updateMutation.isPending ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                "Save Changes"
+              )}
             </Button>
           </DialogFooter>
         </form>

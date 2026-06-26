@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Eye, EyeOff, User as UserIcon, Briefcase, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, User as UserIcon, Briefcase, ShieldCheck, Loader2 } from "lucide-react";
 import PageNav from "@/Components/Header/PageNav";
 import { useAuth } from "@/store/Auth/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -13,6 +13,7 @@ import { getErrorMessage } from "@/utils/helpers";
 
 import { useCategories } from "@/hooks/useCategories";
 import { useLocations } from "@/hooks/useLocations";
+import SpinnerFullPage from "@/Components/UI/SpinnerFullPage";
 
 export const Signup: React.FC = () => {
   const { signup, isAuthenticated, isLoading, user } = useAuth();
@@ -30,6 +31,7 @@ export const Signup: React.FC = () => {
   const [city, setCity] = useState("Addis Ababa");
   const [subCity, setSubCity] = useState("Bole");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useDocumentTitle("SureService | Create Account");
@@ -58,12 +60,15 @@ export const Signup: React.FC = () => {
       },
     };
 
+    setIsSubmitting(true);
     try {
       await signup(payload);
     } catch (err) {
       setError(
         getErrorMessage(err, "Registration failed. Please check inputs and try again."),
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -74,6 +79,10 @@ export const Signup: React.FC = () => {
       else navigate("/marketplace", { replace: true });
     }
   }, [isAuthenticated, user, navigate]);
+
+  if (isLoading) {
+    return <SpinnerFullPage />;
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
@@ -150,7 +159,7 @@ export const Signup: React.FC = () => {
                     placeholder="bethlehem_g"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                     className="h-10 text-xs rounded-xl"
                     required
                   />
@@ -168,7 +177,7 @@ export const Signup: React.FC = () => {
                     placeholder="name@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                     className="h-10 text-xs rounded-xl"
                     required
                   />
@@ -184,7 +193,7 @@ export const Signup: React.FC = () => {
                     placeholder="+251 911 000 000"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                     className="h-10 text-xs rounded-xl"
                   />
                 </div>
@@ -201,7 +210,7 @@ export const Signup: React.FC = () => {
                     placeholder="Create a strong password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                     className="pr-10 h-10 text-xs rounded-xl"
                     required
                   />
@@ -209,7 +218,7 @@ export const Signup: React.FC = () => {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 text-muted-foreground hover:text-ink cursor-pointer focus:outline-none"
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   >
                     {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                   </button>
@@ -232,7 +241,8 @@ export const Signup: React.FC = () => {
                         id="category"
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                        className="h-10 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                        disabled={isSubmitting}
+                        className="h-10 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer disabled:opacity-50"
                       >
                         {categoryNames.map((c) => (
                           <option key={c} value={c}>
@@ -252,6 +262,7 @@ export const Signup: React.FC = () => {
                         min={50}
                         value={hourlyRate}
                         onChange={(e) => setHourlyRate(Number(e.target.value))}
+                        disabled={isSubmitting}
                         className="h-10 text-xs rounded-xl"
                       />
                     </div>
@@ -273,7 +284,8 @@ export const Signup: React.FC = () => {
                       const subList = getSubCities(newCity);
                       setSubCity(subList.length > 0 ? subList[0] : "");
                     }}
-                    className="h-10 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                    disabled={isSubmitting}
+                    className="h-10 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer disabled:opacity-50"
                   >
                     {cities.map((c) => (
                       <option key={c} value={c}>
@@ -292,7 +304,8 @@ export const Signup: React.FC = () => {
                       id="subCity"
                       value={subCity}
                       onChange={(e) => setSubCity(e.target.value)}
-                      className="h-10 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                      disabled={isSubmitting}
+                      className="h-10 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer disabled:opacity-50"
                     >
                       {getSubCities(city).map((sc) => (
                         <option key={sc} value={sc}>
@@ -312,10 +325,17 @@ export const Signup: React.FC = () => {
 
               <Button
                 type="submit"
-                disabled={isLoading}
-                className="w-full rounded-xl h-11 font-bold text-xs bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer mt-1"
+                disabled={isSubmitting}
+                className="w-full rounded-xl h-11 font-bold text-xs bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer mt-1 flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                {isLoading ? "Creating account..." : `Register as ${role === "provider" ? "Service Provider" : "Customer"}`}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    <span>Creating Account...</span>
+                  </>
+                ) : (
+                  `Register as ${role === "provider" ? "Service Provider" : "Customer"}`
+                )}
               </Button>
 
               <div className="text-center text-xs text-muted-foreground font-medium pt-2 border-t border-hairline/60">

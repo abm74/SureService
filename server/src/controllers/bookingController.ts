@@ -9,7 +9,7 @@ export const createBooking = async (
 ) => {
   try {
     const customerId = req.user!.userId;
-    const { providerId, category, serviceDate, timeSlot, address, city, subCity, notes } = req.body;
+    const { providerId, category, serviceDate, timeSlot, address, city, subCity, notes } = req.body || {};
 
     const booking = await bookingService.createBooking(customerId, {
       providerId,
@@ -98,7 +98,7 @@ export const declineBooking = async (
   try {
     const providerId = req.user!.userId;
     const id = req.params.id as string;
-    const { reason } = req.body;
+    const { reason } = req.body || {};
 
     const booking = await bookingService.declineBooking(id, providerId, reason);
     res.status(200).json({
@@ -138,7 +138,7 @@ export const cancelBooking = async (
     const userId = req.user!.userId;
     const userRole = req.user!.role;
     const id = req.params.id as string;
-    const { reason } = req.body;
+    const { reason } = req.body || {};
 
     const booking = await bookingService.cancelBooking(id, userId, userRole, reason);
     res.status(200).json({

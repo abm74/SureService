@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import {
-  LayoutDashboard,
+  Calendar,
   ShieldCheck,
   Clock,
   CheckCircle2,
   AlertTriangle,
+  Activity,
+  Loader2,
 } from "lucide-react";
 import AppHeader from "@/Components/Header/AppHeader";
 import BookingCard from "@/Components/Bookings/BookingCard";
 import BookingCardSkeleton from "@/Components/Bookings/BookingCardSkeleton";
-import TrustScoreGauge from "@/Components/Providers/TrustScoreGauge";
 import VerificationBadge from "@/Components/Providers/VerificationBadge";
 import { useAuth } from "@/store/Auth/AuthContext";
+import { getTrustTier } from "@/utils/trustTier";
 import {
   useProviderBookings,
   useAcceptBooking,
@@ -168,6 +170,26 @@ export const ProviderDashboard: React.FC = () => {
   const completedJobs = bookings.filter((b) => b.status === "completed");
   const cancelledJobs = bookings.filter((b) => b.status === "cancelled" || b.status === "declined");
 
+  const score = user?.trustScore ?? 0;
+  const tier = getTrustTier(score);
+
+  const isDocUnchanged =
+    docUrl.trim() === (user?.verificationDocUrl || "").trim() &&
+    docType === (user?.verificationDocType || "Kebele ID");
+  const isPendingReview = user?.verificationStatus === "pending";
+  const isApproved = user?.verificationStatus === "approved";
+  const isRejected = user?.verificationStatus === "rejected";
+
+  const isVerifSubmitDisabled =
+    isSubmittingVerif ||
+    !docUrl.trim() ||
+    ((isPendingReview || isApproved) && isDocUnchanged);
+
+  const verifButtonClassName =
+    (isPendingReview || isApproved) && isDocUnchanged && !isSubmittingVerif
+      ? "rounded-xl text-xs h-11 px-6 bg-emerald-700 dark:bg-emerald-600 text-white font-bold shadow-xs flex items-center gap-2 cursor-default"
+      : "rounded-xl text-xs h-11 px-6 bg-primary hover:bg-brand-primary-active text-white font-bold cursor-pointer shadow-xs flex items-center gap-2 disabled:opacity-50";
+
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <AppHeader />
@@ -176,15 +198,23 @@ export const ProviderDashboard: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
-              <LayoutDashboard className="size-3.5" />
-              <span>Provider Dashboard</span>
+              <Calendar className="size-3.5" />
+              <span>Service Bookings & Inquiries</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
               Welcome back, {user?.name}
             </h1>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/provider-stats"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-hairline bg-surface-soft hover:bg-surface-hover hover:border-primary/30 transition-all text-xs font-bold text-ink cursor-pointer shadow-2xs group"
+            >
+              <Activity className="size-3.5 text-primary group-hover:scale-110 transition-transform" />
+              <span>Trust Score: <span className="text-primary font-black">{score}</span></span>
+              <span className="text-muted-foreground font-normal">({tier.label})</span>
+            </Link>
             <VerificationBadge status={user?.verificationStatus} size="md" />
           </div>
         </div>
@@ -192,16 +222,6 @@ export const ProviderDashboard: React.FC = () => {
         {/* TAB 1: REQUESTS & JOBS */}
         {activeTab === "requests" && (
           <div className="space-y-6">
-            {/* LIVE TRUST SCORE MANAGER */}
-            <TrustScoreGauge
-              score={user?.trustScore ?? 0}
-              breakdown={user?.trustBreakdown}
-              completedJobsCount={user?.completedJobsCount}
-              repeatCustomerCount={user?.repeatCustomerCount}
-              providerCancelledCount={user?.providerCancelledCount}
-              verificationStatus={user?.verificationStatus}
-              isPublicView={false}
-            />
             {/* PENDING REQUESTS INBOX */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -393,10 +413,33 @@ export const ProviderDashboard: React.FC = () => {
 
               <Button
                 type="submit"
-                disabled={isSubmittingVerif || !docUrl.trim()}
-                className="rounded-xl text-xs h-11 px-6 bg-primary hover:bg-brand-primary-active text-white font-bold cursor-pointer shadow-xs"
+                disabled={isVerifSubmitDisabled}
+                className={verifButtonClassName}
               >
-                {isSubmittingVerif ? "Submitting..." : "Submit Verification Documents"}
+                {isSubmittingVerif ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    <span>Submitting Documents...</span>
+                  </>
+                ) : isPendingReview && isDocUnchanged ? (
+                  <>
+                    <CheckCircle2 className="size-4 text-emerald-300" />
+                    <span>Documents Sent for Review</span>
+                  </>
+                ) : isApproved && isDocUnchanged ? (
+                  <>
+                    <CheckCircle2 className="size-4 text-emerald-300" />
+                    <span>Documents Verified & Approved</span>
+                  </>
+                ) : isPendingReview && !isDocUnchanged ? (
+                  <span>Update & Resubmit Documents</span>
+                ) : isApproved && !isDocUnchanged ? (
+                  <span>Update Verification Documents</span>
+                ) : isRejected ? (
+                  <span>Resubmit Verification Documents</span>
+                ) : (
+                  "Submit Verification Documents"
+                )}
               </Button>
             </form>
           </div>
@@ -573,9 +616,16 @@ export const ProviderDashboard: React.FC = () => {
               <Button
                 type="submit"
                 disabled={isSavingProfile}
-                className="rounded-xl text-xs h-11 px-6 bg-primary hover:bg-brand-primary-active text-white font-bold cursor-pointer shadow-xs"
+                className="rounded-xl text-xs h-11 px-6 bg-primary hover:bg-brand-primary-active text-white font-bold cursor-pointer shadow-xs flex items-center gap-2 disabled:opacity-50"
               >
-                {isSavingProfile ? "Saving Profile..." : "Save Profile & Update Score"}
+                {isSavingProfile ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    <span>Saving Profile...</span>
+                  </>
+                ) : (
+                  "Save Profile & Update Score"
+                )}
               </Button>
             </form>
           </div>

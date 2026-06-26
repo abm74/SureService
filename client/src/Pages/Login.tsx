@@ -10,6 +10,7 @@ import {
   Briefcase,
   ShieldAlert,
   ChevronDown,
+  Loader2,
 } from "lucide-react";
 import PageNav from "@/Components/Header/PageNav";
 import { useAuth } from "@/store/Auth/AuthContext";
@@ -30,12 +31,15 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { UserRole } from "@/types";
 import { getErrorMessage } from "@/utils/helpers";
 import { useDemoStatus } from "@/hooks/useDemoStatus";
+import SpinnerFullPage from "@/Components/UI/SpinnerFullPage";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittingRole, setSubmittingRole] = useState<UserRole | null>(null);
   const navigate = useNavigate();
 
   useDocumentTitle("SureService | Sign In");
@@ -46,23 +50,29 @@ export const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
     try {
       await login(email, password);
     } catch (err) {
       setError(
         getErrorMessage(err, "Login failed. Please check your credentials."),
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleDemoLogin = async (role: UserRole) => {
     setError("");
+    setSubmittingRole(role);
     try {
       await demoLogin(role);
     } catch (err) {
       setError(
         getErrorMessage(err, "Demo login failed. Please try again."),
       );
+    } finally {
+      setSubmittingRole(null);
     }
   };
 
@@ -73,6 +83,10 @@ export const Login: React.FC = () => {
       else navigate("/marketplace", { replace: true });
     }
   }, [isAuthenticated, user, navigate]);
+
+  if (isLoading) {
+    return <SpinnerFullPage />;
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
@@ -107,7 +121,7 @@ export const Login: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    disabled={isLoading}
+                    disabled={isSubmitting || Boolean(submittingRole)}
                     className="pl-10 h-11 rounded-xl text-xs"
                   />
                 </div>
@@ -126,7 +140,7 @@ export const Login: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    disabled={isLoading}
+                    disabled={isSubmitting || Boolean(submittingRole)}
                     className="pl-10 pr-10 h-11 rounded-xl text-xs"
                   />
                   <button
@@ -147,10 +161,17 @@ export const Login: React.FC = () => {
 
               <Button
                 type="submit"
-                disabled={isLoading}
-                className="w-full rounded-xl h-11 font-bold text-xs bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer mt-1"
+                disabled={isSubmitting || Boolean(submittingRole)}
+                className="w-full rounded-xl h-11 font-bold text-xs bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer mt-1 flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                {isLoading ? "Signing in..." : "Sign In with Credentials"}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    <span>Signing In...</span>
+                  </>
+                ) : (
+                  "Sign In with Credentials"
+                )}
               </Button>
             </form>
 
@@ -167,12 +188,21 @@ export const Login: React.FC = () => {
                     <Button
                       type="button"
                       variant="outline"
-                      disabled={isLoading}
-                      className="w-full h-11 rounded-xl border-hairline hover:bg-surface-soft text-xs font-bold text-ink flex items-center justify-between px-4 cursor-pointer"
+                      disabled={isSubmitting || Boolean(submittingRole)}
+                      className="w-full h-11 rounded-xl border-hairline hover:bg-surface-soft text-xs font-bold text-ink flex items-center justify-between px-4 cursor-pointer disabled:opacity-50"
                     >
                       <div className="flex items-center gap-2">
-                        <Sparkles className="size-4 text-primary" />
-                        <span>Select Demo Account...</span>
+                        {submittingRole ? (
+                          <>
+                            <Loader2 className="size-4 text-primary animate-spin" />
+                            <span>Accessing {submittingRole === "customer" ? "Customer" : submittingRole === "provider" ? "Provider" : "Admin"} Demo...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="size-4 text-primary" />
+                            <span>Select Demo Account...</span>
+                          </>
+                        )}
                       </div>
                       <ChevronDown className="size-4 opacity-60" />
                     </Button>

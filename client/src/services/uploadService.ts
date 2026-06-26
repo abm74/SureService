@@ -17,8 +17,12 @@ export interface UploadResult {
   originalFilename?: string;
 }
 
-export const getUploadSignature = async (): Promise<CloudinarySignResponse> => {
-  const response = await api.post<CloudinarySignResponse>("/upload/sign");
+export const getUploadSignature = async (
+  paramsToSign?: Record<string, unknown>
+): Promise<CloudinarySignResponse> => {
+  const response = await api.post<CloudinarySignResponse>("/upload/sign", {
+    paramsToSign: paramsToSign || {},
+  });
   return response.data;
 };
 

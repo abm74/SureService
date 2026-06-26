@@ -18,7 +18,7 @@ export const getCloudinarySignature = async (
     const timestamp = Math.round(new Date().getTime() / 1000);
     const folder = "sureservice/verifications";
 
-    const customParams = req.body.paramsToSign || {};
+    const customParams = req.body?.paramsToSign || {};
     const paramsToSign: Record<string, any> = {
       timestamp,
       folder,

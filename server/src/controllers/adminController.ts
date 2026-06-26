@@ -44,7 +44,7 @@ export const rejectVerification = async (
 ) => {
   try {
     const providerId = req.params.providerId as string;
-    const { reason } = req.body;
+    const { reason } = req.body || {};
 
     const provider = await adminService.rejectVerification(providerId, reason);
 
@@ -129,7 +129,7 @@ export const toggleUserStatus = async (
 ) => {
   try {
     const userId = req.params.userId as string;
-    const { isSuspended, reason } = req.body;
+    const { isSuspended, reason } = req.body || {};
     const updated = await adminService.toggleUserStatus(userId, isSuspended, reason);
     res.status(200).json({
       message: isSuspended ? "User suspended successfully" : "User reactivated successfully",

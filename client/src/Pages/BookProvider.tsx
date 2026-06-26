@@ -11,6 +11,7 @@ import {
   Lock,
   Sparkles,
   FileText,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/store/Auth/AuthContext";
 import { useProvider } from "@/hooks/useProviders";
@@ -407,15 +408,23 @@ export const BookProvider: React.FC = () => {
                     type="submit"
                     size="lg"
                     disabled={isSubmitting || (isAuthenticated && user?.role !== "customer")}
-                    className="w-full sm:w-auto rounded-2xl text-xs font-bold h-12 px-8 bg-primary hover:bg-brand-primary-active text-white shadow-sm cursor-pointer disabled:opacity-50"
+                    className="w-full sm:w-auto rounded-2xl text-xs font-bold h-12 px-8 bg-primary hover:bg-brand-primary-active text-white shadow-sm cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {isSubmitting
-                      ? "Submitting Request..."
-                      : isAuthenticated && user?.role === "provider"
-                      ? "Booking Restricted for Providers"
-                      : isAuthenticated && user?.role === "admin"
-                      ? "Booking Restricted for Admins"
-                      : "Submit Booking Request"}
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        <span>Submitting Request...</span>
+                      </>
+                    ) : isAuthenticated && user?.role === "provider" ? (
+                      "Booking Restricted for Providers"
+                    ) : isAuthenticated && user?.role === "admin" ? (
+                      "Booking Restricted for Admins"
+                    ) : (
+                      <>
+                        <Calendar className="size-4" />
+                        <span>Submit Booking Request</span>
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>

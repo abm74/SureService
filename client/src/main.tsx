@@ -19,6 +19,7 @@ const ProviderProfile = lazy(() => import("./Pages/ProviderProfile.tsx"));
 const BookProvider = lazy(() => import("./Pages/BookProvider.tsx"));
 const CustomerBookings = lazy(() => import("./Pages/CustomerBookings.tsx"));
 const ProviderDashboard = lazy(() => import("./Pages/ProviderDashboard.tsx"));
+const ProviderStats = lazy(() => import("./Pages/ProviderStats.tsx"));
 const AdminDashboard = lazy(() => import("./Pages/AdminDashboard.tsx"));
 const Login = lazy(() => import("./Pages/Login.tsx"));
 const Signup = lazy(() => import("./Pages/Signup.tsx"));
@@ -82,6 +83,10 @@ const router = createBrowserRouter([
           {
             path: "provider-dashboard",
             Component: ProviderDashboard,
+          },
+          {
+            path: "provider-stats",
+            Component: ProviderStats,
           },
         ],
       },

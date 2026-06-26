@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   Star,
   Lock,
+  Loader2,
 } from "lucide-react";
 import type { Booking, User } from "@/types";
 import { Button } from "@/Components/UI/button";
@@ -42,6 +43,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAccepting, setIsAccepting] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const providerObj = typeof booking.provider === "object" ? (booking.provider as User) : null;
   const customerObj = typeof booking.customer === "object" ? (booking.customer as User) : null;
@@ -68,6 +71,26 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         return <Badge variant="secondary">Declined</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const handleAccept = async () => {
+    if (!onAccept || isAccepting || isSubmitting) return;
+    setIsAccepting(true);
+    try {
+      await onAccept(booking.id);
+    } finally {
+      setIsAccepting(false);
+    }
+  };
+
+  const handleComplete = async () => {
+    if (!onComplete || isCompleting || isSubmitting) return;
+    setIsCompleting(true);
+    try {
+      await onComplete(booking.id);
+    } finally {
+      setIsCompleting(false);
     }
   };
 
@@ -223,12 +246,22 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             {isCustomer && booking.status === "accepted" && onComplete && (
               <Button
                 size="sm"
-                onClick={() => onComplete(booking.id)}
-                className="rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer"
+                onClick={handleComplete}
+                disabled={isCompleting || isSubmitting}
+                className="rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                 title="Only the customer can mark this job completed"
               >
-                <CheckCircle2 className="size-4" />
-                <span>Mark Job Complete</span>
+                {isCompleting ? (
+                  <>
+                    <Loader2 className="size-3.5 animate-spin" />
+                    <span>Completing...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="size-4" />
+                    <span>Mark Job Complete</span>
+                  </>
+                )}
               </Button>
             )}
 
@@ -236,17 +269,28 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               <>
                 <Button
                   size="sm"
-                  onClick={() => onAccept && onAccept(booking.id)}
-                  className="rounded-xl text-xs font-bold bg-primary hover:bg-brand-primary-active text-white shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  onClick={handleAccept}
+                  disabled={isAccepting || isSubmitting}
+                  className="rounded-xl text-xs font-bold bg-primary hover:bg-brand-primary-active text-white shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                 >
-                  <CheckCircle2 className="size-4" />
-                  <span>Accept Booking</span>
+                  {isAccepting ? (
+                    <>
+                      <Loader2 className="size-3.5 animate-spin" />
+                      <span>Accepting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="size-4" />
+                      <span>Accept Booking</span>
+                    </>
+                  )}
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => setIsDeclineModalOpen(true)}
-                  className="rounded-xl text-xs border-hairline hover:border-destructive hover:text-destructive cursor-pointer"
+                  disabled={isAccepting || isSubmitting}
+                  className="rounded-xl text-xs border-hairline hover:border-destructive hover:text-destructive cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
                 >
                   <XCircle className="size-4" />
                   <span>Decline</span>
@@ -263,7 +307,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                   size="sm"
                   variant="outline"
                   onClick={() => setIsCancelModalOpen(true)}
-                  className="rounded-xl text-xs border-rose-200 text-rose-700 hover:bg-rose-50 cursor-pointer"
+                  disabled={isSubmitting}
+                  className="rounded-xl text-xs border-rose-200 text-rose-700 hover:bg-rose-50 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
                   title="Cancelling as provider incurs a -10 pts Trust penalty"
                 >
                   <AlertTriangle className="size-3.5 text-rose-600" />
@@ -277,7 +322,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                 size="sm"
                 variant="ghost"
                 onClick={() => setIsCancelModalOpen(true)}
-                className="rounded-xl text-xs text-muted-foreground hover:text-destructive cursor-pointer"
+                disabled={isCompleting || isSubmitting}
+                className="rounded-xl text-xs text-muted-foreground hover:text-destructive cursor-pointer disabled:opacity-50"
               >
                 Cancel Booking
               </Button>
@@ -330,6 +376,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={3}
+              disabled={isSubmitting}
             />
           </div>
 
@@ -339,6 +386,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               size="sm"
               onClick={() => setIsCancelModalOpen(false)}
               disabled={isSubmitting}
+              className="rounded-xl text-xs"
             >
               Keep Booking
             </Button>
@@ -347,8 +395,16 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               size="sm"
               onClick={handleConfirmCancel}
               disabled={isSubmitting}
+              className="rounded-xl text-xs flex items-center gap-1.5"
             >
-              {isSubmitting ? "Cancelling..." : "Confirm Cancellation"}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Cancelling...</span>
+                </>
+              ) : (
+                "Confirm Cancellation"
+              )}
             </Button>
           </div>
         </div>
@@ -370,6 +426,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={3}
+              disabled={isSubmitting}
             />
           </div>
 
@@ -379,6 +436,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               size="sm"
               onClick={() => setIsDeclineModalOpen(false)}
               disabled={isSubmitting}
+              className="rounded-xl text-xs"
             >
               Back
             </Button>
@@ -387,8 +445,16 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               size="sm"
               onClick={handleConfirmDecline}
               disabled={isSubmitting}
+              className="rounded-xl text-xs flex items-center gap-1.5"
             >
-              {isSubmitting ? "Declining..." : "Decline Request"}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Declining...</span>
+                </>
+              ) : (
+                "Decline Request"
+              )}
             </Button>
           </div>
         </div>

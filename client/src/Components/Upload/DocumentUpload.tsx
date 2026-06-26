@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   UploadCloud,
   FileText,
@@ -37,6 +37,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isPreviewImgLoading, setIsPreviewImgLoading] = useState(true);
   const [previewInfo, setPreviewInfo] = useState<{
     name: string;
     size: string;
@@ -45,6 +46,12 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
   } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (value) {
+      setIsPreviewImgLoading(true);
+    }
+  }, [value]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes < 1024) return `${bytes} B`;
@@ -228,8 +235,8 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={disabled}
-                className="rounded-xl text-xs h-8 px-3 cursor-pointer"
+                disabled={disabled || isUploading}
+                className="rounded-xl text-xs h-8 px-3 cursor-pointer disabled:opacity-50"
               >
                 <RefreshCw className="size-3 mr-1" />
                 Replace
@@ -239,8 +246,8 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={handleClear}
-                disabled={disabled}
-                className="rounded-xl text-xs h-8 px-2 text-destructive hover:bg-destructive/10 cursor-pointer"
+                disabled={disabled || isUploading}
+                className="rounded-xl text-xs h-8 px-2 text-destructive hover:bg-destructive/10 cursor-pointer disabled:opacity-50"
               >
                 <X className="size-3.5" />
               </Button>
@@ -249,13 +256,23 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
           {/* Visual Image Preview if it's an image */}
           {!isPdfDocument(value) && (
-            <div className="relative rounded-xl overflow-hidden border border-hairline bg-background max-h-48 flex items-center justify-center group">
+            <div className="relative rounded-xl overflow-hidden border border-hairline bg-background min-h-32 max-h-48 flex items-center justify-center group">
+              {isPreviewImgLoading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-surface-soft/80 text-muted-foreground animate-pulse z-5">
+                  <Loader2 className="size-5 text-primary animate-spin" />
+                  <span className="text-[10px] font-medium">Loading preview...</span>
+                </div>
+              )}
               <img
                 src={previewInfo?.localPreviewUrl || value}
                 alt="Document Preview"
-                className="max-h-48 w-auto object-contain"
+                onLoad={() => setIsPreviewImgLoading(false)}
+                onError={() => setIsPreviewImgLoading(false)}
+                className={`max-h-48 w-auto object-contain transition-opacity duration-200 ${
+                  isPreviewImgLoading ? "opacity-0" : "opacity-100"
+                }`}
               />
-              <div className="absolute inset-0 bg-ink/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <div className="absolute inset-0 bg-ink/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-10">
                 <a
                   href={value}
                   target="_blank"

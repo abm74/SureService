@@ -69,9 +69,6 @@ export const AppHeader: React.FC = () => {
         : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
     }`;
 
-  const isProviderTabActive = (tab: string) =>
-    location.pathname === "/provider-dashboard" && currentTab === tab;
-
   const isAdminTabActive = (tab: string) =>
     location.pathname === "/admin-dashboard" &&
     (currentTab === tab || (!searchParams.get("tab") && tab === "users"));
@@ -106,52 +103,21 @@ export const AppHeader: React.FC = () => {
           )}
 
           {isAuthenticated && role === "provider" && (
-            location.pathname === "/provider-dashboard" ? (
-              <>
-                <Link
-                  to="/provider-dashboard?tab=requests"
-                  className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    isProviderTabActive("requests")
-                      ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
-                  }`}
-                >
-                  <Calendar className="size-3.5" />
-                  <span>Requests{pendingRequestsCount > 0 ? ` (${pendingRequestsCount})` : ""}</span>
-                </Link>
-
-                <Link
-                  to="/provider-dashboard?tab=verification"
-                  className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    isProviderTabActive("verification")
-                      ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
-                  }`}
-                >
-                  <ShieldCheck className="size-3.5" />
-                  <span>Verification</span>
-                </Link>
-
-                <Link
-                  to="/provider-dashboard?tab=profile"
-                  className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    isProviderTabActive("profile")
-                      ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
-                  }`}
-                >
-                  <User className="size-3.5" />
-                  <span>Profile</span>
-                </Link>
-              </>
-            ) : (
+            <>
               <NavLink to="/provider-dashboard" className={linkClass}>
                 <span className="flex items-center gap-1.5">
                   <Calendar className="size-3.5" />
-                  <span>Dashboard</span>
+                  <span>Bookings{pendingRequestsCount > 0 ? ` (${pendingRequestsCount})` : ""}</span>
                 </span>
               </NavLink>
-            )
+
+              <NavLink to="/provider-stats" className={linkClass}>
+                <span className="flex items-center gap-1.5">
+                  <Activity className="size-3.5" />
+                  <span>Trust & Stats</span>
+                </span>
+              </NavLink>
+            </>
           )}
 
           {isAuthenticated && role === "admin" && (
@@ -334,12 +300,20 @@ export const AppHeader: React.FC = () => {
                   {role === "provider" && (
                     <>
                       <Link
-                        to="/provider-dashboard?tab=requests"
+                        to="/provider-dashboard"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                       >
                         <Calendar className="size-3.5 text-primary" />
-                        <span>Requests & Jobs</span>
+                        <span>Bookings & Requests</span>
+                      </Link>
+                      <Link
+                        to="/provider-stats"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
+                      >
+                        <Activity className="size-3.5 text-primary" />
+                        <span>Trust Standing & Stats</span>
                       </Link>
                       <Link
                         to="/provider-dashboard?tab=verification"

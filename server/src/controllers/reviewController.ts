@@ -9,7 +9,7 @@ export const createReview = async (
 ) => {
   try {
     const customerId = req.user!.userId;
-    const { bookingId, rating, comment } = req.body;
+    const { bookingId, rating, comment } = req.body || {};
 
     const review = await reviewService.createReview(
       customerId,
