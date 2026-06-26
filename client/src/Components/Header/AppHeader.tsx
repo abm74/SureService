@@ -21,9 +21,10 @@ import { Badge } from "@/Components/UI/badge";
 export const AppHeader: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const role = user?.role || "customer";
+  const isAdmin = Boolean(isAuthenticated && role === "admin");
   const { data: providerBookings = [] } = useProviderBookings(isAuthenticated && role === "provider");
-  const { data: stats } = usePlatformStats();
-  const { data: pendingVerifications = [] } = usePendingVerifications();
+  const { data: stats } = usePlatformStats(isAdmin);
+  const { data: pendingVerifications = [] } = usePendingVerifications(isAdmin);
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -252,7 +253,7 @@ export const AppHeader: React.FC = () => {
                 size="sm"
                 className="rounded-full text-xs h-9 px-4 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer font-bold"
               >
-                Join Marketplace
+                Sign Up
               </Button>
             </Link>
           </div>

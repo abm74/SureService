@@ -97,7 +97,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
         onChange(result.url);
         setUploadProgress(100);
-      } catch (err: any) {
+      } catch (err: unknown) {
         const msg = getErrorMessage(
           err,
           "Failed to upload document to cloud storage. Please check your connection or credentials."

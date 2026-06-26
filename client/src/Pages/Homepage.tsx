@@ -184,6 +184,7 @@ export const Homepage: React.FC = () => {
             <Link to="/marketplace" className="hover:text-ink transition-colors">Marketplace</Link>
             <Link to="/about" className="hover:text-ink transition-colors">Trust Model</Link>
             <Link to="/login" className="hover:text-ink transition-colors">Sign In</Link>
+            <Link to="/signup" className="hover:text-ink transition-colors font-semibold text-primary">Sign Up</Link>
           </div>
         </div>
       </footer>

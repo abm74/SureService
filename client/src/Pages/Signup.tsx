@@ -71,7 +71,7 @@ export const Signup: React.FC = () => {
     if (isAuthenticated && user) {
       if (user.role === "admin") navigate("/admin-dashboard", { replace: true });
       else if (user.role === "provider") navigate("/provider-dashboard", { replace: true });
-      else navigate("/bookings", { replace: true });
+      else navigate("/marketplace", { replace: true });
     }
   }, [isAuthenticated, user, navigate]);
 
@@ -318,9 +318,10 @@ export const Signup: React.FC = () => {
                 {isLoading ? "Creating account..." : `Register as ${role === "provider" ? "Service Provider" : "Customer"}`}
               </Button>
 
-              <div className="text-center text-xs text-muted-foreground font-medium pt-2">
-                <Link to="/login" className="text-ink underline hover:text-primary transition-colors">
-                  Already have an account? Sign in
+              <div className="text-center text-xs text-muted-foreground font-medium pt-2 border-t border-hairline/60">
+                <span>Already have an account? </span>
+                <Link to="/login" className="font-bold text-primary hover:underline hover:text-brand-primary-active transition-colors ml-1">
+                  Sign In
                 </Link>
               </div>
             </form>

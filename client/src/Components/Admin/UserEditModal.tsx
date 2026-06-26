@@ -21,7 +21,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useLocations } from "@/hooks/useLocations";
 import { useAdminUpdateUser } from "@/hooks/useAdmin";
 import { getErrorMessage } from "@/utils/helpers";
-import type { User, UserRole, VerificationStatus } from "@/types";
+import type { User, UserRole, VerificationStatus, AdminUpdateUserPayload } from "@/types";
 
 interface UserEditModalProps {
   user: User | null;
@@ -90,7 +90,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const payload: any = {
+      const payload: AdminUpdateUserPayload = {
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),

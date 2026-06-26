@@ -35,8 +35,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/Components/UI/dropdown-menu";
-import { getTrustTier } from "@/Components/Providers/TrustScoreBadge";
 import { cn } from "@/lib/utils";
+import { getTrustTier } from "@/utils/trustTier";
 import { useAdminUsers } from "@/hooks/useAdmin";
 import { useLocations } from "@/hooks/useLocations";
 import UserDetailsModal from "./UserDetailsModal";
@@ -228,7 +228,9 @@ export const UserManagement: React.FC = () => {
           <div>
             <Select
               value={filters.status}
-              onValueChange={(val: any) => setFilters((p) => ({ ...p, status: val, page: 1 }))}
+              onValueChange={(val: "all" | "active" | "suspended") =>
+                setFilters((p) => ({ ...p, status: val, page: 1 }))
+              }
             >
               <SelectTrigger className="h-8 text-xs rounded-lg">
                 <SelectValue placeholder="Account Status" />
@@ -244,7 +246,7 @@ export const UserManagement: React.FC = () => {
           <div>
             <Select
               value={filters.verificationStatus}
-              onValueChange={(val: any) =>
+              onValueChange={(val: "all" | "approved" | "pending" | "rejected" | "unverified") =>
                 setFilters((p) => ({ ...p, verificationStatus: val, page: 1 }))
               }
             >
@@ -283,7 +285,9 @@ export const UserManagement: React.FC = () => {
           <div>
             <Select
               value={filters.sortBy}
-              onValueChange={(val: any) => setFilters((p) => ({ ...p, sortBy: val, page: 1 }))}
+              onValueChange={(
+                val: "newest" | "oldest" | "nameAsc" | "nameDesc" | "trustScore" | "completedJobs"
+              ) => setFilters((p) => ({ ...p, sortBy: val, page: 1 }))}
             >
               <SelectTrigger className="h-8 text-xs rounded-lg">
                 <SelectValue placeholder="Sort By" />

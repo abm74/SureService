@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
-import { ShieldCheck, ArrowRight, Store } from "lucide-react";
+import { ShieldCheck, ArrowRight } from "lucide-react";
 import { Button } from "@/Components/UI/button";
 import { useAuth } from "@/store/Auth/AuthContext";
 
@@ -66,13 +66,12 @@ export const PageNav: React.FC = () => {
                   Sign In
                 </Button>
               </NavLink>
-              <NavLink to="/marketplace" className="hidden sm:block">
+              <NavLink to="/signup">
                 <Button
                   size="sm"
-                  className="rounded-full px-4 font-bold text-xs h-9 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer flex items-center gap-1.5"
+                  className="rounded-full px-4 font-bold text-xs h-9 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer font-bold"
                 >
-                  <Store className="size-3.5" />
-                  <span>Explore</span>
+                  Sign Up
                 </Button>
               </NavLink>
             </div>

@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClient } from "./lib/queryClient.ts";
 import App from "./App.tsx";
 import ProtectedRoute from "./Pages/ProtectedRoute.tsx";
+import RouteErrorBoundary from "./Pages/RouteErrorBoundary.tsx";
 
 const Homepage = lazy(() => import("./Pages/Homepage.tsx"));
 const About = lazy(() => import("./Pages/About.tsx"));
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     Component: App,
+    ErrorBoundary: RouteErrorBoundary,
     id: "root",
     children: [
       {
@@ -72,10 +74,20 @@ const router = createBrowserRouter([
             path: "bookings",
             Component: CustomerBookings,
           },
+        ],
+      },
+      {
+        element: <ProtectedRoute requiredRole="provider" />,
+        children: [
           {
             path: "provider-dashboard",
             Component: ProviderDashboard,
           },
+        ],
+      },
+      {
+        element: <ProtectedRoute requiredRole="admin" />,
+        children: [
           {
             path: "admin-dashboard",
             Component: AdminDashboard,

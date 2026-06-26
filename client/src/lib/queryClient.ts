@@ -5,9 +5,9 @@ export const queryClient = new QueryClient({
     queries: {
       staleTime: 1000 * 60 * 2,
       gcTime: 1000 * 60 * 10,
-      refetchOnWindowFocus: false,
-      retry: (failureCount, error: any) => {
-        if (error?.status >= 400 && error?.status < 500) {
+      retry: (failureCount, error: unknown) => {
+        const status = (error as { status?: number })?.status;
+        if (status !== undefined && status >= 400 && status < 500) {
           return false;
         }
         return failureCount < 1;

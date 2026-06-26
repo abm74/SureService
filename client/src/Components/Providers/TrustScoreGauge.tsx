@@ -2,7 +2,7 @@ import React from "react";
 import { ShieldCheck, UserCheck, CheckCircle2, Users, AlertTriangle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { TrustBreakdown } from "@/types";
-import { getTrustTier } from "./TrustScoreBadge";
+import { getTrustTier } from "@/utils/trustTier";
 
 interface TrustScoreGaugeProps {
   score?: number;

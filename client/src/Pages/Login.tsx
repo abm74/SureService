@@ -242,9 +242,13 @@ export const Login: React.FC = () => {
               </div>
             )}
 
-            <div className="text-center text-xs text-muted-foreground font-medium pt-2">
-              <Link to="/signup" className="text-ink underline hover:text-primary transition-colors">
-                Don't have an account? Join SureService
+            <div className="text-center text-xs text-muted-foreground font-medium pt-2 border-t border-hairline/60">
+              <span>Don't have an account? </span>
+              <Link
+                to="/signup"
+                className="font-bold text-primary hover:underline transition-colors ml-1"
+              >
+                Sign up
               </Link>
             </div>
           </CardContent>

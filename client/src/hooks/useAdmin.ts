@@ -14,17 +14,19 @@ import {
 import { queryKeys } from "@/constants/queryKeys";
 import type { AdminUserFilters, AdminUpdateUserPayload } from "@/types";
 
-export const usePlatformStats = () => {
+export const usePlatformStats = (enabled: boolean = true) => {
   return useQuery({
     queryKey: queryKeys.admin.stats(),
     queryFn: getPlatformStats,
+    enabled,
   });
 };
 
-export const usePendingVerifications = () => {
+export const usePendingVerifications = (enabled: boolean = true) => {
   return useQuery({
     queryKey: queryKeys.admin.verifications(),
     queryFn: getPendingVerifications,
+    enabled,
   });
 };
 
@@ -59,11 +61,12 @@ export const useRejectVerification = () => {
   });
 };
 
-export const useAdminUsers = (filters: AdminUserFilters = {}) => {
+export const useAdminUsers = (filters: AdminUserFilters = {}, enabled: boolean = true) => {
   return useQuery({
     queryKey: queryKeys.admin.userList(filters),
     queryFn: () => getUsers(filters),
     placeholderData: keepPreviousData,
+    enabled,
   });
 };
 
