@@ -1,4 +1,4 @@
-# SureService — Verified Peer-to-Peer Service Marketplace
+# SureService — Trust-Scored Peer-to-Peer Service Marketplace
 
 A peer-to-peer service marketplace built with the MERN stack (MongoDB, Express, React 19, Node.js + TypeScript). SureService connects customers with skilled local professionals—such as electricians, plumbers, tutors, and cleaners—ranking providers using an objective **Trust Score (0–100)** calculated from verified job completions, client retention, and audited credentials rather than easily manipulated star ratings.
 
