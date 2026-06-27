@@ -70,9 +70,14 @@ export const Homepage: React.FC = () => {
                 <div className="flex items-center justify-between pb-3 border-b border-hairline">
                   <div className="flex items-center gap-3">
                     <img
-                      src="/default-avatar.jpg"
+                      src="/avater_1.jpg"
                       alt="Abebe Kebede"
                       className="size-12 rounded-full object-cover ring-2 ring-emerald-500/30"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        target.onerror = null;
+                        target.src = "/default-avatar.jpg";
+                      }}
                     />
                     <div>
                       <h3 className="font-bold text-sm text-ink">Abebe Kebede</h3>
