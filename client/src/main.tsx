@@ -1,5 +1,6 @@
 import { StrictMode, lazy } from "react";
 import { createRoot } from "react-dom/client";
+import "./index.css";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -49,6 +50,14 @@ const router = createBrowserRouter([
         Component: Signup,
       },
       {
+        path: "marketplace",
+        Component: Marketplace,
+      },
+      {
+        path: "providers/:id",
+        Component: ProviderProfile,
+      },
+      {
         path: "app",
         element: <Navigate replace to="/marketplace" />,
       },
@@ -59,14 +68,6 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [
-          {
-            path: "marketplace",
-            Component: Marketplace,
-          },
-          {
-            path: "providers/:id",
-            Component: ProviderProfile,
-          },
           {
             path: "providers/:id/book",
             Component: BookProvider,
@@ -107,12 +108,11 @@ const router = createBrowserRouter([
   },
 ]);
 
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen={false} />
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   </StrictMode>
 );

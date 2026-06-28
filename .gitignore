@@ -42,3 +42,7 @@ docs
 DESIGN.md
 .agents
 .env
+.kilo/*
+.claude/*
+AGENTS.md
+CLAUDE.md

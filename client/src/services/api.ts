@@ -11,8 +11,18 @@ const api = axios.create({
 });
 
 const isProtectedAppRoute = () => {
-  const publicPaths = ["/", "/about", "/login", "/signup"];
-  return !publicPaths.includes(window.location.pathname);
+  const path = window.location.pathname;
+  if (
+    path === "/" ||
+    path === "/about" ||
+    path === "/login" ||
+    path === "/signup" ||
+    path === "/marketplace" ||
+    (path.startsWith("/providers/") && !path.endsWith("/book"))
+  ) {
+    return false;
+  }
+  return true;
 };
 const isAuthEndpoint = (url: string | undefined) => {
   const authRoutes = ["/auth/login", "/auth/signup", "/auth/refresh", "/auth/logout"];
@@ -50,6 +60,7 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
+        originalRequest._retry = true;
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         }).then(() => api(originalRequest));

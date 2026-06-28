@@ -79,10 +79,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = useCallback(async (email: string, password: string) => {
     authMutationInProgress.current = true;
-    dispatch({ type: "setLoading", payload: true });
     try {
       const res = await api.post<{ user: User }>("/auth/login", { email, password });
       dispatch({ type: "setUser", payload: res.data.user });
+      return res.data.user;
     } catch (error) {
       dispatch({ type: "logout" });
       throw error;
@@ -93,10 +93,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const demoLogin = useCallback(async (role: UserRole = "customer") => {
     authMutationInProgress.current = true;
-    dispatch({ type: "setLoading", payload: true });
     try {
       const res = await api.post<{ user: User }>("/auth/demo-login", { role });
       dispatch({ type: "setUser", payload: res.data.user });
+      return res.data.user;
     } catch (error) {
       dispatch({ type: "logout" });
       throw error;
@@ -108,7 +108,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signup = useCallback(
     async (payloadOrUsername: SignupPayload | string, email?: string, password?: string) => {
       authMutationInProgress.current = true;
-      dispatch({ type: "setLoading", payload: true });
       try {
         const payload: SignupPayload =
           typeof payloadOrUsername === "string"
@@ -117,6 +116,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const res = await api.post<{ user: User }>("/auth/signup", payload);
         dispatch({ type: "setUser", payload: res.data.user });
+        return res.data.user;
       } catch (error) {
         dispatch({ type: "logout" });
         throw error;

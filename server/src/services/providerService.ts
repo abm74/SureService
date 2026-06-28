@@ -60,11 +60,16 @@ export const getProviders = async (filters: ProviderQueryFilters = {}) => {
 
   const sortOption: Record<string, any> = {};
   switch (filters.sortBy) {
+    case "rateAsc":
     case "hourlyRate_asc":
       sortOption.hourlyRate = 1;
       break;
+    case "rateDesc":
     case "hourlyRate_desc":
       sortOption.hourlyRate = -1;
+      break;
+    case "newest":
+      sortOption.createdAt = -1;
       break;
     case "completedJobs":
       sortOption.completedJobsCount = -1;
