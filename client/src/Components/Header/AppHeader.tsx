@@ -74,13 +74,13 @@ export const AppHeader: React.FC = () => {
     (currentTab === tab || (!searchParams.get("tab") && tab === "users"));
 
   return (
-    <header className="w-full bg-background/95 backdrop-blur-md border-b border-hairline h-18 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40 shrink-0 select-none">
+    <header className="w-full bg-background/95 backdrop-blur-md border-b border-hairline h-16 sm:h-18 px-3 sm:px-4 md:px-8 flex items-center justify-between sticky top-0 z-40 shrink-0 select-none">
       <div className="flex items-center gap-6">
         <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="size-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-2xs group-hover:scale-105 transition-transform">
-            <ShieldCheck className="size-5" />
+          <div className="size-8 sm:size-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-2xs group-hover:scale-105 transition-transform">
+            <ShieldCheck className="size-4 sm:size-5" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-ink">
+          <span className="text-lg sm:text-xl font-bold tracking-tight text-ink">
             Sure<span className="text-primary">Service</span>
           </span>
         </Link>
@@ -231,7 +231,7 @@ export const AppHeader: React.FC = () => {
               className="flex items-center gap-2.5 bg-surface-soft border border-hairline/80 p-1 pr-3 rounded-full shadow-xs hover:bg-surface-hover hover:border-primary/30 transition-all cursor-pointer focus:outline-none group"
               aria-expanded={isDropdownOpen}
             >
-              <div className="size-8 rounded-full overflow-hidden ring-1 ring-primary/30 shrink-0">
+              <div className="size-7.5 sm:size-8 rounded-full overflow-hidden ring-1 ring-primary/30 shrink-0">
                 <img
                   className="size-full object-cover"
                   src={profileAvatar}
@@ -255,7 +255,7 @@ export const AppHeader: React.FC = () => {
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2.5 w-72 bg-background border border-hairline rounded-2xl shadow-xl p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-md">
+              <div className="absolute right-0 mt-2.5 w-[calc(100vw-2rem)] sm:w-72 max-w-xs bg-background border border-hairline rounded-2xl shadow-xl p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-md">
                 <div className="p-3 bg-surface-soft/70 rounded-xl border border-hairline/60 mb-2">
                   <div className="flex items-center gap-2.5 mb-1.5">
                     <img
@@ -283,7 +283,7 @@ export const AppHeader: React.FC = () => {
                     className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                   >
                     <Store className="size-3.5 text-primary" />
-                    <span>Browse Service Providers</span>
+                    <span>Marketplace</span>
                   </Link>
 
                   {role === "customer" && (
