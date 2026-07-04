@@ -23,13 +23,13 @@ export const Homepage: React.FC = () => {
 
       <main className="grow flex flex-col">
         {/* HERO SECTION */}
-        <section className="px-6 py-12 md:py-20 lg:px-20 max-w-7xl mx-auto w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7 flex flex-col items-start gap-6 text-left">
-              <div className="inline-flex items-center gap-1.5 bg-surface-soft border border-hairline px-3 py-1 rounded-full shadow-2xs">
-                <ShieldCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span className="text-[11px] font-bold tracking-tight text-ink">
-                  Objective Trust Scores (0–100) • Anti-Gaming Architecture
+        <section className="px-3.5 sm:px-6 py-8 md:py-20 lg:px-20 max-w-7xl mx-auto w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div className="lg:col-span-7 flex flex-col items-start gap-5 sm:gap-6 text-left">
+              <div className="inline-flex items-center gap-1.5 bg-surface-soft border border-hairline px-2.5 sm:px-3 py-1 rounded-full shadow-2xs max-w-full">
+                <ShieldCheck className="size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="text-[10.5px] sm:text-[11px] font-bold tracking-tight text-ink">
+                  Objective Trust Scores (0–100) <span className="hidden sm:inline">• Anti-Gaming Architecture</span>
                 </span>
               </div>
 
@@ -42,21 +42,19 @@ export const Homepage: React.FC = () => {
                 SureService ranks electricians, plumbers, cleaners, and tutors across Ethiopia through independently verified performance. Only paying clients can confirm job completion, and provider cancellations trigger automated score penalties.
               </p>
 
-              <div className="flex flex-wrap items-center gap-3.5 pt-1 w-full">
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-1">
                 <Link to="/marketplace">
                   <Button
-                    size="lg"
-                    className="rounded-full px-7 font-bold text-xs h-12 bg-primary hover:bg-brand-primary-active text-white shadow-xs flex items-center gap-2 cursor-pointer"
+                    className="rounded-full px-4 sm:px-6 font-bold text-xs h-10 sm:h-11.5 bg-primary hover:bg-brand-primary-active text-white shadow-xs flex items-center gap-1.5 sm:gap-2 cursor-pointer"
                   >
                     <span>Browse Verified Providers</span>
-                    <ArrowRight className="size-4" />
+                    <ArrowRight className="size-3.5 sm:size-4" />
                   </Button>
                 </Link>
                 <Link to="/about">
                   <Button
                     variant="outline"
-                    size="lg"
-                    className="rounded-full px-6 font-semibold text-xs h-12 border-hairline hover:border-ink cursor-pointer"
+                    className="rounded-full px-4 sm:px-5.5 font-semibold text-xs h-10 sm:h-11.5 border-hairline hover:border-ink cursor-pointer"
                   >
                     How Trust Score Works
                   </Button>
@@ -65,65 +63,65 @@ export const Homepage: React.FC = () => {
             </div>
 
             {/* HERO PREVIEW CARD */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="w-full max-w-md rounded-3xl border border-hairline bg-card p-6 shadow-xl space-y-4 text-left">
-                <div className="flex items-center justify-between pb-3 border-b border-hairline">
-                  <div className="flex items-center gap-3">
+            <div className="lg:col-span-5 flex justify-center w-full">
+              <div className="w-full max-w-md rounded-3xl border border-hairline bg-card p-3.5 sm:p-6 shadow-xl space-y-3.5 sm:space-y-4 text-left">
+                <div className="flex items-center justify-between gap-2 pb-3 border-b border-hairline">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                     <img
                       src="/avater_1.jpg"
                       alt="Abebe Kebede"
-                      className="size-12 rounded-full object-cover ring-2 ring-emerald-500/30"
+                      className="size-10 sm:size-12 rounded-full object-cover ring-2 ring-primary/20 shrink-0"
                       onError={(e) => {
                         const target = e.currentTarget;
                         target.onerror = null;
                         target.src = "/default-avatar.jpg";
                       }}
                     />
-                    <div>
-                      <h3 className="font-bold text-sm text-ink">Abebe Kebede</h3>
-                      <p className="text-xs text-muted-foreground">Master Electrician • Addis Ababa (Bole)</p>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-sm text-ink truncate">Abebe Kebede</h3>
+                      <p className="text-[11px] sm:text-xs text-muted-foreground truncate">Master Electrician • Bole, Addis</p>
                     </div>
                   </div>
-                  <TrustScoreBadge score={96} size="sm" />
+                  <TrustScoreBadge score={90} size="sm" className="shrink-0" />
                 </div>
 
-                <div className="rounded-2xl bg-surface-soft/80 border border-hairline p-4 space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-ink font-semibold">
-                    <span className="flex items-center gap-1.5">
-                      <ShieldCheck className="size-4 text-emerald-600" />
-                      Admin-Audited Trade License
+                <div className="rounded-2xl bg-surface-soft/80 border border-hairline p-2.5 sm:p-4 space-y-2 sm:space-y-2.5 text-xs">
+                  <div className="flex items-center justify-between gap-2 text-ink font-semibold">
+                    <span className="flex items-center gap-1.5 min-w-0 text-[11px] sm:text-xs text-body">
+                      <ShieldCheck className="size-3.5 sm:size-4 text-primary shrink-0" />
+                      <span>Audited License</span>
                     </span>
-                    <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-100/70 dark:bg-emerald-950 px-2 py-0.5 rounded-md text-[11px] font-bold">Verified</span>
+                    <span className="text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full text-[10.5px] sm:text-[11px] font-bold shrink-0">Verified</span>
                   </div>
-                  <div className="flex items-center justify-between text-ink font-semibold">
-                    <span className="flex items-center gap-1.5">
-                      <CheckCircle2 className="size-4 text-blue-600" />
-                      12 Client-Confirmed Jobs
+                  <div className="flex items-center justify-between gap-2 text-ink font-semibold">
+                    <span className="flex items-center gap-1.5 min-w-0 text-[11px] sm:text-xs text-body">
+                      <CheckCircle2 className="size-3.5 sm:size-4 text-primary shrink-0" />
+                      <span>12 Confirmed Jobs</span>
                     </span>
-                    <span className="text-blue-700 dark:text-blue-400 bg-blue-100/70 dark:bg-blue-950 px-2 py-0.5 rounded-md text-[11px] font-bold">100% Confirmed</span>
+                    <span className="text-ink font-bold text-[10.5px] sm:text-[11px] shrink-0">100% Rate</span>
                   </div>
-                  <div className="flex items-center justify-between text-ink font-semibold">
-                    <span className="flex items-center gap-1.5">
-                      <Users className="size-4 text-teal-600" />
-                      Repeat Client Track Record
+                  <div className="flex items-center justify-between gap-2 text-ink font-semibold">
+                    <span className="flex items-center gap-1.5 min-w-0 text-[11px] sm:text-xs text-body">
+                      <Users className="size-3.5 sm:size-4 text-primary shrink-0" />
+                      <span>Repeat Clients</span>
                     </span>
-                    <span className="text-teal-700 dark:text-teal-400 bg-teal-100/70 dark:bg-teal-950 px-2 py-0.5 rounded-md text-[11px] font-bold">High Retention</span>
+                    <span className="text-ink font-bold text-[10.5px] sm:text-[11px] shrink-0">High Retention</span>
                   </div>
-                  <div className="flex items-center justify-between text-ink font-semibold">
-                    <span className="flex items-center gap-1.5">
-                      <UserCheck className="size-4 text-indigo-600" />
-                      Service Area & Identity
+                  <div className="flex items-center justify-between gap-2 text-ink font-semibold">
+                    <span className="flex items-center gap-1.5 min-w-0 text-[11px] sm:text-xs text-body">
+                      <UserCheck className="size-3.5 sm:size-4 text-primary shrink-0" />
+                      <span>Service Area</span>
                     </span>
-                    <span className="text-indigo-700 dark:text-indigo-400 bg-indigo-100/70 dark:bg-indigo-950 px-2 py-0.5 rounded-md text-[11px] font-bold">Bole, Addis</span>
+                    <span className="text-muted-foreground font-medium text-[10.5px] sm:text-[11px] shrink-0">Bole, Addis</span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300">
-                  <p className="font-bold flex items-center gap-1.5">
-                    <CheckCircle2 className="size-4" />
+                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-soft/80 border border-hairline text-xs text-ink">
+                  <p className="font-bold flex items-center gap-1.5 text-[11px] sm:text-xs text-ink">
+                    <CheckCircle2 className="size-3.5 sm:size-4 text-primary shrink-0" />
                     Independent Ratings
                   </p>
-                  <p className="text-[11px] mt-0.5 opacity-90">
+                  <p className="text-[10.5px] sm:text-[11px] mt-0.5 text-muted-foreground leading-snug">
                     Abebe cannot rate himself or close his own jobs. Points for completed jobs come only from verified customers who hired him.
                   </p>
                 </div>
@@ -133,7 +131,7 @@ export const Homepage: React.FC = () => {
         </section>
 
         {/* POPULAR CATEGORIES */}
-        <section className="bg-surface-soft/60 border-y border-hairline py-16 px-6 lg:px-20">
+        <section className="bg-surface-soft/60 border-y border-hairline py-12 md:py-16 px-4 sm:px-6 lg:px-20">
           <div className="max-w-7xl mx-auto text-left space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
@@ -179,17 +177,17 @@ export const Homepage: React.FC = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-background border-t border-hairline py-8 px-6 lg:px-20 text-xs text-muted-foreground font-medium select-none">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="size-4 text-primary" />
-            <span>&copy; {new Date().getFullYear()} SureService</span>
+      <footer className="bg-background border-t border-hairline py-6 sm:py-8 px-3.5 sm:px-6 lg:px-20 text-xs text-muted-foreground font-medium select-none">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3.5 sm:gap-4 text-center sm:text-left">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <ShieldCheck className="size-4 text-primary shrink-0" />
+            <span className="text-[11px] sm:text-xs">&copy; {new Date().getFullYear()} SureService</span>
           </div>
-          <div className="flex items-center gap-6">
-            <Link to="/marketplace" className="hover:text-ink transition-colors">Marketplace</Link>
-            <Link to="/about" className="hover:text-ink transition-colors">Trust Model</Link>
-            <Link to="/login" className="hover:text-ink transition-colors">Sign In</Link>
-            <Link to="/signup" className="hover:text-ink transition-colors font-semibold text-primary">Sign Up</Link>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-6 gap-y-1.5 text-[11px] sm:text-xs">
+            <Link to="/marketplace" className="hover:text-ink transition-colors whitespace-nowrap">Marketplace</Link>
+            <Link to="/about" className="hover:text-ink transition-colors whitespace-nowrap">Trust Model</Link>
+            <Link to="/login" className="hover:text-ink transition-colors whitespace-nowrap">Sign In</Link>
+            <Link to="/signup" className="hover:text-ink transition-colors font-semibold text-primary whitespace-nowrap">Sign Up</Link>
           </div>
         </div>
       </footer>

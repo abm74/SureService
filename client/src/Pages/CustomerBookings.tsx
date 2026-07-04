@@ -54,25 +54,26 @@ export const CustomerBookings: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <AppHeader />
 
-      <main className="grow px-4 md:px-8 lg:px-12 py-8 max-w-5xl mx-auto w-full space-y-6 text-left">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <main className="grow px-3.5 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-8 max-w-5xl mx-auto w-full space-y-4 sm:space-y-6 text-left">
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-1">
-              <Calendar className="size-3.5" />
+            <div className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-primary uppercase tracking-wider mb-0.5">
+              <Calendar className="size-3 sm:size-3.5 shrink-0" />
               <span>Customer Booking Hub</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
+            <h1 className="text-base sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
               My Service Bookings
             </h1>
           </div>
 
-          <Link to="/marketplace">
+          <Link to="/marketplace" className="shrink-0">
             <Button
               size="sm"
-              className="rounded-full text-xs h-10 px-5 bg-primary hover:bg-brand-primary-active text-white shadow-xs flex items-center gap-1.5 cursor-pointer font-bold"
+              className="rounded-full text-xs h-8 sm:h-9 px-3 sm:px-4 bg-primary hover:bg-brand-primary-active text-white shadow-xs flex items-center gap-1.5 cursor-pointer font-bold"
             >
               <Store className="size-3.5" />
-              <span>Find New Service</span>
+              <span className="hidden sm:inline">Find New Service</span>
+              <span className="sm:hidden">Browse</span>
             </Button>
           </Link>
         </div>
@@ -84,11 +85,11 @@ export const CustomerBookings: React.FC = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-2 border-b border-hairline pb-2 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1.5 sm:gap-2 border-b border-hairline pb-2 overflow-x-auto scrollbar-none -mx-3.5 px-3.5 sm:mx-0 sm:px-0">
           <button
             type="button"
             onClick={() => setActiveTab("all")}
-            className={`rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+            className={`rounded-lg sm:rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === "all"
                 ? "bg-primary text-white shadow-2xs"
                 : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
@@ -99,7 +100,7 @@ export const CustomerBookings: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab("active")}
-            className={`rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+            className={`rounded-lg sm:rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === "active"
                 ? "bg-primary text-white shadow-2xs"
                 : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
@@ -110,7 +111,7 @@ export const CustomerBookings: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab("completed")}
-            className={`rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+            className={`rounded-lg sm:rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === "completed"
                 ? "bg-primary text-white shadow-2xs"
                 : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
@@ -121,7 +122,7 @@ export const CustomerBookings: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab("cancelled")}
-            className={`rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+            className={`rounded-lg sm:rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === "cancelled"
                 ? "bg-primary text-white shadow-2xs"
                 : "text-muted-foreground hover:text-ink hover:bg-surface-soft"

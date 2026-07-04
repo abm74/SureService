@@ -52,7 +52,10 @@ export const Login: React.FC = () => {
     setError("");
     setIsSubmitting(true);
     try {
-      await login(email, password);
+      const loggedUser = await login(email, password);
+      if (loggedUser.role === "admin") navigate("/admin-dashboard", { replace: true });
+      else if (loggedUser.role === "provider") navigate("/provider-dashboard", { replace: true });
+      else navigate("/marketplace", { replace: true });
     } catch (err) {
       setError(
         getErrorMessage(err, "Login failed. Please check your credentials."),
@@ -66,7 +69,10 @@ export const Login: React.FC = () => {
     setError("");
     setSubmittingRole(role);
     try {
-      await demoLogin(role);
+      const loggedUser = await demoLogin(role);
+      if (loggedUser.role === "admin") navigate("/admin-dashboard", { replace: true });
+      else if (loggedUser.role === "provider") navigate("/provider-dashboard", { replace: true });
+      else navigate("/marketplace", { replace: true });
     } catch (err) {
       setError(
         getErrorMessage(err, "Demo login failed. Please try again."),
@@ -77,12 +83,12 @@ export const Login: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (!isLoading && isAuthenticated && user) {
       if (user.role === "admin") navigate("/admin-dashboard", { replace: true });
       else if (user.role === "provider") navigate("/provider-dashboard", { replace: true });
       else navigate("/marketplace", { replace: true });
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, isLoading, user, navigate]);
 
   if (isLoading) {
     return <SpinnerFullPage />;
@@ -92,28 +98,31 @@ export const Login: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <PageNav />
 
-      <main className="grow flex items-center justify-center p-4 md:p-8">
-        <Card className="w-full max-w-md border-hairline rounded-3xl shadow-xl p-3">
-          <CardHeader className="text-center space-y-1.5 pb-2">
-            <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-2 text-primary">
-              <ShieldCheck className="size-6" />
+      <main className="grow flex items-center justify-center p-3 sm:p-6 md:p-8">
+        <Card className="w-full max-w-[340px] sm:max-w-md border-hairline rounded-2xl sm:rounded-3xl shadow-xl py-3.5 sm:py-6 gap-2.5 sm:gap-6">
+          <CardHeader className="text-center space-y-1 sm:space-y-1.5 px-3.5 sm:px-6 pb-0 sm:pb-2">
+            <div className="relative size-10 sm:size-12 mx-auto mb-1.5 sm:mb-2">
+              <div className="absolute inset-0 bg-primary/20 rounded-xl sm:rounded-2xl blur-md pointer-events-none" />
+              <div className="relative size-full rounded-xl sm:rounded-2xl bg-gradient-to-tr from-primary to-emerald-600 flex items-center justify-center text-white shadow-md shadow-primary/25 ring-4 ring-primary/10">
+                <ShieldCheck className="size-5 sm:size-6" />
+              </div>
             </div>
-            <CardTitle className="text-2xl font-extrabold tracking-tight text-ink">
-              Welcome to SureService
+            <CardTitle className="text-base sm:text-2xl font-extrabold tracking-tight text-ink">
+              Welcome to Sure<span className="text-primary">Service</span>
             </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground font-medium">
+            <CardDescription className="text-[11px] sm:text-sm text-muted-foreground font-medium max-w-[240px] sm:max-w-sm mx-auto leading-snug sm:leading-relaxed">
               Sign in to explore verified professionals, manage service bookings, or access your cockpit.
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-4">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 text-left">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="email" className="text-xs font-bold text-ink">
+          <CardContent className="space-y-2.5 sm:space-y-4 px-3.5 sm:px-6">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2.5 sm:gap-3.5 text-left">
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="email" className="text-[11px] sm:text-xs font-bold text-ink">
                   Email Address
                 </Label>
                 <div className="relative flex items-center">
-                  <Mail className="absolute left-3.5 size-4 text-muted-foreground pointer-events-none" />
+                  <Mail className="absolute left-2.5 sm:left-3.5 size-3.5 sm:size-4 text-muted-foreground pointer-events-none" />
                   <Input
                     id="email"
                     type="email"
@@ -122,17 +131,17 @@ export const Login: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={isSubmitting || Boolean(submittingRole)}
-                    className="pl-10 h-11 rounded-xl text-xs"
+                    className="pl-8 sm:pl-10 h-9 sm:h-11 rounded-lg sm:rounded-xl text-xs"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="password" className="text-xs font-bold text-ink">
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="password" className="text-[11px] sm:text-xs font-bold text-ink">
                   Password
                 </Label>
                 <div className="relative flex items-center">
-                  <Lock className="absolute left-3.5 size-4 text-muted-foreground pointer-events-none" />
+                  <Lock className="absolute left-2.5 sm:left-3.5 size-3.5 sm:size-4 text-muted-foreground pointer-events-none" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -141,20 +150,20 @@ export const Login: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isSubmitting || Boolean(submittingRole)}
-                    className="pl-10 pr-10 h-11 rounded-xl text-xs"
+                    className="pl-8 sm:pl-10 pr-8 sm:pr-10 h-9 sm:h-11 rounded-lg sm:rounded-xl text-xs"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 text-muted-foreground hover:text-ink transition-colors cursor-pointer"
+                    className="absolute right-2.5 sm:right-3.5 text-muted-foreground hover:text-ink transition-colors cursor-pointer"
                   >
-                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    {showPassword ? <EyeOff className="size-3.5 sm:size-4" /> : <Eye className="size-3.5 sm:size-4" />}
                   </button>
                 </div>
               </div>
 
               {error && (
-                <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-xs font-semibold text-destructive animate-in fade-in duration-150">
+                <div className="p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-destructive/10 border border-destructive/20 text-xs font-semibold text-destructive animate-in fade-in duration-150">
                   {error}
                 </div>
               )}
@@ -162,11 +171,11 @@ export const Login: React.FC = () => {
               <Button
                 type="submit"
                 disabled={isSubmitting || Boolean(submittingRole)}
-                className="w-full rounded-xl h-11 font-bold text-xs bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer mt-1 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full rounded-lg sm:rounded-xl h-9 sm:h-11 font-bold text-xs bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer mt-0.5 sm:mt-1 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="size-4 animate-spin" />
+                    <Loader2 className="size-3.5 sm:size-4 animate-spin" />
                     <span>Signing In...</span>
                   </>
                 ) : (
@@ -177,9 +186,9 @@ export const Login: React.FC = () => {
 
             {/* DEMO LOGIN DROPDOWN */}
             {isDemoEnabled && (
-              <div className="pt-3 border-t border-hairline space-y-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block text-center flex items-center justify-center gap-1.5">
-                  <Sparkles className="size-3 text-amber-500" />
+              <div className="pt-2 sm:pt-3 border-t border-hairline space-y-1.5 sm:space-y-2">
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-muted-foreground block text-center flex items-center justify-center gap-1.5">
+                  <Sparkles className="size-2.5 sm:size-3 text-amber-500" />
                   <span>Instant Demo Access</span>
                 </span>
 
@@ -189,44 +198,44 @@ export const Login: React.FC = () => {
                       type="button"
                       variant="outline"
                       disabled={isSubmitting || Boolean(submittingRole)}
-                      className="w-full h-11 rounded-xl border-hairline hover:bg-surface-soft text-xs font-bold text-ink flex items-center justify-between px-4 cursor-pointer disabled:opacity-50"
+                      className="w-full h-9 sm:h-11 rounded-lg sm:rounded-xl border-hairline hover:bg-surface-soft text-xs font-bold text-ink flex items-center justify-between px-3 sm:px-4 cursor-pointer disabled:opacity-50"
                     >
                       <div className="flex items-center gap-2">
                         {submittingRole ? (
                           <>
-                            <Loader2 className="size-4 text-primary animate-spin" />
+                            <Loader2 className="size-3.5 sm:size-4 text-primary animate-spin" />
                             <span>Accessing {submittingRole === "customer" ? "Customer" : submittingRole === "provider" ? "Provider" : "Admin"} Demo...</span>
                           </>
                         ) : (
                           <>
-                            <Sparkles className="size-4 text-primary" />
+                            <Sparkles className="size-3.5 sm:size-4 text-primary" />
                             <span>Select Demo Account...</span>
                           </>
                         )}
                       </div>
-                      <ChevronDown className="size-4 opacity-60" />
+                      <ChevronDown className="size-3.5 sm:size-4 opacity-60" />
                     </Button>
                   </DropdownMenuTrigger>
 
-                  <DropdownMenuContent align="center" className="w-[360px] p-2 space-y-1">
-                    <DropdownMenuLabel className="text-[10px]">
+                  <DropdownMenuContent align="center" className="w-[calc(100vw-2rem)] sm:w-[350px] max-w-sm p-1.5 sm:p-2 space-y-0.5 sm:space-y-1">
+                    <DropdownMenuLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider py-1 px-2">
                       Choose a role to test the marketplace:
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator className="my-1" />
 
                     <DropdownMenuItem
                       onClick={() => handleDemoLogin("customer")}
-                      className="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer hover:bg-surface-soft"
+                      className="flex items-center gap-2.5 p-2 sm:p-2.5 rounded-lg sm:rounded-xl cursor-pointer hover:bg-surface-soft"
                     >
-                      <div className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 font-bold">
-                        <User className="size-4" />
+                      <div className="size-7 sm:size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 font-bold">
+                        <User className="size-3.5 sm:size-4" />
                       </div>
-                      <div className="flex-1 text-left">
-                        <div className="flex items-center justify-between">
-                          <p className="font-bold text-xs text-ink">Customer Demo</p>
-                          <span className="text-[10px] text-primary font-semibold">Bethlehem Girma</span>
+                      <div className="flex-1 min-w-0 text-left">
+                        <div className="flex items-center justify-between gap-1.5">
+                          <p className="font-bold text-xs text-ink shrink-0">Customer Demo</p>
+                          <span className="text-[10px] sm:text-[11px] text-primary font-semibold truncate">Bethlehem Girma</span>
                         </div>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight sm:leading-snug truncate sm:whitespace-normal">
                           Browse marketplace, book trades & mark jobs completed
                         </p>
                       </div>
@@ -234,17 +243,17 @@ export const Login: React.FC = () => {
 
                     <DropdownMenuItem
                       onClick={() => handleDemoLogin("provider")}
-                      className="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer hover:bg-surface-soft"
+                      className="flex items-center gap-2.5 p-2 sm:p-2.5 rounded-lg sm:rounded-xl cursor-pointer hover:bg-surface-soft"
                     >
-                      <div className="size-8 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center shrink-0 font-bold">
-                        <Briefcase className="size-4" />
+                      <div className="size-7 sm:size-8 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center shrink-0 font-bold">
+                        <Briefcase className="size-3.5 sm:size-4" />
                       </div>
-                      <div className="flex-1 text-left">
-                        <div className="flex items-center justify-between">
-                          <p className="font-bold text-xs text-ink">Provider Demo</p>
-                          <span className="text-[10px] text-blue-600 font-semibold">Abebe Kebede (96 Score)</span>
+                      <div className="flex-1 min-w-0 text-left">
+                        <div className="flex items-center justify-between gap-1.5">
+                          <p className="font-bold text-xs text-ink shrink-0">Provider Demo</p>
+                          <span className="text-[10px] sm:text-[11px] text-blue-600 font-semibold truncate">Abebe Kebede (90 Score)</span>
                         </div>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight sm:leading-snug truncate sm:whitespace-normal">
                           Master electrician, manage requests & live Trust score
                         </p>
                       </div>
@@ -252,17 +261,17 @@ export const Login: React.FC = () => {
 
                     <DropdownMenuItem
                       onClick={() => handleDemoLogin("admin")}
-                      className="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer hover:bg-surface-soft"
+                      className="flex items-center gap-2.5 p-2 sm:p-2.5 rounded-lg sm:rounded-xl cursor-pointer hover:bg-surface-soft"
                     >
-                      <div className="size-8 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-600 flex items-center justify-center shrink-0 font-bold">
-                        <ShieldAlert className="size-4" />
+                      <div className="size-7 sm:size-8 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-600 flex items-center justify-center shrink-0 font-bold">
+                        <ShieldAlert className="size-3.5 sm:size-4" />
                       </div>
-                      <div className="flex-1 text-left">
-                        <div className="flex items-center justify-between">
-                          <p className="font-bold text-xs text-ink">Admin Demo</p>
-                          <span className="text-[10px] text-rose-600 font-semibold">Dawit Haile</span>
+                      <div className="flex-1 min-w-0 text-left">
+                        <div className="flex items-center justify-between gap-1.5">
+                          <p className="font-bold text-xs text-ink shrink-0">Admin Demo</p>
+                          <span className="text-[10px] sm:text-[11px] text-rose-600 font-semibold truncate">Dawit Haile</span>
                         </div>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight sm:leading-snug truncate sm:whitespace-normal">
                           Review ID verification queue & platform metrics
                         </p>
                       </div>
@@ -272,7 +281,7 @@ export const Login: React.FC = () => {
               </div>
             )}
 
-            <div className="text-center text-xs text-muted-foreground font-medium pt-2 border-t border-hairline/60">
+            <div className="text-center text-xs text-muted-foreground font-medium pt-1.5 sm:pt-2 border-t border-hairline/60">
               <span>Don't have an account? </span>
               <Link
                 to="/signup"

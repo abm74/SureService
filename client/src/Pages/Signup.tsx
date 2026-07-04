@@ -62,7 +62,10 @@ export const Signup: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await signup(payload);
+      const registeredUser = await signup(payload);
+      if (registeredUser.role === "admin") navigate("/admin-dashboard", { replace: true });
+      else if (registeredUser.role === "provider") navigate("/provider-dashboard", { replace: true });
+      else navigate("/marketplace", { replace: true });
     } catch (err) {
       setError(
         getErrorMessage(err, "Registration failed. Please check inputs and try again."),
@@ -73,12 +76,12 @@ export const Signup: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (!isLoading && isAuthenticated && user) {
       if (user.role === "admin") navigate("/admin-dashboard", { replace: true });
       else if (user.role === "provider") navigate("/provider-dashboard", { replace: true });
       else navigate("/marketplace", { replace: true });
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, isLoading, user, navigate]);
 
   if (isLoading) {
     return <SpinnerFullPage />;
@@ -88,46 +91,48 @@ export const Signup: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <PageNav />
 
-      <main className="grow flex items-center justify-center p-4 md:p-8">
-        <Card className="w-full max-w-lg border-hairline rounded-3xl shadow-xl p-3">
-          <CardHeader className="text-center space-y-1.5 pb-2">
-            <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-2 text-primary">
-              <ShieldCheck className="size-6" />
+      <main className="grow flex items-center justify-center p-3.5 sm:p-6 md:p-8">
+        <Card className="w-full max-w-lg border-hairline rounded-3xl shadow-xl p-3 sm:p-4">
+          <CardHeader className="text-center space-y-1 sm:space-y-1.5 pb-2">
+            <div className="relative size-11 sm:size-12 mx-auto mb-2">
+              <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-md pointer-events-none" />
+              <div className="relative size-full rounded-2xl bg-gradient-to-tr from-primary to-emerald-600 flex items-center justify-center text-white shadow-md shadow-primary/25 ring-4 ring-primary/10">
+                <ShieldCheck className="size-5 sm:size-6" />
+              </div>
             </div>
-            <CardTitle className="text-2xl font-extrabold tracking-tight text-ink">
-              Join SureService Marketplace
+            <CardTitle className="text-lg sm:text-2xl font-extrabold tracking-tight text-ink">
+              Join Sure<span className="text-primary">Service</span>
             </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground font-medium">
+            <CardDescription className="text-xs sm:text-sm text-muted-foreground font-medium max-w-sm mx-auto leading-relaxed">
               Create your account to book verified trades or build your professional trust record.
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-4">
-            {/* ROLE SELECTOR */}
-            <div className="grid grid-cols-2 gap-2 p-1 bg-surface-soft border border-hairline rounded-2xl">
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2 p-1 bg-surface-soft border border-hairline rounded-2xl">
               <button
                 type="button"
                 onClick={() => setRole("customer")}
-                className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap select-none ${
                   role === "customer"
                     ? "bg-primary text-white shadow-2xs"
                     : "text-muted-foreground hover:text-ink"
                 }`}
               >
-                <UserIcon className="size-3.5" />
-                <span>I'm a Customer</span>
+                <UserIcon className="size-3.5 shrink-0" />
+                <span><span className="hidden sm:inline">I'm a </span>Customer</span>
               </button>
               <button
                 type="button"
                 onClick={() => setRole("provider")}
-                className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap select-none ${
                   role === "provider"
                     ? "bg-primary text-white shadow-2xs"
                     : "text-muted-foreground hover:text-ink"
                 }`}
               >
-                <Briefcase className="size-3.5" />
-                <span>I'm a Service Provider</span>
+                <Briefcase className="size-3.5 shrink-0" />
+                <span><span className="hidden sm:inline">I'm a </span><span className="hidden sm:inline">Service </span>Provider</span>
               </button>
             </div>
 
@@ -143,7 +148,7 @@ export const Signup: React.FC = () => {
                     placeholder="e.g. Bethlehem Girma"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                     className="h-10 text-xs rounded-xl"
                     required
                   />

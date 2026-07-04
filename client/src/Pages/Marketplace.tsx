@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Frown } from "lucide-react";
+import { Frown, Store } from "lucide-react";
 import AppHeader from "@/Components/Header/AppHeader";
 import ProviderFilter from "@/Components/Providers/ProviderFilter";
 import ProviderCard from "@/Components/Providers/ProviderCard";
@@ -53,10 +53,14 @@ export const Marketplace: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <AppHeader />
 
-      <main className="grow px-4 md:px-8 lg:px-12 py-8 max-w-7xl mx-auto w-full space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
+      <main className="grow px-2.5 sm:px-6 md:px-8 lg:px-12 py-3 sm:py-6 md:py-8 max-w-7xl mx-auto w-full space-y-2.5 sm:space-y-6 text-left min-w-0 overflow-x-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-3 text-left">
+          <div className="min-w-0">
+            <div className="inline-flex items-center gap-1 text-[9px] sm:text-xs font-bold text-primary uppercase tracking-wider mb-0.5 sm:mb-1">
+              <Store className="size-2.5 sm:size-3.5 shrink-0" />
+              <span>Verified Provider Directory</span>
+            </div>
+            <h1 className="text-sm sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink leading-tight">
               Discover Trustworthy Professionals
             </h1>
           </div>
@@ -70,37 +74,37 @@ export const Marketplace: React.FC = () => {
         />
 
         {formattedError && (
-          <div className="rounded-2xl bg-destructive/10 border border-destructive/20 p-4 text-xs font-medium text-destructive text-left">
+          <div className="rounded-xl sm:rounded-2xl bg-destructive/10 border border-destructive/20 p-2.5 sm:p-4 text-xs font-medium text-destructive text-left">
             {formattedError}
           </div>
         )}
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
               <ProviderCardSkeleton key={i} />
             ))}
           </div>
         ) : providers.length === 0 ? (
-          <div className="rounded-3xl border border-hairline bg-card p-12 text-center shadow-xs space-y-3">
-            <div className="size-12 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground">
-              <Frown className="size-6" />
+          <div className="rounded-2xl sm:rounded-3xl border border-hairline bg-card p-4 sm:p-12 text-center shadow-xs space-y-2 sm:space-y-3">
+            <div className="size-9 sm:size-12 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground">
+              <Frown className="size-4.5 sm:size-6" />
             </div>
-            <h3 className="text-base font-bold text-ink">No Service Providers Found</h3>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+            <h3 className="text-xs sm:text-base font-bold text-ink">No Service Providers Found</h3>
+            <p className="text-[10px] sm:text-xs text-muted-foreground max-w-sm mx-auto">
               We couldn't find any professionals matching your selected criteria. Try adjusting your search keywords, category, or location.
             </p>
             <Button
               variant="outline"
               size="sm"
               onClick={handleResetFilters}
-              className="rounded-full text-xs font-semibold mt-2 border-hairline"
+              className="rounded-full text-[10.5px] sm:text-xs font-semibold mt-1 sm:mt-2 h-7.5 sm:h-9 px-3 sm:px-4 border-hairline cursor-pointer"
             >
               Reset All Filters
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-5 text-left">
             {providers.map((provider) => (
               <ProviderCard
                 key={provider.id}

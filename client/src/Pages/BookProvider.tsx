@@ -10,7 +10,6 @@ import {
   AlertCircle,
   Lock,
   Sparkles,
-  FileText,
   Loader2,
 } from "lucide-react";
 import { useAuth } from "@/store/Auth/AuthContext";
@@ -88,7 +87,7 @@ export const BookProvider: React.FC = () => {
     }
 
     if (!address.trim()) {
-      setFormError("Please specify a street address, house number, or nearby landmark.");
+      setFormError("Please specify a street address or nearby landmark.");
       return;
     }
 
@@ -122,15 +121,15 @@ export const BookProvider: React.FC = () => {
     return (
       <div className="min-h-screen bg-background flex flex-col font-sans">
         <AppHeader />
-        <main className="grow px-4 md:px-8 lg:px-12 py-8 max-w-6xl mx-auto w-full space-y-6 text-left">
-          <Skeleton className="h-5 w-40 mb-4" />
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-8 space-y-6">
-              <Skeleton className="h-64 rounded-3xl" />
-              <Skeleton className="h-48 rounded-3xl" />
+        <main className="grow px-3.5 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-8 max-w-5xl mx-auto w-full space-y-4 sm:space-y-6 text-left">
+          <Skeleton className="h-4 sm:h-5 w-36 sm:w-40 mb-2" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
+            <div className="lg:col-span-8 space-y-4 sm:space-y-6">
+              <Skeleton className="h-44 sm:h-56 rounded-2xl" />
+              <Skeleton className="h-36 sm:h-44 rounded-2xl" />
             </div>
             <div className="lg:col-span-4">
-              <Skeleton className="h-80 rounded-3xl" />
+              <Skeleton className="h-56 sm:h-72 rounded-2xl" />
             </div>
           </div>
         </main>
@@ -143,7 +142,7 @@ export const BookProvider: React.FC = () => {
       <div className="min-h-screen bg-background flex flex-col font-sans">
         <AppHeader />
         <main className="grow px-4 md:px-8 py-16 max-w-2xl mx-auto text-center space-y-4">
-          <h2 className="text-xl font-bold text-ink">Service Provider Not Found</h2>
+          <h2 className="text-base sm:text-xl font-bold text-ink">Service Provider Not Found</h2>
           <p className="text-xs text-muted-foreground">
             {fetchError ? getErrorMessage(fetchError) : "The requested provider profile is unavailable."}
           </p>
@@ -164,83 +163,82 @@ export const BookProvider: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <AppHeader />
 
-      <main className="grow px-4 md:px-8 lg:px-12 py-8 max-w-6xl mx-auto w-full space-y-6 text-left">
+      <main className="grow px-3.5 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 max-w-5xl mx-auto w-full space-y-3.5 sm:space-y-5 text-left min-w-0 overflow-x-hidden">
         <div className="flex items-center gap-3">
           <Link
             to={`/providers/${provider.id}`}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-ink transition-colors p-1.5 pr-3 rounded-full hover:bg-surface-soft border border-transparent hover:border-hairline"
+            className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-muted-foreground hover:text-ink transition-colors p-1 sm:p-1.5 pr-2.5 sm:pr-3 rounded-full hover:bg-surface-soft border border-transparent hover:border-hairline"
           >
             <ArrowLeft className="size-3.5" />
             <span>Back to Profile</span>
           </Link>
         </div>
 
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider">
-            <Sparkles className="size-3.5" />
+        <div className="space-y-0.5">
+          <div className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-primary uppercase tracking-wider">
+            <Sparkles className="size-3 shrink-0" />
             <span>Direct Service Request</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
+          <h1 className="text-base sm:text-xl md:text-2xl font-extrabold tracking-tight text-ink break-words leading-tight">
             Request Service with {provider.name}
           </h1>
-          <p className="text-xs text-muted-foreground">
-            Schedule an appointment and outline your requirements. The provider will review and respond to your request.
+          <p className="text-[11px] sm:text-xs text-muted-foreground leading-snug">
+            Choose a date and outline your service needs.
           </p>
         </div>
 
         {isSuccess ? (
-          <div className="rounded-3xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 p-10 text-center text-emerald-800 dark:text-emerald-200 animate-in fade-in duration-200 max-w-xl mx-auto space-y-4 my-12 shadow-sm">
-            <CheckCircle2 className="size-14 mx-auto text-emerald-600 dark:text-emerald-400 animate-bounce" />
-            <h2 className="text-xl font-bold text-emerald-900 dark:text-emerald-100">Booking Request Sent Successfully!</h2>
-            <p className="text-xs text-emerald-700 dark:text-emerald-300 max-w-md mx-auto">
-              Your service request has been transmitted to {provider.name}. Redirecting to your bookings management hub...
+          <div className="rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 p-6 sm:p-8 text-center text-emerald-800 dark:text-emerald-200 animate-in fade-in duration-200 max-w-lg mx-auto space-y-2.5 my-6 shadow-sm">
+            <CheckCircle2 className="size-10 sm:size-12 mx-auto text-emerald-600 dark:text-emerald-400 animate-bounce" />
+            <h2 className="text-sm sm:text-lg font-bold text-emerald-900 dark:text-emerald-100">Booking Request Sent!</h2>
+            <p className="text-[11px] sm:text-xs text-emerald-700 dark:text-emerald-300 max-w-md mx-auto leading-relaxed">
+              Your service request was transmitted to {provider.name}. Redirecting to your bookings hub...
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-5 items-start min-w-0 w-full">
             {/* LEFT COLUMN: FORM SECTIONS */}
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-8 space-y-3.5 sm:space-y-4 min-w-0 w-full">
               {isAuthenticated && user?.role === "provider" && (
-                <div className="flex items-start gap-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 p-4 text-xs text-amber-900 dark:text-amber-200 shadow-2xs">
-                  <AlertCircle className="size-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                  <div className="space-y-1">
-                    <p className="font-bold text-sm">Provider Account Restricted</p>
-                    <p className="text-xs leading-relaxed opacity-90">
-                      You are currently signed in as a Service Provider. To prevent trust score manipulation and circular booking rings, booking services is reserved for Customer accounts.
+                <div className="flex items-start gap-2.5 rounded-xl sm:rounded-2xl bg-amber-500/10 border border-amber-500/20 p-2.5 sm:p-3 text-[11px] sm:text-xs text-amber-900 dark:text-amber-200 shadow-2xs">
+                  <AlertCircle className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <p className="font-bold">Provider Account Restricted</p>
+                    <p className="opacity-90 leading-snug">
+                      Provider accounts cannot book services to prevent score manipulation. Please use a Customer account.
                     </p>
                   </div>
                 </div>
               )}
 
               {isAuthenticated && user?.role === "admin" && (
-                <div className="flex items-start gap-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 p-4 text-xs text-amber-900 dark:text-amber-200 shadow-2xs">
-                  <AlertCircle className="size-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                  <div className="space-y-1">
-                    <p className="font-bold text-sm">Administrator Account Notice</p>
-                    <p className="text-xs leading-relaxed opacity-90">
-                      Administrator accounts cannot initiate service bookings. Please switch to a Customer account to book services.
+                <div className="flex items-start gap-2.5 rounded-xl sm:rounded-2xl bg-amber-500/10 border border-amber-500/20 p-2.5 sm:p-3 text-[11px] sm:text-xs text-amber-900 dark:text-amber-200 shadow-2xs">
+                  <AlertCircle className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <p className="font-bold">Admin Account Notice</p>
+                    <p className="opacity-90 leading-snug">
+                      Admin accounts cannot initiate bookings. Please switch to a Customer account.
                     </p>
                   </div>
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                 {/* STEP 1: DATE & TIME */}
-                <div className="rounded-3xl border border-hairline bg-card p-6 md:p-7 shadow-xs space-y-4">
-                  <div className="flex items-center gap-2.5 pb-3 border-b border-hairline">
-                    <div className="size-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                <div className="rounded-xl sm:rounded-2xl border border-hairline bg-card p-3 sm:p-5 shadow-xs space-y-2.5 min-w-0 overflow-hidden">
+                  <div className="flex items-center gap-2 pb-2 border-b border-hairline">
+                    <div className="size-6 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
                       1
                     </div>
                     <div>
-                      <h2 className="text-sm font-bold text-ink">Date & Time Slot</h2>
-                      <p className="text-[11px] text-muted-foreground">Select when you need this service performed</p>
+                      <h2 className="text-xs sm:text-sm font-bold text-ink">Date & Time</h2>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="serviceDate" className="text-xs font-bold text-ink flex items-center gap-1.5">
-                        <Calendar className="size-3.5 text-primary" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="serviceDate" className="text-[10.5px] sm:text-xs font-bold text-ink flex items-center gap-1">
+                        <Calendar className="size-3 text-primary shrink-0" />
                         <span>Service Date</span>
                       </Label>
                       <Input
@@ -251,13 +249,13 @@ export const BookProvider: React.FC = () => {
                         onChange={(e) => setServiceDate(e.target.value)}
                         required
                         disabled={isAuthenticated && user?.role !== "customer"}
-                        className="h-11 text-xs rounded-xl"
+                        className="h-9 text-xs rounded-xl"
                       />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <Label htmlFor="timeSlot" className="text-xs font-bold text-ink flex items-center gap-1.5">
-                        <Clock className="size-3.5 text-primary" />
+                    <div className="space-y-1">
+                      <Label htmlFor="timeSlot" className="text-[10.5px] sm:text-xs font-bold text-ink flex items-center gap-1">
+                        <Clock className="size-3 text-primary shrink-0" />
                         <span>Preferred Time Slot</span>
                       </Label>
                       <select
@@ -265,7 +263,7 @@ export const BookProvider: React.FC = () => {
                         value={timeSlot}
                         onChange={(e) => setTimeSlot(e.target.value)}
                         disabled={isAuthenticated && user?.role !== "customer"}
-                        className="h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer disabled:opacity-50"
+                        className="h-9 w-full rounded-xl border border-hairline bg-background px-2.5 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer disabled:opacity-50"
                       >
                         {TIME_SLOTS.map((slot) => (
                           <option key={slot} value={slot}>
@@ -278,20 +276,19 @@ export const BookProvider: React.FC = () => {
                 </div>
 
                 {/* STEP 2: LOCATION */}
-                <div className="rounded-3xl border border-hairline bg-card p-6 md:p-7 shadow-xs space-y-4">
-                  <div className="flex items-center gap-2.5 pb-3 border-b border-hairline">
-                    <div className="size-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                <div className="rounded-xl sm:rounded-2xl border border-hairline bg-card p-3 sm:p-5 shadow-xs space-y-2.5 min-w-0 overflow-hidden">
+                  <div className="flex items-center gap-2 pb-2 border-b border-hairline">
+                    <div className="size-6 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
                       2
                     </div>
                     <div>
-                      <h2 className="text-sm font-bold text-ink">Service Location</h2>
-                      <p className="text-[11px] text-muted-foreground">Where should the provider visit for the service?</p>
+                      <h2 className="text-xs sm:text-sm font-bold text-ink">Service Location</h2>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="city" className="text-xs font-bold text-ink">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="city" className="text-[10.5px] sm:text-xs font-bold text-ink">
                         City
                       </Label>
                       <select
@@ -304,7 +301,7 @@ export const BookProvider: React.FC = () => {
                           setSubCity(subList.length > 0 ? subList[0] : "");
                         }}
                         disabled={isAuthenticated && user?.role !== "customer"}
-                        className="h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer disabled:opacity-50"
+                        className="h-9 w-full rounded-xl border border-hairline bg-background px-2.5 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer disabled:opacity-50"
                       >
                         {cities.map((c) => (
                           <option key={c} value={c}>
@@ -315,8 +312,8 @@ export const BookProvider: React.FC = () => {
                     </div>
 
                     {getSubCities(city).length > 0 && (
-                      <div className="space-y-1.5 animate-in fade-in duration-150">
-                        <Label htmlFor="subCity" className="text-xs font-bold text-ink">
+                      <div className="space-y-1 animate-in fade-in duration-150">
+                        <Label htmlFor="subCity" className="text-[10.5px] sm:text-xs font-bold text-ink">
                           Sub-City / District
                         </Label>
                         <select
@@ -324,7 +321,7 @@ export const BookProvider: React.FC = () => {
                           value={subCity}
                           onChange={(e) => setSubCity(e.target.value)}
                           disabled={isAuthenticated && user?.role !== "customer"}
-                          className="h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer disabled:opacity-50"
+                          className="h-9 w-full rounded-xl border border-hairline bg-background px-2.5 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer disabled:opacity-50"
                         >
                           {getSubCities(city).map((sc) => (
                             <option key={sc} value={sc}>
@@ -336,69 +333,64 @@ export const BookProvider: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <Label htmlFor="address" className="text-xs font-bold text-ink flex items-center gap-1.5">
-                      <MapPin className="size-3.5 text-primary" />
-                      <span>Street Address / House Number / Landmark</span>
+                  <div className="space-y-1">
+                    <Label htmlFor="address" className="text-[10.5px] sm:text-xs font-bold text-ink flex items-center gap-1">
+                      <MapPin className="size-3 text-primary shrink-0" />
+                      <span>Address / Landmark</span>
                     </Label>
                     <Input
                       id="address"
                       type="text"
-                      placeholder="e.g. Bole Medhanialem, Near Edna Mall, House #204"
+                      placeholder="e.g. Bole Medhanialem, House #204"
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       required
                       disabled={isAuthenticated && user?.role !== "customer"}
-                      className="h-11 text-xs rounded-xl"
+                      className="h-9 text-xs rounded-xl"
                     />
                   </div>
                 </div>
 
                 {/* STEP 3: JOB DETAILS */}
-                <div className="rounded-3xl border border-hairline bg-card p-6 md:p-7 shadow-xs space-y-4">
-                  <div className="flex items-center gap-2.5 pb-3 border-b border-hairline">
-                    <div className="size-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                <div className="rounded-xl sm:rounded-2xl border border-hairline bg-card p-3 sm:p-5 shadow-xs space-y-2.5 min-w-0 overflow-hidden">
+                  <div className="flex items-center gap-2 pb-2 border-b border-hairline">
+                    <div className="size-6 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
                       3
                     </div>
                     <div>
-                      <h2 className="text-sm font-bold text-ink">Job Description & Requirements</h2>
-                      <p className="text-[11px] text-muted-foreground">Describe what needs to be fixed, installed, or tutored</p>
+                      <h2 className="text-xs sm:text-sm font-bold text-ink">Job Description (Optional)</h2>
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <Label htmlFor="notes" className="text-xs font-bold text-ink flex items-center gap-1.5">
-                      <FileText className="size-3.5 text-primary" />
-                      <span>Job Description / Specific Requests (Optional)</span>
-                    </Label>
+                  <div className="space-y-1">
                     <Textarea
                       id="notes"
-                      placeholder="Please describe the scope of work (e.g. kitchen sink leak under the cabinet, replacement parts needed, etc.)"
+                      placeholder="Describe what needs to be fixed or installed..."
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      rows={4}
+                      rows={2}
                       disabled={isAuthenticated && user?.role !== "customer"}
-                      className="text-xs rounded-xl"
+                      className="text-xs rounded-xl p-2.5"
                     />
                   </div>
                 </div>
 
                 {formError && (
-                  <div className="flex items-center gap-2.5 rounded-2xl bg-destructive/10 border border-destructive/20 p-4 text-xs text-destructive">
-                    <AlertCircle className="size-4.5 shrink-0" />
+                  <div className="flex items-center gap-2 rounded-xl bg-destructive/10 border border-destructive/20 p-2.5 text-xs text-destructive">
+                    <AlertCircle className="size-4 shrink-0" />
                     <span>{formError}</span>
                   </div>
                 )}
 
                 {/* SUBMIT BUTTONS */}
-                <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
-                  <Link to={`/providers/${provider.id}`} className="w-full sm:w-auto">
+                <div className="flex items-center justify-end gap-2 pt-1 min-w-0 w-full">
+                  <Link to={`/providers/${provider.id}`} className="shrink-0">
                     <Button
                       type="button"
                       variant="outline"
-                      size="lg"
+                      size="sm"
                       disabled={isSubmitting}
-                      className="w-full sm:w-auto rounded-2xl text-xs font-bold h-12 px-6 border-hairline"
+                      className="rounded-xl text-[11px] sm:text-xs font-bold h-8.5 px-3 sm:px-4 bg-surface-soft text-ink border border-hairline cursor-pointer"
                     >
                       Cancel
                     </Button>
@@ -406,23 +398,23 @@ export const BookProvider: React.FC = () => {
 
                   <Button
                     type="submit"
-                    size="lg"
+                    size="sm"
                     disabled={isSubmitting || (isAuthenticated && user?.role !== "customer")}
-                    className="w-full sm:w-auto rounded-2xl text-xs font-bold h-12 px-8 bg-primary hover:bg-brand-primary-active text-white shadow-sm cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 sm:flex-none rounded-xl text-[11px] sm:text-xs font-bold h-8.5 px-4 sm:px-6 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5 whitespace-nowrap min-w-0"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="size-4 animate-spin" />
-                        <span>Submitting Request...</span>
+                        <Loader2 className="size-3.5 animate-spin shrink-0" />
+                        <span>Submitting...</span>
                       </>
                     ) : isAuthenticated && user?.role === "provider" ? (
-                      "Booking Restricted for Providers"
+                      <span>Providers Restricted</span>
                     ) : isAuthenticated && user?.role === "admin" ? (
-                      "Booking Restricted for Admins"
+                      <span>Admins Restricted</span>
                     ) : (
                       <>
-                        <Calendar className="size-4" />
-                        <span>Submit Booking Request</span>
+                        <Calendar className="size-3.5 shrink-0" />
+                        <span>Submit Request</span>
                       </>
                     )}
                   </Button>
@@ -431,10 +423,10 @@ export const BookProvider: React.FC = () => {
             </div>
 
             {/* RIGHT COLUMN: PROVIDER SUMMARY CARD */}
-            <div className="lg:col-span-4 space-y-5 sticky top-24">
-              <div className="rounded-3xl border border-hairline bg-card p-6 shadow-xs space-y-5">
-                <div className="flex items-center gap-3.5 pb-4 border-b border-hairline">
-                  <div className="size-14 rounded-full overflow-hidden ring-2 ring-hairline shrink-0">
+            <div className="lg:col-span-4 space-y-3 lg:sticky lg:top-24 min-w-0 w-full">
+              <div className="rounded-xl sm:rounded-2xl border border-hairline bg-card p-3 sm:p-4 shadow-xs space-y-3 min-w-0 overflow-hidden">
+                <div className="flex items-center gap-2.5 pb-2.5 border-b border-hairline min-w-0">
+                  <div className="size-10 sm:size-11 rounded-full overflow-hidden ring-1.5 ring-hairline shrink-0">
                     <img
                       src={avatarUrl}
                       alt={provider.name}
@@ -447,62 +439,41 @@ export const BookProvider: React.FC = () => {
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-bold text-ink truncate">{provider.name}</h3>
-                    <p className="text-xs text-muted-foreground">{provider.category}</p>
-                    <div className="flex items-center gap-1.5 mt-1">
+                    <h3 className="text-xs sm:text-sm font-bold text-ink truncate">{provider.name}</h3>
+                    <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate">{provider.category}</p>
+                    <div className="flex items-center gap-1 mt-0.5">
                       <VerificationBadge status={provider.verificationStatus} size="sm" />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-surface-soft border border-hairline">
-                  <div>
-                    <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
-                      Trust Standing
+                <div className="flex items-center justify-between p-2 rounded-xl bg-surface-soft border border-hairline gap-2 min-w-0">
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                      Trust Score
                     </span>
-                    <span className="text-xs font-semibold text-ink">Objective behavioral track record</span>
+                    <span className="text-[10px] sm:text-[11px] font-semibold text-ink truncate block">Verified Track Record</span>
                   </div>
-                  <TrustScoreBadge score={provider.trustScore ?? 0} size="md" showLabel={true} />
+                  <TrustScoreBadge score={provider.trustScore ?? 0} size="xs" showLabel={true} />
                 </div>
 
-                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-surface-soft border border-hairline">
-                  <div>
-                    <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
-                      Hourly Rate
-                    </span>
-                    <span className="text-xs text-muted-foreground">Standard service rate</span>
-                  </div>
-                  <span className="text-base font-extrabold text-ink">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-surface-soft border border-hairline gap-2 min-w-0">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-muted-foreground">
+                    Rate
+                  </span>
+                  <span className="text-xs sm:text-sm font-extrabold text-ink whitespace-nowrap">
                     {provider.hourlyRate ? `${provider.hourlyRate} ETB/hr` : "Negotiable"}
                   </span>
                 </div>
 
-                <div className="space-y-3 pt-2">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
-                    Platform Guarantees
-                  </span>
-
-                  <div className="space-y-2.5">
-                    <div className="flex items-start gap-2.5 text-xs text-body">
-                      <ShieldCheck className="size-4 text-primary shrink-0 mt-0.5" />
-                      <span>
-                        <strong className="text-ink font-semibold">No Upfront Payment:</strong> You only pay directly after the service is successfully completed.
-                      </span>
-                    </div>
-
-                    <div className="flex items-start gap-2.5 text-xs text-body">
-                      <Lock className="size-4 text-primary shrink-0 mt-0.5" />
-                      <span>
-                        <strong className="text-ink font-semibold">Gated Contacts:</strong> Phone and email are securely exchanged once the provider accepts your request.
-                      </span>
-                    </div>
-
-                    <div className="flex items-start gap-2.5 text-xs text-body">
-                      <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
-                      <span>
-                        <strong className="text-ink font-semibold">Customer Completion Authority:</strong> Only you have the authority to confirm the job as complete.
-                      </span>
-                    </div>
+                <div className="space-y-1.5 pt-1 text-[10px] sm:text-[11px] text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheck className="size-3 text-primary shrink-0" />
+                    <span>No upfront payment required</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Lock className="size-3 text-primary shrink-0" />
+                    <span>Contact details revealed upon request acceptance</span>
                   </div>
                 </div>
               </div>
