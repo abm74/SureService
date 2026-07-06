@@ -136,7 +136,7 @@ export const ProviderDashboard: React.FC = () => {
       };
       const updated = await updateProfileMutation.mutateAsync(payload);
       updateUser(updated);
-      setProfileMessage("Profile and rates updated successfully! Trust score recalculated.");
+      setProfileMessage("Profile updated successfully!");
       setTimeout(() => setProfileMessage(""), 4000);
       refreshUser();
     } catch (err) {
@@ -187,46 +187,47 @@ export const ProviderDashboard: React.FC = () => {
 
   const verifButtonClassName =
     (isPendingReview || isApproved) && isDocUnchanged && !isSubmittingVerif
-      ? "rounded-xl text-xs h-11 px-6 bg-emerald-700 dark:bg-emerald-600 text-white font-bold shadow-xs flex items-center gap-2 cursor-default"
-      : "rounded-xl text-xs h-11 px-6 bg-primary hover:bg-brand-primary-active text-white font-bold cursor-pointer shadow-xs flex items-center gap-2 disabled:opacity-50";
+      ? "w-full sm:w-auto rounded-xl text-xs h-9 sm:h-11 px-4 sm:px-6 bg-emerald-700 dark:bg-emerald-600 text-white font-bold shadow-xs flex items-center justify-center gap-2 cursor-default"
+      : "w-full sm:w-auto rounded-xl text-xs h-9 sm:h-11 px-4 sm:px-6 bg-primary hover:bg-brand-primary-active text-white font-bold cursor-pointer shadow-xs flex items-center justify-center gap-2 disabled:opacity-50";
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <AppHeader />
 
-      <main className="grow px-4 md:px-8 lg:px-12 py-8 max-w-6xl mx-auto w-full space-y-6 text-left">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
-              <Calendar className="size-3.5" />
+      <main className="grow px-3.5 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-8 max-w-6xl mx-auto w-full space-y-4 sm:space-y-6 text-left min-w-0 overflow-x-hidden">
+        {/* RESPONSIVE HEADER SECTION */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="min-w-0">
+            <div className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-0.5 sm:mb-1">
+              <Calendar className="size-3 sm:size-3.5 shrink-0" />
               <span>Service Bookings & Inquiries</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
+            <h1 className="text-base sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink truncate">
               Welcome back, {user?.name}
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <Link
               to="/provider-stats"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-hairline bg-surface-soft hover:bg-surface-hover hover:border-primary/30 transition-all text-xs font-bold text-ink cursor-pointer shadow-2xs group"
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full border border-hairline bg-surface-soft hover:bg-surface-hover hover:border-primary/30 transition-all text-[11px] sm:text-xs font-bold text-ink cursor-pointer shadow-2xs group shrink-0"
             >
-              <Activity className="size-3.5 text-primary group-hover:scale-110 transition-transform" />
-              <span>Trust Score: <span className="text-primary font-black">{score}</span></span>
-              <span className="text-muted-foreground font-normal">({tier.label})</span>
+              <Activity className="size-3 sm:size-3.5 text-primary group-hover:scale-110 transition-transform shrink-0" />
+              <span>Trust: <span className="text-primary font-black">{score}</span></span>
+              <span className="text-muted-foreground font-normal hidden xs:inline">({tier.label})</span>
             </Link>
-            <VerificationBadge status={user?.verificationStatus} size="md" />
+            <VerificationBadge status={user?.verificationStatus} size="sm" />
           </div>
         </div>
 
         {/* TAB 1: REQUESTS & JOBS */}
         {activeTab === "requests" && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* PENDING REQUESTS INBOX */}
-            <div className="space-y-3">
+            <div className="space-y-2.5 sm:space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-sm text-ink flex items-center gap-2">
-                  <Clock className="size-4 text-amber-500" />
+                <h3 className="font-bold text-xs sm:text-sm text-ink flex items-center gap-1.5 sm:gap-2">
+                  <Clock className="size-3.5 sm:size-4 text-amber-500 shrink-0" />
                   <span>Pending Client Inquiries ({isBookingsLoading ? "..." : pendingRequests.length})</span>
                 </h3>
               </div>
@@ -236,7 +237,7 @@ export const ProviderDashboard: React.FC = () => {
                   <BookingCardSkeleton />
                 </div>
               ) : pendingRequests.length === 0 ? (
-                <div className="p-6 rounded-2xl border border-hairline bg-card text-center text-xs text-muted-foreground">
+                <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-hairline bg-card text-center text-xs text-muted-foreground">
                   No new pending requests right now.
                 </div>
               ) : (
@@ -255,10 +256,10 @@ export const ProviderDashboard: React.FC = () => {
             </div>
 
             {/* ACTIVE SCHEDULED JOBS */}
-            <div className="space-y-3 pt-4">
+            <div className="space-y-2.5 sm:space-y-3 pt-2 sm:pt-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-sm text-ink flex items-center gap-2">
-                  <CheckCircle2 className="size-4 text-blue-500" />
+                <h3 className="font-bold text-xs sm:text-sm text-ink flex items-center gap-1.5 sm:gap-2">
+                  <CheckCircle2 className="size-3.5 sm:size-4 text-blue-500 shrink-0" />
                   <span>Active & Scheduled Jobs ({isBookingsLoading ? "..." : activeJobs.length})</span>
                 </h3>
               </div>
@@ -268,7 +269,7 @@ export const ProviderDashboard: React.FC = () => {
                   <BookingCardSkeleton />
                 </div>
               ) : activeJobs.length === 0 ? (
-                <div className="p-6 rounded-2xl border border-hairline bg-card text-center text-xs text-muted-foreground">
+                <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-hairline bg-card text-center text-xs text-muted-foreground">
                   No active ongoing jobs.
                 </div>
               ) : (
@@ -286,9 +287,9 @@ export const ProviderDashboard: React.FC = () => {
             </div>
 
             {/* COMPLETED JOBS ARCHIVE */}
-            <div className="space-y-3 pt-4">
-              <h3 className="font-bold text-sm text-ink flex items-center gap-2">
-                <ShieldCheck className="size-4 text-emerald-500" />
+            <div className="space-y-2.5 sm:space-y-3 pt-2 sm:pt-4">
+              <h3 className="font-bold text-xs sm:text-sm text-ink flex items-center gap-1.5 sm:gap-2">
+                <ShieldCheck className="size-3.5 sm:size-4 text-emerald-500 shrink-0" />
                 <span>Verified Completed Jobs ({isBookingsLoading ? "..." : completedJobs.length})</span>
               </h3>
 
@@ -297,7 +298,7 @@ export const ProviderDashboard: React.FC = () => {
                   <BookingCardSkeleton />
                 </div>
               ) : completedJobs.length === 0 ? (
-                <div className="p-6 rounded-2xl border border-hairline bg-card text-center text-xs text-muted-foreground">
+                <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-hairline bg-card text-center text-xs text-muted-foreground">
                   No completed jobs yet. Once clients confirm service, they appear here and boost your Trust Score!
                 </div>
               ) : (
@@ -311,9 +312,9 @@ export const ProviderDashboard: React.FC = () => {
 
             {/* CANCELLED & DECLINED JOBS ARCHIVE */}
             {cancelledJobs.length > 0 && (
-              <div className="space-y-3 pt-4">
-                <h3 className="font-bold text-sm text-ink flex items-center gap-2">
-                  <AlertTriangle className="size-4 text-rose-500" />
+              <div className="space-y-2.5 sm:space-y-3 pt-2 sm:pt-4">
+                <h3 className="font-bold text-xs sm:text-sm text-ink flex items-center gap-1.5 sm:gap-2">
+                  <AlertTriangle className="size-3.5 sm:size-4 text-rose-500 shrink-0" />
                   <span>Cancelled & Declined Records ({cancelledJobs.length})</span>
                 </h3>
                 <div className="space-y-3">
@@ -328,70 +329,70 @@ export const ProviderDashboard: React.FC = () => {
 
         {/* TAB 2: VERIFICATION CENTER */}
         {activeTab === "verification" && (
-          <div className="rounded-3xl border border-hairline bg-card p-6 md:p-8 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-hairline">
-              <div>
-                <h3 className="text-lg font-bold text-ink">Trade License & National ID Verification</h3>
-                <p className="text-xs text-muted-foreground">
-                  Submitting official Ethiopian credentials grants a Verified Provider badge and +25 Trust points upon admin review.
+          <div className="rounded-2xl sm:rounded-3xl border border-hairline bg-card p-3.5 sm:p-6 md:p-8 shadow-xs space-y-4 sm:space-y-6 min-w-0 overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 pb-3 sm:pb-4 border-b border-hairline">
+              <div className="min-w-0">
+                <h2 className="text-sm sm:text-base md:text-lg font-bold text-ink">ID & Trade License Verification</h2>
+                <p className="text-[10.5px] sm:text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                  Submitting official credentials grants the Verified Provider shield and +25 Trust points upon review.
                 </p>
               </div>
-              <VerificationBadge status={user?.verificationStatus} size="lg" />
+              <VerificationBadge status={user?.verificationStatus} size="sm" />
             </div>
 
             {user?.verificationStatus === "approved" && (
-              <div className="rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-4 text-xs text-emerald-900 dark:text-emerald-200 flex items-start gap-3">
-                <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+              <div className="rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-3 sm:p-4 text-[11px] sm:text-xs text-emerald-900 dark:text-emerald-200 flex items-start gap-2.5">
+                <CheckCircle2 className="size-4 sm:size-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
                 <div>
                   <p className="font-bold">Identity & Credentials Approved</p>
-                  <p className="text-[11px] mt-0.5">
-                    Your account is fully verified. You enjoy the +25 Trust Score boost and the official Verified shield on the marketplace.
+                  <p className="text-[10.5px] sm:text-[11px] mt-0.5">
+                    Your account is fully verified with the +25 Trust Score boost and Verified shield on the marketplace.
                   </p>
                 </div>
               </div>
             )}
 
             {user?.verificationStatus === "rejected" && (
-              <div className="rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-4 text-xs text-rose-900 dark:text-rose-200 flex items-start gap-3">
-                <AlertTriangle className="size-5 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
+              <div className="rounded-xl sm:rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-3 sm:p-4 text-[11px] sm:text-xs text-rose-900 dark:text-rose-200 flex items-start gap-2.5">
+                <AlertTriangle className="size-4 sm:size-5 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
                 <div>
                   <p className="font-bold">Verification Rejected by Admin</p>
-                  <p className="text-[11px] mt-0.5">
+                  <p className="text-[10.5px] sm:text-[11px] mt-0.5">
                     Reason: {user?.verificationRejectionReason || "Documents were illegible or expired."}
                   </p>
-                  <p className="text-[11px] mt-1 font-semibold">Please resubmit updated documents below.</p>
+                  <p className="text-[10.5px] sm:text-[11px] mt-1 font-semibold">Please resubmit updated documents below.</p>
                 </div>
               </div>
             )}
 
             {user?.verificationStatus === "pending" && (
-              <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 p-4 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-3">
-                <Clock className="size-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+              <div className="rounded-xl sm:rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 p-3 sm:p-4 text-[11px] sm:text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
+                <Clock className="size-4 sm:size-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
                 <div>
                   <p className="font-bold">Under Admin Review</p>
-                  <p className="text-[11px] mt-0.5">
-                    Your submitted document is queued for review by platform administrators. You will be notified once reviewed.
+                  <p className="text-[10.5px] sm:text-[11px] mt-0.5">
+                    Your submitted document is in the admin review queue. You will be notified once verified.
                   </p>
                 </div>
               </div>
             )}
 
             {verifMessage && (
-              <div className="rounded-xl bg-primary/10 border border-primary/20 p-3 text-xs font-semibold text-primary">
+              <div className="rounded-xl bg-primary/10 border border-primary/20 p-2.5 sm:p-3 text-[11px] sm:text-xs font-semibold text-primary">
                 {verifMessage}
               </div>
             )}
 
-            <form onSubmit={handleVerificationSubmit} className="space-y-5 max-w-xl">
+            <form onSubmit={handleVerificationSubmit} className="space-y-3.5 sm:space-y-5 max-w-xl min-w-0">
               <div className="space-y-1">
-                <Label htmlFor="docType" className="text-xs font-bold text-ink">
+                <Label htmlFor="docType" className="text-[11px] sm:text-xs font-bold text-ink">
                   Document Type
                 </Label>
                 <select
                   id="docType"
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                  className="h-9.5 sm:h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                 >
                   <option value="Kebele ID">Kebele ID</option>
                   <option value="National ID (Fayda)">National ID (Fayda)</option>
@@ -408,7 +409,7 @@ export const ProviderDashboard: React.FC = () => {
                 onRemove={() => setDocUrl("")}
                 disabled={isSubmittingVerif}
                 label="Identity / Trade Document"
-                description="Upload your scanned ID or license (JPG, PNG, WEBP, or PDF up to 10MB) directly to Cloudinary."
+                description="Upload scanned ID or license directly to secure cloud storage."
               />
 
               <Button
@@ -418,27 +419,27 @@ export const ProviderDashboard: React.FC = () => {
               >
                 {isSubmittingVerif ? (
                   <>
-                    <Loader2 className="size-4 animate-spin" />
+                    <Loader2 className="size-3.5 sm:size-4 animate-spin" />
                     <span>Submitting Documents...</span>
                   </>
                 ) : isPendingReview && isDocUnchanged ? (
                   <>
-                    <CheckCircle2 className="size-4 text-emerald-300" />
-                    <span>Documents Sent for Review</span>
+                    <CheckCircle2 className="size-3.5 sm:size-4 text-emerald-300" />
+                    <span>Documents Under Review</span>
                   </>
                 ) : isApproved && isDocUnchanged ? (
                   <>
-                    <CheckCircle2 className="size-4 text-emerald-300" />
+                    <CheckCircle2 className="size-3.5 sm:size-4 text-emerald-300" />
                     <span>Documents Verified & Approved</span>
                   </>
                 ) : isPendingReview && !isDocUnchanged ? (
-                  <span>Update & Resubmit Documents</span>
+                  <span>Update & Resubmit</span>
                 ) : isApproved && !isDocUnchanged ? (
-                  <span>Update Verification Documents</span>
+                  <span>Update Verification Document</span>
                 ) : isRejected ? (
-                  <span>Resubmit Verification Documents</span>
+                  <span>Resubmit Document</span>
                 ) : (
-                  "Submit Verification Documents"
+                  "Submit Document"
                 )}
               </Button>
             </form>
@@ -447,24 +448,24 @@ export const ProviderDashboard: React.FC = () => {
 
         {/* TAB 3: PROFILE & RATES EDITOR */}
         {activeTab === "profile" && (
-          <div className="rounded-3xl border border-hairline bg-card p-6 md:p-8 shadow-xs space-y-6">
-            <div className="pb-4 border-b border-hairline">
-              <h3 className="text-lg font-bold text-ink">Edit Professional Profile & Service Details</h3>
-              <p className="text-xs text-muted-foreground">
-                Keeping your bio, location, and rates up to date contributes up to 15 points to your Profile Completeness trust factor.
+          <div className="rounded-2xl sm:rounded-3xl border border-hairline bg-card p-3.5 sm:p-6 md:p-8 shadow-xs space-y-4 sm:space-y-6 min-w-0 overflow-hidden">
+            <div className="pb-3 sm:pb-4 border-b border-hairline">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold text-ink">Edit Professional Profile & Rates</h2>
+              <p className="text-[10.5px] sm:text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                Keeping your bio, rates, and coverage up to date contributes up to 15 points to your Profile Completeness.
               </p>
             </div>
 
             {profileMessage && (
-              <div className="rounded-xl bg-primary/10 border border-primary/20 p-3 text-xs font-semibold text-primary">
+              <div className="rounded-xl bg-primary/10 border border-primary/20 p-2.5 sm:p-3 text-[11px] sm:text-xs font-semibold text-primary">
                 {profileMessage}
               </div>
             )}
 
-            <form onSubmit={handleSaveProfile} className="space-y-4 max-w-2xl">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSaveProfile} className="space-y-3.5 sm:space-y-4 max-w-2xl min-w-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-1">
-                  <Label htmlFor="name" className="text-xs font-bold text-ink">
+                  <Label htmlFor="name" className="text-[11px] sm:text-xs font-bold text-ink">
                     Full Name
                   </Label>
                   <Input
@@ -473,12 +474,12 @@ export const ProviderDashboard: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="h-11 text-xs rounded-xl"
+                    className="h-9.5 sm:h-11 text-xs rounded-xl"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="phone" className="text-xs font-bold text-ink">
+                  <Label htmlFor="phone" className="text-[11px] sm:text-xs font-bold text-ink">
                     Phone Number (Gated to Accepted Bookings)
                   </Label>
                   <Input
@@ -487,21 +488,21 @@ export const ProviderDashboard: React.FC = () => {
                     placeholder="+251 911 000 000"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="h-11 text-xs rounded-xl"
+                    className="h-9.5 sm:h-11 text-xs rounded-xl"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div className="space-y-1">
-                  <Label htmlFor="category" className="text-xs font-bold text-ink">
+                  <Label htmlFor="category" className="text-[11px] sm:text-xs font-bold text-ink">
                     Primary Trade
                   </Label>
                   <select
                     id="category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                    className="h-9.5 sm:h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                   >
                     {categoryNames.map((c) => (
                       <option key={c} value={c}>
@@ -512,7 +513,7 @@ export const ProviderDashboard: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="hourlyRate" className="text-xs font-bold text-ink">
+                  <Label htmlFor="hourlyRate" className="text-[11px] sm:text-xs font-bold text-ink">
                     Rate (ETB / hr)
                   </Label>
                   <Input
@@ -521,12 +522,12 @@ export const ProviderDashboard: React.FC = () => {
                     min={50}
                     value={hourlyRate}
                     onChange={(e) => setHourlyRate(Number(e.target.value))}
-                    className="h-11 text-xs rounded-xl"
+                    className="h-9.5 sm:h-11 text-xs rounded-xl"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="experienceYears" className="text-xs font-bold text-ink">
+                  <Label htmlFor="experienceYears" className="text-[11px] sm:text-xs font-bold text-ink">
                     Experience (Years)
                   </Label>
                   <Input
@@ -535,14 +536,14 @@ export const ProviderDashboard: React.FC = () => {
                     min={0}
                     value={experienceYears}
                     onChange={(e) => setExperienceYears(Number(e.target.value))}
-                    className="h-11 text-xs rounded-xl"
+                    className="h-9.5 sm:h-11 text-xs rounded-xl"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-1">
-                  <Label htmlFor="city" className="text-xs font-bold text-ink">
+                  <Label htmlFor="city" className="text-[11px] sm:text-xs font-bold text-ink">
                     City
                   </Label>
                   <select
@@ -554,7 +555,7 @@ export const ProviderDashboard: React.FC = () => {
                       const subList = getSubCities(newCity);
                       setSubCity(subList.length > 0 ? subList[0] : "");
                     }}
-                    className="h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                    className="h-9.5 sm:h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                   >
                     {cities.map((c) => (
                       <option key={c} value={c}>
@@ -566,14 +567,14 @@ export const ProviderDashboard: React.FC = () => {
 
                 {getSubCities(city).length > 0 && (
                   <div className="space-y-1 animate-in fade-in duration-150">
-                    <Label htmlFor="subCity" className="text-xs font-bold text-ink">
+                    <Label htmlFor="subCity" className="text-[11px] sm:text-xs font-bold text-ink">
                       Sub-City
                     </Label>
                     <select
                       id="subCity"
                       value={subCity}
                       onChange={(e) => setSubCity(e.target.value)}
-                      className="h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                      className="h-9.5 sm:h-11 w-full rounded-xl border border-hairline bg-background px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                     >
                       {getSubCities(city).map((sc) => (
                         <option key={sc} value={sc}>
@@ -586,26 +587,26 @@ export const ProviderDashboard: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="skills" className="text-xs font-bold text-ink">
+                <Label htmlFor="skills" className="text-[11px] sm:text-xs font-bold text-ink">
                   Skills & Services (Comma separated)
                 </Label>
                 <Input
                   id="skills"
                   type="text"
-                  placeholder="Wiring, Circuit Breakers, Solar Setup, Appliance Repair"
+                  placeholder="Wiring, Circuit Breakers, Solar Setup"
                   value={skills}
                   onChange={(e) => setSkills(e.target.value)}
-                  className="h-11 text-xs rounded-xl"
+                  className="h-9.5 sm:h-11 text-xs rounded-xl"
                 />
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="bio" className="text-xs font-bold text-ink">
+                <Label htmlFor="bio" className="text-[11px] sm:text-xs font-bold text-ink">
                   Professional Bio
                 </Label>
                 <Textarea
                   id="bio"
-                  rows={4}
+                  rows={3}
                   placeholder="Describe your background, craftsmanship philosophy, and warranty guarantees..."
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
@@ -616,15 +617,15 @@ export const ProviderDashboard: React.FC = () => {
               <Button
                 type="submit"
                 disabled={isSavingProfile}
-                className="rounded-xl text-xs h-11 px-6 bg-primary hover:bg-brand-primary-active text-white font-bold cursor-pointer shadow-xs flex items-center gap-2 disabled:opacity-50"
+                className="w-full sm:w-auto rounded-xl text-xs h-9.5 sm:h-11 px-5 sm:px-6 bg-primary hover:bg-brand-primary-active text-white font-bold cursor-pointer shadow-xs flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isSavingProfile ? (
                   <>
-                    <Loader2 className="size-4 animate-spin" />
-                    <span>Saving Profile...</span>
+                    <Loader2 className="size-3.5 sm:size-4 animate-spin" />
+                    <span>Saving...</span>
                   </>
                 ) : (
-                  "Save Profile & Update Score"
+                  "Save Profile"
                 )}
               </Button>
             </form>

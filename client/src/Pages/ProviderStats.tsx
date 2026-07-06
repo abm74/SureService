@@ -34,28 +34,28 @@ export const ProviderStats: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <AppHeader />
 
-      <main className="grow px-4 md:px-8 lg:px-12 py-8 max-w-6xl mx-auto w-full space-y-6 text-left">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <main className="grow px-3.5 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-8 max-w-6xl mx-auto w-full space-y-4 sm:space-y-6 text-left min-w-0 overflow-x-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
-              <Activity className="size-3.5" />
+            <div className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-0.5 sm:mb-1">
+              <Activity className="size-3 sm:size-3.5" />
               <span>Trust Standing & Analytics</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
+            <h1 className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
               Trust Standing & Performance
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-relaxed">
               Review your verified track record, algorithmic factor breakdown, and actionable coaching tips.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <VerificationBadge status={user?.verificationStatus} size="md" />
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+            <VerificationBadge status={user?.verificationStatus} size="sm" />
             <Link to="/provider-dashboard">
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-full text-xs h-9 px-4 border-hairline hover:border-ink cursor-pointer font-bold flex items-center gap-1.5"
+                className="rounded-full text-xs h-8 sm:h-9 px-3 sm:px-4 border-hairline hover:border-ink cursor-pointer font-bold flex items-center gap-1.5"
               >
                 <Calendar className="size-3.5 text-primary" />
                 <span>Go to Bookings</span>
@@ -64,10 +64,10 @@ export const ProviderStats: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="rounded-2xl border border-hairline bg-card p-3.5 sm:p-5 shadow-xs space-y-1.5 sm:space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">Overall Trust Score</span>
+              <span className="text-[11px] sm:text-xs font-semibold text-muted-foreground">Overall Trust Score</span>
               <div className="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                 <Sparkles className="size-4" />
               </div>
@@ -83,42 +83,51 @@ export const ProviderStats: React.FC = () => {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2">
+          <Link
+            to="/provider-dashboard?tab=requests"
+            className="group rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2 hover:border-primary/40 hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer block"
+          >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-muted-foreground">Confirmed Deliveries</span>
-              <div className="size-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <div className="size-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <CheckCircle2 className="size-4" />
               </div>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black tracking-tight text-ink tabular-nums">{completedJobsCount}</span>
+              <span className="text-3xl font-black tracking-tight text-ink tabular-nums group-hover:text-primary transition-colors">{completedJobsCount}</span>
               <span className="text-xs font-bold text-muted-foreground">Jobs</span>
             </div>
             <p className="text-[11px] text-muted-foreground font-medium pt-1">
               {completedJobsCount > 0 ? "100% Client Confirmed" : "Completing initial jobs"}
             </p>
-          </div>
+          </Link>
 
-          <div className="rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2">
+          <Link
+            to="/provider-dashboard?tab=requests"
+            className="group rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2 hover:border-primary/40 hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer block"
+          >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-muted-foreground">Client Retention</span>
-              <div className="size-8 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+              <div className="size-8 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <Users className="size-4" />
               </div>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black tracking-tight text-ink tabular-nums">{repeatCustomerCount}</span>
+              <span className="text-3xl font-black tracking-tight text-ink tabular-nums group-hover:text-primary transition-colors">{repeatCustomerCount}</span>
               <span className="text-xs font-bold text-muted-foreground">Repeat Clients</span>
             </div>
             <p className="text-[11px] text-muted-foreground font-medium pt-1">
               {repeatCustomerCount > 0 ? "Repeat bonus applied" : "Awaiting returning clients"}
             </p>
-          </div>
+          </Link>
 
-          <div className="rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2">
+          <Link
+            to="/provider-dashboard?tab=requests"
+            className="group rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2 hover:border-primary/40 hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer block"
+          >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-muted-foreground">Fulfillment Reliability</span>
-              <div className={`size-8 rounded-xl flex items-center justify-center ${
+              <div className={`size-8 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 ${
                 providerCancelledCount === 0
                   ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400"
                   : "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400"
@@ -127,13 +136,13 @@ export const ProviderStats: React.FC = () => {
               </div>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black tracking-tight text-ink tabular-nums">{providerCancelledCount}</span>
+              <span className="text-3xl font-black tracking-tight text-ink tabular-nums group-hover:text-primary transition-colors">{providerCancelledCount}</span>
               <span className="text-xs font-bold text-muted-foreground">Cancellations</span>
             </div>
             <p className="text-[11px] text-muted-foreground font-medium pt-1">
               {providerCancelledCount === 0 ? "Zero cancellations recorded" : "-10 pts penalty per incident"}
             </p>
-          </div>
+          </Link>
         </div>
 
         {!isVerified && (
