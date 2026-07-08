@@ -88,12 +88,12 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="rounded-2xl border border-hairline bg-card p-5 text-card-foreground shadow-xs"
+            className="rounded-2xl border border-hairline bg-card p-4 sm:p-5 text-card-foreground shadow-xs min-w-0"
           >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-start gap-3.5">
-                <Skeleton className="size-12 rounded-full shrink-0" />
-                <div className="space-y-2">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 min-w-0">
+              <div className="flex items-start gap-2.5 sm:gap-3.5 min-w-0 flex-1">
+                <Skeleton className="size-10 sm:size-12 rounded-full shrink-0" />
+                <div className="space-y-2 min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <Skeleton className="h-4 w-32" />
                     <Skeleton className="h-4 w-12 rounded-full" />
@@ -106,9 +106,9 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 self-end md:self-center">
-                <Skeleton className="h-9 w-24 rounded-full" />
-                <Skeleton className="h-9 w-20 rounded-full" />
+              <div className="flex items-center gap-2 pt-2 border-t border-hairline/60 md:border-0 md:pt-0 shrink-0 w-full md:w-auto">
+                <Skeleton className="h-8 sm:h-9 flex-1 md:w-24 rounded-xl" />
+                <Skeleton className="h-8 sm:h-9 flex-1 md:w-20 rounded-xl" />
               </div>
             </div>
           </div>
@@ -150,11 +150,11 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
           return (
             <div
               key={provider.id}
-              className="rounded-2xl border border-hairline bg-card p-5 text-card-foreground shadow-xs transition-all hover:border-border"
+              className="rounded-2xl border border-hairline bg-card p-4 sm:p-5 text-card-foreground shadow-xs transition-all hover:border-border min-w-0 overflow-hidden"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-start gap-3.5">
-                  <div className="size-12 rounded-full overflow-hidden ring-1 ring-hairline shrink-0">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 min-w-0">
+                <div className="flex items-start gap-2.5 sm:gap-3.5 min-w-0 flex-1">
+                  <div className="size-10 sm:size-12 rounded-full overflow-hidden ring-1 ring-hairline shrink-0">
                     <img
                       src={provider.avatar || "/default-avatar.jpg"}
                       alt={provider.name}
@@ -167,13 +167,13 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                     />
                   </div>
 
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-sm text-ink">{provider.name}</span>
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap min-w-0">
+                      <span className="font-bold text-sm text-ink truncate">{provider.name}</span>
                       <TrustScoreBadge score={provider.trustScore ?? 0} size="xs" showLabel={false} />
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 flex-wrap">
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-muted-foreground mt-0.5 flex-wrap">
                       <span className="flex items-center gap-1 font-semibold text-ink">
                         <Briefcase className="size-3.5 text-primary" />
                         {provider.category}
@@ -191,8 +191,8 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                       )}
                     </div>
 
-                    <div className="mt-2.5 flex items-center gap-2 flex-wrap">
-                      <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface-soft border border-hairline px-2.5 py-1 text-xs text-ink font-medium">
+                    <div className="mt-2 flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                      <div className="inline-flex items-center gap-1 sm:gap-1.5 rounded-lg bg-surface-soft border border-hairline px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-xs text-ink font-medium">
                         <FileText className="size-3.5 text-primary" />
                         <span className="capitalize">{provider.verificationDocType || "Government ID / License"}</span>
                       </div>
@@ -204,7 +204,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                             variant="outline"
                             size="sm"
                             onClick={() => setPreviewDocProvider(provider)}
-                            className="rounded-xl text-xs h-7 px-2.5 font-semibold text-ink border-hairline hover:border-ink flex items-center gap-1.5 cursor-pointer"
+                            className="rounded-xl text-[11px] sm:text-xs h-6.5 sm:h-7 px-2 sm:px-2.5 font-semibold text-ink border-hairline hover:border-ink flex items-center gap-1 cursor-pointer"
                           >
                             <FileText className="size-3 text-primary" />
                             <span>Inspect</span>
@@ -213,7 +213,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                             href={provider.verificationDocUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center justify-center size-7 rounded-lg border border-hairline bg-surface-soft hover:bg-surface-subtle text-muted-foreground hover:text-ink transition-colors"
+                            className="inline-flex items-center justify-center size-6.5 sm:size-7 rounded-lg border border-hairline bg-surface-soft hover:bg-surface-subtle text-muted-foreground hover:text-ink transition-colors"
                             title="Open document in new tab"
                           >
                             <ExternalLink className="size-3" />
@@ -222,7 +222,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                       )}
 
                       {provider.verificationSubmittedAt && (
-                        <span className="text-[11px] text-muted-foreground">
+                        <span className="text-[10.5px] sm:text-[11px] text-muted-foreground">
                           Submitted: {new Date(provider.verificationSubmittedAt).toLocaleDateString()}
                         </span>
                       )}
@@ -230,13 +230,13 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                <div className="flex items-center gap-2 pt-2 border-t border-hairline/60 md:border-0 md:pt-0 shrink-0 w-full md:w-auto">
                   <Button
                     size="sm"
                     variant="destructive"
                     onClick={() => handleOpenRejectModal(provider)}
                     disabled={Boolean(processingId)}
-                    className="rounded-xl text-xs h-9 px-3.5 font-bold bg-red-600 hover:bg-red-700 text-white cursor-pointer flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+                    className="flex-1 md:flex-none rounded-xl text-xs h-8 sm:h-9 px-3 font-bold bg-red-600 hover:bg-red-700 text-white cursor-pointer flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-50"
                   >
                     <ShieldAlert className="size-3.5" />
                     <span>Reject</span>
@@ -246,7 +246,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                     size="sm"
                     onClick={() => handleApprove(provider)}
                     disabled={Boolean(processingId)}
-                    className="rounded-xl text-xs h-9 px-4 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="flex-1 md:flex-none rounded-xl text-xs h-8 sm:h-9 px-3.5 sm:px-4 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     {isProcessing ? (
                       <>
@@ -255,7 +255,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                       </>
                     ) : (
                       <>
-                        <ShieldCheck className="size-4" />
+                        <ShieldCheck className="size-3.5" />
                         <span>Approve</span>
                       </>
                     )}
@@ -277,7 +277,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
       >
         <div className="space-y-4 pt-2">
           {previewDocProvider?.verificationDocUrl && (
-            <div className="relative rounded-2xl border border-hairline bg-surface-soft p-2 overflow-hidden min-h-[260px] sm:min-h-[320px] flex items-center justify-center">
+            <div className="relative rounded-2xl border border-hairline bg-surface-soft p-2 overflow-hidden min-h-[220px] sm:min-h-[300px] flex items-center justify-center">
               {isDocLoading && (
                 <div className="w-full h-64 sm:h-80 flex flex-col items-center justify-center gap-3 text-muted-foreground animate-pulse">
                   <div className="size-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
@@ -313,7 +313,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                       setIsDocLoading(false);
                       setDocLoadError(true);
                     }}
-                    className={`w-full h-96 rounded-xl border border-hairline bg-background transition-opacity duration-300 ${
+                    className={`max-h-[48vh] sm:max-h-[65vh] w-full h-80 sm:h-96 rounded-xl border border-hairline bg-background transition-opacity duration-300 ${
                       isDocLoading ? "hidden" : "block"
                     }`}
                   />
@@ -326,7 +326,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                       setIsDocLoading(false);
                       setDocLoadError(true);
                     }}
-                    className={`max-h-[65vh] w-auto mx-auto rounded-xl object-contain transition-opacity duration-300 ${
+                    className={`max-h-[48vh] sm:max-h-[65vh] w-auto mx-auto rounded-xl object-contain transition-opacity duration-300 ${
                       isDocLoading ? "hidden" : "block"
                     }`}
                   />
@@ -334,70 +334,71 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
             </div>
           )}
 
-          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="rounded-xl text-xs h-9 px-3.5 border-hairline hover:border-ink flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
-            >
-              <a
-                href={previewDocProvider?.verificationDocUrl || "#"}
-                target="_blank"
-                rel="noreferrer"
+          <div className="flex flex-col gap-2.5 pt-1">
+            <div className="flex items-center justify-between gap-2">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="rounded-xl text-[11px] sm:text-xs h-8 sm:h-9 px-2.5 sm:px-3.5 border-hairline hover:border-ink flex items-center gap-1.5 cursor-pointer"
               >
-                <ExternalLink className="size-3.5" />
-                <span>Open in New Tab</span>
-              </a>
-            </Button>
+                <a
+                  href={previewDocProvider?.verificationDocUrl || "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <ExternalLink className="size-3 sm:size-3.5" />
+                  <span>Open in New Tab</span>
+                </a>
+              </Button>
 
-            <div className="flex items-center gap-2 self-end sm:self-auto">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setPreviewDocProvider(null)}
                 disabled={Boolean(processingId)}
-                className="rounded-xl text-xs h-9 px-4 border-hairline hover:border-ink cursor-pointer"
+                className="rounded-xl text-[11px] sm:text-xs h-8 sm:h-9 px-3 sm:px-4 border-hairline hover:border-ink cursor-pointer"
               >
                 Close
               </Button>
-              {previewDocProvider && (
-                <>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => {
-                      const p = previewDocProvider;
-                      setPreviewDocProvider(null);
-                      handleOpenRejectModal(p);
-                    }}
-                    disabled={Boolean(processingId)}
-                    className="rounded-xl text-xs h-9 px-3.5 font-bold bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-50"
-                  >
-                    <ShieldAlert className="size-3.5" />
-                    <span>Reject</span>
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => handleApprove(previewDocProvider)}
-                    disabled={Boolean(processingId)}
-                    className="rounded-xl text-xs h-9 px-4 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                  >
-                    {processingId === previewDocProvider.id ? (
-                      <>
-                        <Loader2 className="size-4 animate-spin" />
-                        <span>Approving...</span>
-                      </>
-                    ) : (
-                      <>
-                        <ShieldCheck className="size-4" />
-                        <span>Approve</span>
-                      </>
-                    )}
-                  </Button>
-                </>
-              )}
             </div>
+
+            {previewDocProvider && (
+              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-hairline/60">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => {
+                    const p = previewDocProvider;
+                    setPreviewDocProvider(null);
+                    handleOpenRejectModal(p);
+                  }}
+                  disabled={Boolean(processingId)}
+                  className="rounded-xl text-xs h-8.5 sm:h-9 px-3 font-bold bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-50"
+                >
+                  <ShieldAlert className="size-3.5" />
+                  <span>Reject</span>
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => handleApprove(previewDocProvider)}
+                  disabled={Boolean(processingId)}
+                  className="rounded-xl text-xs h-8.5 sm:h-9 px-3 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {processingId === previewDocProvider.id ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      <span>Approving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="size-3.5" />
+                      <span>Approve</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </Modal>

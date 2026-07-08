@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Search,
   Users,
@@ -47,25 +48,122 @@ import type { User, AdminUserFilters } from "@/types";
 
 export const UserManagement: React.FC = () => {
   const { cities } = useLocations();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [filters, setFilters] = useState<AdminUserFilters>({
-    role: "all",
-    status: "all",
-    verificationStatus: "all",
-    search: "",
-    city: "",
-    sortBy: "newest",
-    page: 1,
-    limit: 12,
+  const [filters, setFilters] = useState<AdminUserFilters>(() => {
+    const role = (searchParams.get("role") as "all" | "customer" | "provider" | "admin") || "all";
+    const status = (searchParams.get("status") as "all" | "active" | "suspended") || "all";
+    const verificationStatus = (searchParams.get("verificationStatus") as AdminUserFilters["verificationStatus"]) || "all";
+    const search = searchParams.get("search") || "";
+    const city = searchParams.get("city") || "";
+    const sortBy = (searchParams.get("sortBy") as AdminUserFilters["sortBy"]) || "newest";
+    const page = Number(searchParams.get("page")) || 1;
+
+    return {
+      role,
+      status,
+      verificationStatus,
+      search,
+      city,
+      sortBy,
+      page,
+      limit: 12,
+    };
   });
 
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState(searchParams.get("search") || "");
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  useEffect(() => {
+    const role = (searchParams.get("role") as "all" | "customer" | "provider" | "admin") || "all";
+    const status = (searchParams.get("status") as "all" | "active" | "suspended") || "all";
+    const verificationStatus = (searchParams.get("verificationStatus") as AdminUserFilters["verificationStatus"]) || "all";
+    const search = searchParams.get("search") || "";
+    const city = searchParams.get("city") || "";
+    const sortBy = (searchParams.get("sortBy") as AdminUserFilters["sortBy"]) || "newest";
+    const page = Number(searchParams.get("page")) || 1;
+
+    setFilters((prev) => {
+      if (
+        prev.role === role &&
+        prev.status === status &&
+        prev.verificationStatus === verificationStatus &&
+        prev.search === search &&
+        prev.city === city &&
+        prev.sortBy === sortBy &&
+        prev.page === page
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        role,
+        status,
+        verificationStatus,
+        search,
+        city,
+        sortBy,
+        page,
+      };
+    });
+    setSearchInput(search);
+  }, [searchParams]);
+
+  const updateUrlParams = (newFilters: Partial<AdminUserFilters>) => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set("tab", "users");
+
+    const merged = { ...filters, ...newFilters };
+
+    if (merged.role && merged.role !== "all") {
+      nextParams.set("role", merged.role);
+    } else {
+      nextParams.delete("role");
+    }
+
+    if (merged.status && merged.status !== "all") {
+      nextParams.set("status", merged.status);
+    } else {
+      nextParams.delete("status");
+    }
+
+    if (merged.verificationStatus && merged.verificationStatus !== "all") {
+      nextParams.set("verificationStatus", merged.verificationStatus);
+    } else {
+      nextParams.delete("verificationStatus");
+    }
+
+    if (merged.search) {
+      nextParams.set("search", merged.search);
+    } else {
+      nextParams.delete("search");
+    }
+
+    if (merged.city) {
+      nextParams.set("city", merged.city);
+    } else {
+      nextParams.delete("city");
+    }
+
+    if (merged.sortBy && merged.sortBy !== "newest") {
+      nextParams.set("sortBy", merged.sortBy);
+    } else {
+      nextParams.delete("sortBy");
+    }
+
+    if (merged.page && merged.page > 1) {
+      nextParams.set("page", String(merged.page));
+    } else {
+      nextParams.delete("page");
+    }
+
+    setSearchParams(nextParams);
+  };
 
   const { data, isLoading } = useAdminUsers(filters);
 
@@ -76,16 +174,28 @@ export const UserManagement: React.FC = () => {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setFilters((prev) => ({ ...prev, search: searchInput.trim(), page: 1 }));
+    updateUrlParams({ search: searchInput.trim(), page: 1 });
   };
 
   const handleClearSearch = () => {
     setSearchInput("");
-    setFilters((prev) => ({ ...prev, search: "", page: 1 }));
+    updateUrlParams({ search: "", page: 1 });
   };
 
   const handleRoleTabChange = (role: "all" | "customer" | "provider" | "admin") => {
-    setFilters((prev) => ({ ...prev, role, page: 1 }));
+    updateUrlParams({ role, page: 1 });
+  };
+
+  const handleStatCardClick = (type: "all" | "provider" | "customer" | "suspended") => {
+    if (type === "all") {
+      updateUrlParams({ role: "all", status: "all", page: 1 });
+    } else if (type === "provider") {
+      updateUrlParams({ role: "provider", status: "all", page: 1 });
+    } else if (type === "customer") {
+      updateUrlParams({ role: "customer", status: "all", page: 1 });
+    } else if (type === "suspended") {
+      updateUrlParams({ status: "suspended", role: "all", page: 1 });
+    }
   };
 
   const handleInspect = (user: User) => {
@@ -108,52 +218,103 @@ export const UserManagement: React.FC = () => {
     setDeleteModalOpen(true);
   };
 
+  const isTotalSelected = filters.role === "all" && filters.status === "all";
+  const isProvidersSelected = filters.role === "provider" && filters.status !== "suspended";
+  const isCustomersSelected = filters.role === "customer" && filters.status !== "suspended";
+  const isSuspendedSelected = filters.status === "suspended";
+
   return (
     <div className="space-y-6 text-left">
       {/* Summary metric pill banner */}
       {counts && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
-            <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold">
-              <span>Total Users</span>
-              <Users className="size-4 text-primary" />
+          <button
+            type="button"
+            onClick={() => handleStatCardClick("all")}
+            className={cn(
+              "rounded-lg sm:rounded-xl border p-2.5 sm:p-4 text-left min-w-0 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20",
+              isTotalSelected
+                ? "border-primary ring-2 ring-primary/20 bg-primary/5 shadow-xs"
+                : "border-border bg-card shadow-xs hover:border-primary/40 hover:shadow-sm hover:scale-[1.01] active:scale-[0.99]"
+            )}
+          >
+            <div className="flex items-center justify-between text-muted-foreground text-[10px] sm:text-xs font-semibold">
+              <span className="truncate">Total Users</span>
+              <Users className="size-3.5 sm:size-4 text-primary shrink-0 ml-1" />
             </div>
-            <div className="mt-2 text-2xl font-extrabold text-ink">{counts.total}</div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">Platform accounts</div>
-          </div>
+            <div className="mt-1 sm:mt-2 text-lg sm:text-2xl font-extrabold text-ink tabular-nums truncate">
+              {counts.total}
+            </div>
+            <div className="text-[9.5px] sm:text-[11px] text-muted-foreground mt-0.5 truncate leading-tight">
+              Platform accounts
+            </div>
+          </button>
 
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
-            <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold">
-              <span>Service Providers</span>
-              <ShieldCheck className="size-4 text-blue-600" />
+          <button
+            type="button"
+            onClick={() => handleStatCardClick("provider")}
+            className={cn(
+              "rounded-lg sm:rounded-xl border p-2.5 sm:p-4 text-left min-w-0 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20",
+              isProvidersSelected
+                ? "border-blue-500 ring-2 ring-blue-500/20 bg-blue-50/50 dark:bg-blue-950/20 shadow-xs"
+                : "border-border bg-card shadow-xs hover:border-blue-400/50 hover:shadow-sm hover:scale-[1.01] active:scale-[0.99]"
+            )}
+          >
+            <div className="flex items-center justify-between text-muted-foreground text-[10px] sm:text-xs font-semibold">
+              <span className="truncate">Service Providers</span>
+              <ShieldCheck className="size-3.5 sm:size-4 text-blue-600 shrink-0 ml-1" />
             </div>
-            <div className="mt-2 text-2xl font-extrabold text-blue-600 dark:text-blue-400">
+            <div className="mt-1 sm:mt-2 text-lg sm:text-2xl font-extrabold text-blue-600 dark:text-blue-400 tabular-nums truncate">
               {counts.providers}
             </div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">Verified & active trades</div>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
-            <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold">
-              <span>Customers</span>
-              <Users className="size-4 text-teal-600" />
+            <div className="text-[9.5px] sm:text-[11px] text-muted-foreground mt-0.5 truncate leading-tight">
+              Verified & active trades
             </div>
-            <div className="mt-2 text-2xl font-extrabold text-teal-600 dark:text-teal-400">
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleStatCardClick("customer")}
+            className={cn(
+              "rounded-lg sm:rounded-xl border p-2.5 sm:p-4 text-left min-w-0 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500/20",
+              isCustomersSelected
+                ? "border-teal-500 ring-2 ring-teal-500/20 bg-teal-50/50 dark:bg-teal-950/20 shadow-xs"
+                : "border-border bg-card shadow-xs hover:border-teal-400/50 hover:shadow-sm hover:scale-[1.01] active:scale-[0.99]"
+            )}
+          >
+            <div className="flex items-center justify-between text-muted-foreground text-[10px] sm:text-xs font-semibold">
+              <span className="truncate">Customers</span>
+              <Users className="size-3.5 sm:size-4 text-teal-600 shrink-0 ml-1" />
+            </div>
+            <div className="mt-1 sm:mt-2 text-lg sm:text-2xl font-extrabold text-teal-600 dark:text-teal-400 tabular-nums truncate">
               {counts.customers}
             </div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">Homeowners & clients</div>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
-            <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold">
-              <span>Suspended</span>
-              <Ban className="size-4 text-rose-600" />
+            <div className="text-[9.5px] sm:text-[11px] text-muted-foreground mt-0.5 truncate leading-tight">
+              Homeowners & clients
             </div>
-            <div className="mt-2 text-2xl font-extrabold text-rose-600 dark:text-rose-400">
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleStatCardClick("suspended")}
+            className={cn(
+              "rounded-lg sm:rounded-xl border p-2.5 sm:p-4 text-left min-w-0 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/20",
+              isSuspendedSelected
+                ? "border-rose-500 ring-2 ring-rose-500/20 bg-rose-50/50 dark:bg-rose-950/20 shadow-xs"
+                : "border-border bg-card shadow-xs hover:border-rose-400/50 hover:shadow-sm hover:scale-[1.01] active:scale-[0.99]"
+            )}
+          >
+            <div className="flex items-center justify-between text-muted-foreground text-[10px] sm:text-xs font-semibold">
+              <span className="truncate">Suspended</span>
+              <Ban className="size-3.5 sm:size-4 text-rose-600 shrink-0 ml-1" />
+            </div>
+            <div className="mt-1 sm:mt-2 text-lg sm:text-2xl font-extrabold text-rose-600 dark:text-rose-400 tabular-nums truncate">
               {counts.suspended}
             </div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">Moderated accounts</div>
-          </div>
+            <div className="text-[9.5px] sm:text-[11px] text-muted-foreground mt-0.5 truncate leading-tight">
+              Moderated accounts
+            </div>
+          </button>
         </div>
       )}
 
@@ -165,7 +326,7 @@ export const UserManagement: React.FC = () => {
             <button
               type="button"
               onClick={() => handleRoleTabChange("all")}
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                 filters.role === "all"
                   ? "bg-background text-ink shadow-xs"
                   : "text-muted-foreground hover:text-ink"
@@ -176,7 +337,7 @@ export const UserManagement: React.FC = () => {
             <button
               type="button"
               onClick={() => handleRoleTabChange("customer")}
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                 filters.role === "customer"
                   ? "bg-background text-ink shadow-xs"
                   : "text-muted-foreground hover:text-ink"
@@ -187,7 +348,7 @@ export const UserManagement: React.FC = () => {
             <button
               type="button"
               onClick={() => handleRoleTabChange("provider")}
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                 filters.role === "provider"
                   ? "bg-background text-ink shadow-xs"
                   : "text-muted-foreground hover:text-ink"
@@ -224,12 +385,12 @@ export const UserManagement: React.FC = () => {
         </div>
 
         {/* Secondary filters row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-border">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-2 border-t border-border">
           <div>
             <Select
               value={filters.status}
               onValueChange={(val: "all" | "active" | "suspended") =>
-                setFilters((p) => ({ ...p, status: val, page: 1 }))
+                updateUrlParams({ status: val, page: 1 })
               }
             >
               <SelectTrigger className="h-8 text-xs rounded-lg">
@@ -247,7 +408,7 @@ export const UserManagement: React.FC = () => {
             <Select
               value={filters.verificationStatus}
               onValueChange={(val: "all" | "approved" | "pending" | "rejected" | "unverified") =>
-                setFilters((p) => ({ ...p, verificationStatus: val, page: 1 }))
+                updateUrlParams({ verificationStatus: val, page: 1 })
               }
             >
               <SelectTrigger className="h-8 text-xs rounded-lg">
@@ -267,7 +428,7 @@ export const UserManagement: React.FC = () => {
             <Select
               value={filters.city || "all"}
               onValueChange={(val) =>
-                setFilters((p) => ({ ...p, city: val === "all" ? "" : val, page: 1 }))
+                updateUrlParams({ city: val === "all" ? "" : val, page: 1 })
               }
             >
               <SelectTrigger className="h-8 text-xs rounded-lg">
@@ -287,7 +448,7 @@ export const UserManagement: React.FC = () => {
               value={filters.sortBy}
               onValueChange={(
                 val: "newest" | "oldest" | "nameAsc" | "nameDesc" | "trustScore" | "completedJobs"
-              ) => setFilters((p) => ({ ...p, sortBy: val, page: 1 }))}
+              ) => updateUrlParams({ sortBy: val, page: 1 })}
             >
               <SelectTrigger className="h-8 text-xs rounded-lg">
                 <SelectValue placeholder="Sort By" />
@@ -307,52 +468,51 @@ export const UserManagement: React.FC = () => {
 
       {/* Users table */}
       <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-border bg-muted/40 text-muted-foreground font-semibold">
-                <th className="py-3 px-4">User</th>
-                <th className="py-3 px-4">Role</th>
-                <th className="py-3 px-4">Location</th>
-                <th className="py-3 px-4">Trust & Verification</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Joined</th>
-                <th className="py-3 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, idx) => (
-                  <tr key={idx} className="animate-pulse">
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-full bg-muted" />
-                        <div className="space-y-1">
-                          <div className="h-3.5 w-24 bg-muted rounded" />
-                          <div className="h-2.5 w-32 bg-muted rounded" />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4"><div className="h-4 w-16 bg-muted rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="h-3 w-20 bg-muted rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="h-4 w-20 bg-muted rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="h-4 w-14 bg-muted rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="h-3 w-16 bg-muted rounded" /></td>
-                    <td className="py-3.5 px-4 text-right"><div className="h-7 w-7 bg-muted rounded ml-auto" /></td>
-                  </tr>
-                ))
-              ) : users.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-12 text-center text-muted-foreground">
-                    <Users className="size-8 mx-auto mb-2 text-muted-foreground/50" />
-                    <p className="font-semibold text-ink">No users found</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Try adjusting your search criteria or clear active filters.
-                    </p>
-                  </td>
+        {users.length === 0 && !isLoading ? (
+          <div className="py-12 px-4 text-center text-muted-foreground">
+            <Users className="size-8 mx-auto mb-2 text-muted-foreground/50" />
+            <p className="font-semibold text-ink">No users found</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Try adjusting your search criteria or clear active filters.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-muted/40 text-muted-foreground font-semibold">
+                  <th className="py-3 px-4">User</th>
+                  <th className="py-3 px-4">Role</th>
+                  <th className="py-3 px-4">Location</th>
+                  <th className="py-3 px-4">Trust & Verification</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Joined</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
-              ) : (
-                users.map((user) => {
+              </thead>
+              <tbody className="divide-y divide-border">
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, idx) => (
+                    <tr key={idx} className="animate-pulse">
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-3">
+                          <div className="size-8 rounded-full bg-muted" />
+                          <div className="space-y-1">
+                            <div className="h-3.5 w-24 bg-muted rounded" />
+                            <div className="h-2.5 w-32 bg-muted rounded" />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4"><div className="h-4 w-16 bg-muted rounded" /></td>
+                      <td className="py-3.5 px-4"><div className="h-3 w-20 bg-muted rounded" /></td>
+                      <td className="py-3.5 px-4"><div className="h-4 w-20 bg-muted rounded" /></td>
+                      <td className="py-3.5 px-4"><div className="h-4 w-14 bg-muted rounded" /></td>
+                      <td className="py-3.5 px-4"><div className="h-3 w-16 bg-muted rounded" /></td>
+                      <td className="py-3.5 px-4 text-right"><div className="h-7 w-7 bg-muted rounded ml-auto" /></td>
+                    </tr>
+                  ))
+                ) : (
+                  users.map((user) => {
                   const isProv = user.role === "provider";
                   const tier = isProv ? getTrustTier(user.trustScore ?? 15) : null;
 
@@ -569,37 +729,38 @@ export const UserManagement: React.FC = () => {
             </tbody>
           </table>
         </div>
+      )}
 
         {/* Pagination bar */}
-        <div className="px-4 py-3 border-t border-border flex items-center justify-between gap-2 text-xs">
-          <div className="text-muted-foreground">
+        <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-t border-border flex flex-col xs:flex-row items-center justify-between gap-2 text-[11px] sm:text-xs">
+          <div className="text-muted-foreground text-center xs:text-left text-[11px] sm:text-xs">
             Showing <span className="font-semibold text-ink">{users.length}</span> of{" "}
             <span className="font-semibold text-ink">{total}</span> accounts
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1 sm:gap-1.5">
             <Button
               variant="outline"
               size="sm"
               disabled={filters.page === 1 || isLoading}
-              onClick={() => setFilters((p) => ({ ...p, page: (p.page || 1) - 1 }))}
-              className="h-8 px-2.5 rounded-lg text-xs"
+              onClick={() => updateUrlParams({ page: (filters.page || 1) - 1 })}
+              className="h-7.5 sm:h-8 px-2 sm:px-2.5 rounded-lg text-[11px] sm:text-xs"
             >
-              <ChevronLeft className="size-3.5 mr-1" />
+              <ChevronLeft className="size-3 sm:size-3.5 mr-0.5 sm:mr-1" />
               <span>Previous</span>
             </Button>
-            <span className="px-2 text-muted-foreground font-semibold">
+            <span className="px-1.5 sm:px-2 text-muted-foreground font-semibold text-[10.5px] sm:text-xs whitespace-nowrap">
               Page {filters.page} of {totalPages}
             </span>
             <Button
               variant="outline"
               size="sm"
               disabled={(filters.page || 1) >= totalPages || isLoading}
-              onClick={() => setFilters((p) => ({ ...p, page: (p.page || 1) + 1 }))}
-              className="h-8 px-2.5 rounded-lg text-xs"
+              onClick={() => updateUrlParams({ page: (filters.page || 1) + 1 })}
+              className="h-7.5 sm:h-8 px-2 sm:px-2.5 rounded-lg text-[11px] sm:text-xs"
             >
               <span>Next</span>
-              <ChevronRight className="size-3.5 ml-1" />
+              <ChevronRight className="size-3 sm:size-3.5 ml-0.5 sm:ml-1" />
             </Button>
           </div>
         </div>

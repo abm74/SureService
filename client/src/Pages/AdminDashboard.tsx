@@ -78,12 +78,12 @@ export const AdminDashboard: React.FC = () => {
       <main className="grow px-4 md:px-8 lg:px-12 py-8 max-w-6xl mx-auto w-full space-y-6 text-left">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
+            <h1 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-ink leading-tight">
               {activeTab === "users" && "User Directory & Moderation"}
               {activeTab === "verifications" && "ID Verification Audit Center"}
               {activeTab === "metrics" && "Platform Pulse & Marketplace Metrics"}
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
               {activeTab === "users" && "Manage customer and provider accounts, status, search, and profile audits."}
               {activeTab === "verifications" && "Audit uploaded government IDs and Ethiopian trade licenses."}
               {activeTab === "metrics" && "Comprehensive health, trust scores, and booking lifecycle metrics."}
@@ -96,9 +96,9 @@ export const AdminDashboard: React.FC = () => {
             size="sm"
             onClick={handleRefresh}
             disabled={isLoading || isRefreshing}
-            className="rounded-full text-xs h-8 px-3.5 font-semibold text-ink bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
+            className="rounded-full text-[11px] sm:text-xs h-7.5 sm:h-8 px-2.5 sm:px-3.5 font-semibold text-ink bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
           >
-            <RefreshCw className={`size-3.5 text-primary ${isRefreshing ? "animate-spin" : ""}`} />
+            <RefreshCw className={`size-3 sm:size-3.5 text-primary ${isRefreshing ? "animate-spin" : ""}`} />
             <span>Refresh Data</span>
           </Button>
         </div>
@@ -116,13 +116,13 @@ export const AdminDashboard: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink flex items-center gap-2">
+                <h2 className="text-sm sm:text-base md:text-lg font-bold text-ink flex items-center gap-1.5 sm:gap-2 flex-wrap">
                   <span>Pending Provider Verifications</span>
-                  <span className="rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 px-2.5 py-0.5 text-xs font-extrabold">
+                  <span className="rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 px-2 py-0.2 text-[10.5px] sm:text-xs font-extrabold">
                     {pendingVerifications.length}
                   </span>
-                </h3>
-                <p className="text-xs text-muted-foreground">
+                </h2>
+                <p className="text-[11px] sm:text-xs text-muted-foreground">
                   Approving grants the Verified marketplace shield and updates trust standing.
                 </p>
               </div>
