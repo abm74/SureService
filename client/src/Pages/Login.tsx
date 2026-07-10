@@ -187,9 +187,8 @@ export const Login: React.FC = () => {
             {/* DEMO LOGIN DROPDOWN */}
             {isDemoEnabled && (
               <div className="pt-2 sm:pt-3 border-t border-hairline space-y-1.5 sm:space-y-2">
-                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-muted-foreground block text-center flex items-center justify-center gap-1.5">
-                  <Sparkles className="size-2.5 sm:size-3 text-amber-500" />
-                  <span>Instant Demo Access</span>
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-muted-foreground block text-center">
+                  Instant Demo Access
                 </span>
 
                 <DropdownMenu>

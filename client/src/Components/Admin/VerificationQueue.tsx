@@ -88,27 +88,27 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="rounded-2xl border border-hairline bg-card p-4 sm:p-5 text-card-foreground shadow-xs min-w-0"
+            className="rounded-xl sm:rounded-2xl border border-hairline bg-card p-3 sm:p-4 md:p-5 text-card-foreground shadow-xs min-w-0"
           >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 min-w-0">
-              <div className="flex items-start gap-2.5 sm:gap-3.5 min-w-0 flex-1">
-                <Skeleton className="size-10 sm:size-12 rounded-full shrink-0" />
-                <div className="space-y-2 min-w-0 flex-1">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-3.5 md:gap-4 min-w-0">
+              <div className="flex items-start gap-2 sm:gap-3.5 min-w-0 flex-1">
+                <Skeleton className="size-9 sm:size-10 md:size-12 rounded-full shrink-0" />
+                <div className="space-y-1.5 sm:space-y-2 min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-4 w-12 rounded-full" />
+                    <Skeleton className="h-3.5 sm:h-4 w-28 sm:w-32" />
+                    <Skeleton className="h-3.5 sm:h-4 w-10 sm:w-12 rounded-full" />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Skeleton className="h-3.5 w-24" />
-                    <Skeleton className="h-3.5 w-28" />
+                    <Skeleton className="h-3 sm:h-3.5 w-20 sm:w-24" />
+                    <Skeleton className="h-3 sm:h-3.5 w-24 sm:w-28" />
                   </div>
-                  <Skeleton className="h-6 w-44 rounded-lg" />
+                  <Skeleton className="h-5 sm:h-6 w-36 sm:w-44 rounded-lg" />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-2 border-t border-hairline/60 md:border-0 md:pt-0 shrink-0 w-full md:w-auto">
-                <Skeleton className="h-8 sm:h-9 flex-1 md:w-24 rounded-xl" />
-                <Skeleton className="h-8 sm:h-9 flex-1 md:w-20 rounded-xl" />
+              <div className="flex items-center justify-end gap-1.5 sm:gap-2 pt-1.5 sm:pt-2 border-t border-hairline/60 md:border-0 md:pt-0 shrink-0 w-full md:w-auto">
+                <Skeleton className="h-6 sm:h-7 md:h-8 w-14 sm:w-18 rounded-md sm:rounded-lg" />
+                <Skeleton className="h-6 sm:h-7 md:h-8 w-16 sm:w-20 rounded-md sm:rounded-lg" />
               </div>
             </div>
           </div>
@@ -133,7 +133,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
 
   return (
     <>
-      <div className="space-y-3.5">
+      <div className="space-y-3 sm:space-y-3.5">
         {actionError && (
           <div className="flex items-center gap-2 rounded-xl bg-destructive/10 border border-destructive/20 p-3 text-xs text-destructive">
             <AlertCircle className="size-4 shrink-0" />
@@ -150,11 +150,11 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
           return (
             <div
               key={provider.id}
-              className="rounded-2xl border border-hairline bg-card p-4 sm:p-5 text-card-foreground shadow-xs transition-all hover:border-border min-w-0 overflow-hidden"
+              className="rounded-xl sm:rounded-2xl border border-hairline bg-card p-3 sm:p-4 md:p-5 text-card-foreground shadow-xs transition-all hover:border-border min-w-0 overflow-hidden"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 min-w-0">
-                <div className="flex items-start gap-2.5 sm:gap-3.5 min-w-0 flex-1">
-                  <div className="size-10 sm:size-12 rounded-full overflow-hidden ring-1 ring-hairline shrink-0">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-3.5 md:gap-4 min-w-0">
+                <div className="flex items-start gap-2 sm:gap-3.5 min-w-0 flex-1">
+                  <div className="size-9 sm:size-10 md:size-12 rounded-full overflow-hidden ring-1 ring-hairline shrink-0">
                     <img
                       src={provider.avatar || "/default-avatar.jpg"}
                       alt={provider.name}
@@ -167,20 +167,20 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                     />
                   </div>
 
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap min-w-0">
-                      <span className="font-bold text-sm text-ink truncate">{provider.name}</span>
+                  <div className="min-w-0 flex-1 space-y-0.5 sm:space-y-1">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
+                      <span className="font-bold text-xs sm:text-sm text-ink truncate">{provider.name}</span>
                       <TrustScoreBadge score={provider.trustScore ?? 0} size="xs" showLabel={false} />
                     </div>
 
-                    <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-muted-foreground mt-0.5 flex-wrap">
+                    <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 text-[10.5px] sm:text-xs text-muted-foreground mt-0.5 flex-wrap">
                       <span className="flex items-center gap-1 font-semibold text-ink">
-                        <Briefcase className="size-3.5 text-primary" />
+                        <Briefcase className="size-3 sm:size-3.5 text-primary" />
                         {provider.category}
                       </span>
                       <span>•</span>
                       <span className="flex items-center gap-1">
-                        <MapPin className="size-3" />
+                        <MapPin className="size-2.5 sm:size-3" />
                         {locationStr}
                       </span>
                       {provider.phone && (
@@ -191,20 +191,20 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                       )}
                     </div>
 
-                    <div className="mt-2 flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                      <div className="inline-flex items-center gap-1 sm:gap-1.5 rounded-lg bg-surface-soft border border-hairline px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-xs text-ink font-medium">
-                        <FileText className="size-3.5 text-primary" />
+                    <div className="mt-1.5 sm:mt-2 flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                      <div className="inline-flex items-center gap-1 sm:gap-1.5 rounded-lg bg-surface-soft border border-hairline px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-xs text-ink font-medium">
+                        <FileText className="size-3 sm:size-3.5 text-primary" />
                         <span className="capitalize">{provider.verificationDocType || "Government ID / License"}</span>
                       </div>
 
                       {provider.verificationDocUrl && (
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1 sm:gap-1.5">
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
                             onClick={() => setPreviewDocProvider(provider)}
-                            className="rounded-xl text-[11px] sm:text-xs h-6.5 sm:h-7 px-2 sm:px-2.5 font-semibold text-ink border-hairline hover:border-ink flex items-center gap-1 cursor-pointer"
+                            className="rounded-lg sm:rounded-xl text-[10.5px] sm:text-xs h-6 sm:h-7 px-2 sm:px-2.5 font-semibold text-ink border-hairline hover:border-ink flex items-center gap-1 cursor-pointer"
                           >
                             <FileText className="size-3 text-primary" />
                             <span>Inspect</span>
@@ -213,16 +213,16 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                             href={provider.verificationDocUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center justify-center size-6.5 sm:size-7 rounded-lg border border-hairline bg-surface-soft hover:bg-surface-subtle text-muted-foreground hover:text-ink transition-colors"
+                            className="inline-flex items-center justify-center size-6 sm:size-7 rounded-lg border border-hairline bg-surface-soft hover:bg-surface-subtle text-muted-foreground hover:text-ink transition-colors"
                             title="Open document in new tab"
                           >
-                            <ExternalLink className="size-3" />
+                            <ExternalLink className="size-2.5 sm:size-3" />
                           </a>
                         </div>
                       )}
 
                       {provider.verificationSubmittedAt && (
-                        <span className="text-[10.5px] sm:text-[11px] text-muted-foreground">
+                        <span className="text-[10px] sm:text-[11px] text-muted-foreground">
                           Submitted: {new Date(provider.verificationSubmittedAt).toLocaleDateString()}
                         </span>
                       )}
@@ -230,32 +230,32 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 pt-2 border-t border-hairline/60 md:border-0 md:pt-0 shrink-0 w-full md:w-auto">
+                <div className="flex items-center justify-end gap-1.5 sm:gap-2 pt-1.5 sm:pt-2 border-t border-hairline/60 md:border-0 md:pt-0 shrink-0 w-full md:w-auto">
                   <Button
-                    size="sm"
+                    size="xs"
                     variant="destructive"
                     onClick={() => handleOpenRejectModal(provider)}
                     disabled={Boolean(processingId)}
-                    className="flex-1 md:flex-none rounded-xl text-xs h-8 sm:h-9 px-3 font-bold bg-red-600 hover:bg-red-700 text-white cursor-pointer flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-50"
+                    className="rounded-md sm:rounded-lg text-[10px] sm:text-[11px] md:text-xs h-6 sm:h-7 md:h-8 px-2 sm:px-2.5 md:px-3 font-semibold bg-red-600 hover:bg-red-700 text-white cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 shadow-2xs disabled:opacity-50 shrink-0"
                   >
-                    <ShieldAlert className="size-3.5" />
+                    <ShieldAlert className="size-2.5 sm:size-3 md:size-3.5" />
                     <span>Reject</span>
                   </Button>
 
                   <Button
-                    size="sm"
+                    size="xs"
                     onClick={() => handleApprove(provider)}
                     disabled={Boolean(processingId)}
-                    className="flex-1 md:flex-none rounded-xl text-xs h-8 sm:h-9 px-3.5 sm:px-4 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="rounded-md sm:rounded-lg text-[10px] sm:text-[11px] md:text-xs h-6 sm:h-7 md:h-8 px-2 sm:px-2.5 md:px-3.5 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer disabled:opacity-50 shrink-0"
                   >
                     {isProcessing ? (
                       <>
-                        <Loader2 className="size-4 animate-spin" />
+                        <Loader2 className="size-2.5 sm:size-3 animate-spin" />
                         <span>Approving...</span>
                       </>
                     ) : (
                       <>
-                        <ShieldCheck className="size-3.5" />
+                        <ShieldCheck className="size-2.5 sm:size-3 md:size-3.5" />
                         <span>Approve</span>
                       </>
                     )}
@@ -340,7 +340,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                 asChild
                 variant="outline"
                 size="sm"
-                className="rounded-xl text-[11px] sm:text-xs h-8 sm:h-9 px-2.5 sm:px-3.5 border-hairline hover:border-ink flex items-center gap-1.5 cursor-pointer"
+                className="rounded-lg sm:rounded-xl text-[11px] sm:text-xs h-7.5 sm:h-9 px-2.5 sm:px-3.5 border-hairline hover:border-ink flex items-center gap-1.5 cursor-pointer"
               >
                 <a
                   href={previewDocProvider?.verificationDocUrl || "#"}
@@ -357,7 +357,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                 size="sm"
                 onClick={() => setPreviewDocProvider(null)}
                 disabled={Boolean(processingId)}
-                className="rounded-xl text-[11px] sm:text-xs h-8 sm:h-9 px-3 sm:px-4 border-hairline hover:border-ink cursor-pointer"
+                className="rounded-lg sm:rounded-xl text-[11px] sm:text-xs h-7.5 sm:h-9 px-3 sm:px-4 border-hairline hover:border-ink cursor-pointer"
               >
                 Close
               </Button>
@@ -366,7 +366,7 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
             {previewDocProvider && (
               <div className="grid grid-cols-2 gap-2 pt-1 border-t border-hairline/60">
                 <Button
-                  size="sm"
+                  size="xs"
                   variant="destructive"
                   onClick={() => {
                     const p = previewDocProvider;
@@ -374,25 +374,25 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
                     handleOpenRejectModal(p);
                   }}
                   disabled={Boolean(processingId)}
-                  className="rounded-xl text-xs h-8.5 sm:h-9 px-3 font-bold bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-50"
+                  className="rounded-md sm:rounded-lg text-[10.5px] sm:text-xs h-6.5 sm:h-7.5 md:h-8.5 px-2.5 sm:px-3 font-semibold bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-1 sm:gap-1.5 shadow-2xs cursor-pointer disabled:opacity-50"
                 >
-                  <ShieldAlert className="size-3.5" />
+                  <ShieldAlert className="size-2.5 sm:size-3.5" />
                   <span>Reject</span>
                 </Button>
                 <Button
-                  size="sm"
+                  size="xs"
                   onClick={() => handleApprove(previewDocProvider)}
                   disabled={Boolean(processingId)}
-                  className="rounded-xl text-xs h-8.5 sm:h-9 px-3 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  className="rounded-md sm:rounded-lg text-[10.5px] sm:text-xs h-6.5 sm:h-7.5 md:h-8.5 px-2.5 sm:px-3 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer disabled:opacity-50"
                 >
                   {processingId === previewDocProvider.id ? (
                     <>
-                      <Loader2 className="size-4 animate-spin" />
+                      <Loader2 className="size-2.5 sm:size-3.5 animate-spin" />
                       <span>Approving...</span>
                     </>
                   ) : (
                     <>
-                      <ShieldCheck className="size-3.5" />
+                      <ShieldCheck className="size-2.5 sm:size-3.5" />
                       <span>Approve</span>
                     </>
                   )}

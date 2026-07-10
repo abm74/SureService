@@ -54,14 +54,14 @@ export const CustomerBookings: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <AppHeader />
 
-      <main className="grow px-3.5 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-8 max-w-5xl mx-auto w-full space-y-4 sm:space-y-6 text-left">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <div className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-primary uppercase tracking-wider mb-0.5">
-              <Calendar className="size-3 sm:size-3.5 shrink-0" />
+      <main className="grow px-2.5 sm:px-6 md:px-8 lg:px-12 py-3 sm:py-6 md:py-8 max-w-5xl mx-auto w-full space-y-2.5 sm:space-y-6 text-left min-w-0 overflow-x-hidden">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
+          <div className="min-w-0">
+            <div className="inline-flex items-center gap-1 text-[9px] sm:text-xs font-bold text-primary uppercase tracking-wider mb-0.5 sm:mb-1">
+              <Calendar className="size-2.5 sm:size-3.5 shrink-0" />
               <span>Customer Booking Hub</span>
             </div>
-            <h1 className="text-base sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink">
+            <h1 className="text-sm sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink leading-tight">
               My Service Bookings
             </h1>
           </div>
@@ -69,27 +69,26 @@ export const CustomerBookings: React.FC = () => {
           <Link to="/marketplace" className="shrink-0">
             <Button
               size="sm"
-              className="rounded-full text-xs h-8 sm:h-9 px-3 sm:px-4 bg-primary hover:bg-brand-primary-active text-white shadow-xs flex items-center gap-1.5 cursor-pointer font-bold"
+              className="rounded-full text-[10.5px] sm:text-xs h-7.5 sm:h-9 px-2.5 sm:px-4 bg-primary hover:bg-brand-primary-active text-white shadow-2xs flex items-center gap-1 sm:gap-1.5 cursor-pointer font-bold"
             >
-              <Store className="size-3.5" />
+              <Store className="size-3 sm:size-3.5" />
               <span className="hidden sm:inline">Find New Service</span>
               <span className="sm:hidden">Browse</span>
             </Button>
           </Link>
         </div>
 
-
         {actionMessage && (
-          <div className="rounded-xl bg-primary/10 border border-primary/20 p-3 text-xs font-semibold text-primary animate-in fade-in duration-200">
+          <div className="rounded-xl sm:rounded-2xl bg-primary/10 border border-primary/20 p-2.5 sm:p-3 text-[10.5px] sm:text-xs font-semibold text-primary animate-in fade-in duration-200">
             {actionMessage}
           </div>
         )}
 
-        <div className="flex items-center gap-1.5 sm:gap-2 border-b border-hairline pb-2 overflow-x-auto scrollbar-none -mx-3.5 px-3.5 sm:mx-0 sm:px-0">
+        <div className="flex items-center gap-1 sm:gap-2 border-b border-hairline pb-1.5 sm:pb-2 overflow-x-auto scrollbar-none -mx-2.5 px-2.5 sm:mx-0 sm:px-0">
           <button
             type="button"
             onClick={() => setActiveTab("all")}
-            className={`rounded-lg sm:rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+            className={`rounded-lg sm:rounded-xl px-2.5 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === "all"
                 ? "bg-primary text-white shadow-2xs"
                 : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
@@ -100,7 +99,7 @@ export const CustomerBookings: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab("active")}
-            className={`rounded-lg sm:rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+            className={`rounded-lg sm:rounded-xl px-2.5 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === "active"
                 ? "bg-primary text-white shadow-2xs"
                 : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
@@ -111,7 +110,7 @@ export const CustomerBookings: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab("completed")}
-            className={`rounded-lg sm:rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+            className={`rounded-lg sm:rounded-xl px-2.5 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === "completed"
                 ? "bg-primary text-white shadow-2xs"
                 : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
@@ -122,7 +121,7 @@ export const CustomerBookings: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab("cancelled")}
-            className={`rounded-lg sm:rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+            className={`rounded-lg sm:rounded-xl px-2.5 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === "cancelled"
                 ? "bg-primary text-white shadow-2xs"
                 : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
@@ -133,28 +132,28 @@ export const CustomerBookings: React.FC = () => {
         </div>
 
         {isLoading ? (
-          <div className="space-y-4">
+          <div className="space-y-2.5 sm:space-y-4">
             {[1, 2, 3].map((i) => (
               <BookingCardSkeleton key={i} />
             ))}
           </div>
         ) : filteredBookings.length === 0 ? (
-          <div className="rounded-3xl border border-hairline bg-card p-12 text-center shadow-xs space-y-3">
-            <div className="size-12 rounded-full bg-surface-soft flex items-center justify-center mx-auto text-primary">
-              <Calendar className="size-6" />
+          <div className="rounded-2xl sm:rounded-3xl border border-hairline bg-card p-4 sm:p-12 text-center shadow-xs space-y-2 sm:space-y-3">
+            <div className="size-9 sm:size-12 rounded-full bg-surface-soft flex items-center justify-center mx-auto text-primary">
+              <Calendar className="size-4.5 sm:size-6" />
             </div>
-            <h3 className="text-base font-bold text-ink">No Bookings Found</h3>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+            <h3 className="text-xs sm:text-base font-bold text-ink">No Bookings Found</h3>
+            <p className="text-[10px] sm:text-xs text-muted-foreground max-w-sm mx-auto">
               You don't have any bookings under this category. Need help with plumbing, electrical, or tutoring?
             </p>
             <Link to="/marketplace">
-              <Button size="sm" className="rounded-full text-xs font-bold mt-2">
+              <Button size="sm" className="rounded-full text-[10.5px] sm:text-xs font-bold mt-1 sm:mt-2 h-7.5 sm:h-9 px-3 sm:px-4">
                 Browse Marketplace
               </Button>
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {filteredBookings.map((booking) => (
               <BookingCard
                 key={booking.id}
