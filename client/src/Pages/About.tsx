@@ -9,7 +9,7 @@ import {
   UserCheck,
   ArrowRight,
 } from "lucide-react";
-import PageNav from "@/Components/Header/PageNav";
+import AppHeader from "@/Components/Header/AppHeader";
 import { Button } from "@/Components/UI/button";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
@@ -18,7 +18,7 @@ export const About: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
-      <PageNav />
+      <AppHeader />
 
       <main className="grow px-3.5 sm:px-6 py-5 sm:py-12 md:py-16 lg:px-20 max-w-5xl mx-auto w-full space-y-6 sm:space-y-10 text-left">
         {/* HERO SECTION */}

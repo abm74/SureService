@@ -84,7 +84,10 @@ export const CustomerBookings: React.FC = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-1 sm:gap-2 border-b border-hairline pb-1.5 sm:pb-2 overflow-x-auto scrollbar-none -mx-2.5 px-2.5 sm:mx-0 sm:px-0">
+        <div
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          className="flex items-center gap-1 sm:gap-2 border-b border-hairline pb-1.5 sm:pb-2 overflow-x-auto scrollbar-none no-scrollbar -mx-2.5 px-2.5 sm:mx-0 sm:px-0"
+        >
           <button
             type="button"
             onClick={() => setActiveTab("all")}

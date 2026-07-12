@@ -322,7 +322,10 @@ export const UserManagement: React.FC = () => {
       <div className="rounded-2xl border border-border bg-card p-4 shadow-xs space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Role filter buttons */}
-          <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl self-start overflow-x-auto max-w-full">
+          <div
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl self-start overflow-x-auto max-w-full scrollbar-none no-scrollbar"
+          >
             <button
               type="button"
               onClick={() => handleRoleTabChange("all")}

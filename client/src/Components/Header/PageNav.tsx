@@ -22,6 +22,12 @@ export const PageNav: React.FC = () => {
     return "/bookings";
   };
 
+  const getDashboardLabel = () => {
+    if (user?.role === "admin") return "Dashboard";
+    if (user?.role === "provider") return "Dashboard";
+    return "My Bookings";
+  };
+
   return (
     <nav className="flex justify-between bg-background/95 backdrop-blur-md border-b border-hairline h-18 px-4 sm:px-6 lg:px-20 items-center sticky top-0 z-50 shrink-0 select-none">
       <Link to="/" className="flex items-center gap-2.5 group">
@@ -53,7 +59,7 @@ export const PageNav: React.FC = () => {
                 size="sm"
                 className="rounded-full px-5 font-bold text-xs h-9 shadow-xs flex items-center gap-1.5 cursor-pointer"
               >
-                <span>Dashboard</span>
+                <span>{getDashboardLabel()}</span>
                 <ArrowRight className="size-3.5" />
               </Button>
             </NavLink>
@@ -119,7 +125,7 @@ export const PageNav: React.FC = () => {
                   size="sm"
                   className="w-full rounded-xl font-bold text-xs h-10 shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <span>Dashboard</span>
+                  <span>{getDashboardLabel()}</span>
                   <ArrowRight className="size-3.5" />
                 </Button>
               </NavLink>

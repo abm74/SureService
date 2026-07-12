@@ -11,6 +11,13 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/Components/UI/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/Components/UI/select";
 import type { ProviderFilters } from "@/types";
 
 import { useCategories } from "@/hooks/useCategories";
@@ -49,8 +56,7 @@ export const ProviderFilter: React.FC<ProviderFilterProps> = ({
     });
   };
 
-  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
+  const handleCitySelect = (val: string) => {
     onFilterChange({
       ...filters,
       city: val === "All Cities" ? undefined : val,
@@ -58,8 +64,7 @@ export const ProviderFilter: React.FC<ProviderFilterProps> = ({
     });
   };
 
-  const handleSubCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
+  const handleSubCitySelect = (val: string) => {
     onFilterChange({
       ...filters,
       subCity: val === "All Sub-cities" ? undefined : val,
@@ -73,10 +78,10 @@ export const ProviderFilter: React.FC<ProviderFilterProps> = ({
     });
   };
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSortSelect = (val: string) => {
     onFilterChange({
       ...filters,
-      sortBy: e.target.value as ProviderFilters["sortBy"],
+      sortBy: val as ProviderFilters["sortBy"],
     });
   };
 
@@ -162,30 +167,32 @@ export const ProviderFilter: React.FC<ProviderFilterProps> = ({
 
         <div className="hidden md:flex items-center gap-2.5 w-auto flex-wrap justify-end">
           <div className="flex items-center gap-2 flex-wrap">
-            <select
-              value={activeCity}
-              onChange={handleCityChange}
-              className="h-11 rounded-xl border border-hairline bg-background px-3 py-2 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
-            >
-              {citiesFilterList.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            <Select value={activeCity} onValueChange={handleCitySelect}>
+              <SelectTrigger className="h-11 w-auto px-3.5 rounded-xl border border-hairline bg-surface-soft text-ink hover:bg-surface-hover text-xs font-semibold shadow-xs justify-center gap-1.5 transition-all">
+                <SelectValue placeholder="All Cities" />
+              </SelectTrigger>
+              <SelectContent>
+                {citiesFilterList.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {activeSubCities.length > 0 && (
-              <select
-                value={activeSubCity}
-                onChange={handleSubCityChange}
-                className="h-11 rounded-xl border border-hairline bg-background px-3 py-2 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer animate-in fade-in duration-200"
-              >
-                {subCitiesFilterList.map((sc) => (
-                  <option key={sc} value={sc}>
-                    {sc}
-                  </option>
-                ))}
-              </select>
+              <Select value={activeSubCity} onValueChange={handleSubCitySelect}>
+                <SelectTrigger className="h-11 w-auto px-3.5 rounded-xl border border-hairline bg-surface-soft text-ink hover:bg-surface-hover text-xs font-semibold shadow-xs justify-center gap-1.5 transition-all animate-in fade-in duration-200">
+                  <SelectValue placeholder="All Sub-cities" />
+                </SelectTrigger>
+                <SelectContent>
+                  {subCitiesFilterList.map((sc) => (
+                    <SelectItem key={sc} value={sc}>
+                      {sc}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
           </div>
 
@@ -204,22 +211,26 @@ export const ProviderFilter: React.FC<ProviderFilterProps> = ({
               <span>Verified Only</span>
             </button>
 
-            <select
-              value={sortBy}
-              onChange={handleSortChange}
-              className="h-11 rounded-xl border border-hairline bg-background px-3 py-2 text-xs font-semibold text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
-            >
-              <option value="trustScore">Highest Trust Score</option>
-              <option value="completedJobs">Most Completed Jobs</option>
-              <option value="rateAsc">Lowest Hourly Rate</option>
-              <option value="rateDesc">Highest Hourly Rate</option>
-              <option value="newest">Newest Listed</option>
-            </select>
+            <Select value={sortBy} onValueChange={handleSortSelect}>
+              <SelectTrigger className="h-11 w-auto px-3.5 rounded-xl border border-hairline bg-surface-soft text-ink hover:bg-surface-hover text-xs font-semibold shadow-xs justify-center gap-1.5 transition-all">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="trustScore">Highest Trust Score</SelectItem>
+                <SelectItem value="completedJobs">Most Completed Jobs</SelectItem>
+                <SelectItem value="rateAsc">Lowest Hourly Rate</SelectItem>
+                <SelectItem value="rateDesc">Highest Hourly Rate</SelectItem>
+                <SelectItem value="newest">Newest Listed</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-0.5 scrollbar-none pt-0.5 -mx-1 px-1 sm:mx-0 sm:px-0">
+      <div
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto py-1 scrollbar-none no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0"
+      >
         {categoryFilterList.map((cat) => {
           const isSelected = (cat === "All Categories" && !filters.category) || filters.category === cat;
           return (
@@ -411,30 +422,32 @@ export const ProviderFilter: React.FC<ProviderFilterProps> = ({
                 <span>Location</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
-                <select
-                  value={activeCity}
-                  onChange={handleCityChange}
-                  className="h-8.5 sm:h-10 rounded-xl border border-hairline bg-background px-2.5 sm:px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer w-full"
-                >
-                  {citiesFilterList.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                <Select value={activeCity} onValueChange={handleCitySelect}>
+                  <SelectTrigger className="h-8.5 sm:h-10 rounded-xl text-xs font-medium w-full">
+                    <SelectValue placeholder="All Cities" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {citiesFilterList.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
                 {activeSubCities.length > 0 && (
-                  <select
-                    value={activeSubCity}
-                    onChange={handleSubCityChange}
-                    className="h-8.5 sm:h-10 rounded-xl border border-hairline bg-background px-2.5 sm:px-3 text-xs font-medium text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer w-full"
-                  >
-                    {subCitiesFilterList.map((sc) => (
-                      <option key={sc} value={sc}>
-                        {sc}
-                      </option>
-                    ))}
-                  </select>
+                  <Select value={activeSubCity} onValueChange={handleSubCitySelect}>
+                    <SelectTrigger className="h-8.5 sm:h-10 rounded-xl text-xs font-medium w-full">
+                      <SelectValue placeholder="All Sub-cities" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subCitiesFilterList.map((sc) => (
+                        <SelectItem key={sc} value={sc}>
+                          {sc}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               </div>
             </div>
@@ -444,17 +457,18 @@ export const ProviderFilter: React.FC<ProviderFilterProps> = ({
                 <ArrowUpDown className="size-3 sm:size-3.5 text-primary" />
                 <span>Sort Providers</span>
               </label>
-              <select
-                value={sortBy}
-                onChange={handleSortChange}
-                className="h-8.5 sm:h-10 rounded-xl border border-hairline bg-background px-2.5 sm:px-3 text-xs font-semibold text-ink shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer w-full"
-              >
-                <option value="trustScore">Highest Trust Score (Recommended)</option>
-                <option value="completedJobs">Most Completed Jobs</option>
-                <option value="rateAsc">Lowest Hourly Rate</option>
-                <option value="rateDesc">Highest Hourly Rate</option>
-                <option value="newest">Newest Listed</option>
-              </select>
+              <Select value={sortBy} onValueChange={handleSortSelect}>
+                <SelectTrigger className="h-8.5 sm:h-10 rounded-xl text-xs font-semibold w-full">
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="trustScore">Highest Trust Score (Recommended)</SelectItem>
+                  <SelectItem value="completedJobs">Most Completed Jobs</SelectItem>
+                  <SelectItem value="rateAsc">Lowest Hourly Rate</SelectItem>
+                  <SelectItem value="rateDesc">Highest Hourly Rate</SelectItem>
+                  <SelectItem value="newest">Newest Listed</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1">

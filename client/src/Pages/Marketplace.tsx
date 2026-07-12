@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Frown, Store } from "lucide-react";
 import AppHeader from "@/Components/Header/AppHeader";
@@ -16,11 +16,38 @@ export const Marketplace: React.FC = () => {
   const [filters, setFilters] = useState<ProviderFilters>(() => {
     const category = searchParams.get("category") || undefined;
     const city = searchParams.get("city") || undefined;
+    const subCity = searchParams.get("subCity") || undefined;
     const search = searchParams.get("search") || undefined;
     const verifiedOnly = searchParams.get("verified") === "true";
+    const minScore = searchParams.get("minScore") ? Number(searchParams.get("minScore")) : undefined;
     const sortBy = (searchParams.get("sortBy") as ProviderFilters["sortBy"]) || "trustScore";
-    return { category, city, search, verifiedOnly, sortBy };
+    return { category, city, subCity, search, verifiedOnly, minScore, sortBy };
   });
+
+  useEffect(() => {
+    const category = searchParams.get("category") || undefined;
+    const city = searchParams.get("city") || undefined;
+    const subCity = searchParams.get("subCity") || undefined;
+    const search = searchParams.get("search") || undefined;
+    const verifiedOnly = searchParams.get("verified") === "true";
+    const minScore = searchParams.get("minScore") ? Number(searchParams.get("minScore")) : undefined;
+    const sortBy = (searchParams.get("sortBy") as ProviderFilters["sortBy"]) || "trustScore";
+
+    setFilters((prev) => {
+      if (
+        prev.category === category &&
+        prev.city === city &&
+        prev.subCity === subCity &&
+        prev.search === search &&
+        prev.verifiedOnly === verifiedOnly &&
+        prev.minScore === minScore &&
+        prev.sortBy === sortBy
+      ) {
+        return prev;
+      }
+      return { category, city, subCity, search, verifiedOnly, minScore, sortBy };
+    });
+  }, [searchParams]);
 
   const {
     data: providers = [],
