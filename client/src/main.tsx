@@ -19,9 +19,13 @@ const Marketplace = lazy(() => import("./Pages/Marketplace.tsx"));
 const ProviderProfile = lazy(() => import("./Pages/ProviderProfile.tsx"));
 const BookProvider = lazy(() => import("./Pages/BookProvider.tsx"));
 const CustomerBookings = lazy(() => import("./Pages/CustomerBookings.tsx"));
-const ProviderDashboard = lazy(() => import("./Pages/ProviderDashboard.tsx"));
+const ProviderBookings = lazy(() => import("./Pages/ProviderBookings.tsx"));
 const ProviderStats = lazy(() => import("./Pages/ProviderStats.tsx"));
-const AdminDashboard = lazy(() => import("./Pages/AdminDashboard.tsx"));
+const ProviderVerification = lazy(() => import("./Pages/ProviderVerification.tsx"));
+const ProviderProfileSettings = lazy(() => import("./Pages/ProviderProfileSettings.tsx"));
+const AdminUsers = lazy(() => import("./Pages/AdminUsers.tsx"));
+const AdminVerifications = lazy(() => import("./Pages/AdminVerifications.tsx"));
+const AdminMetrics = lazy(() => import("./Pages/AdminMetrics.tsx"));
 const Login = lazy(() => import("./Pages/Login.tsx"));
 const Signup = lazy(() => import("./Pages/Signup.tsx"));
 const PageNotFound = lazy(() => import("./Pages/PageNotFound.tsx"));
@@ -58,14 +62,6 @@ const router = createBrowserRouter([
         Component: ProviderProfile,
       },
       {
-        path: "app",
-        element: <Navigate replace to="/marketplace" />,
-      },
-      {
-        path: "app/*",
-        element: <Navigate replace to="/marketplace" />,
-      },
-      {
         element: <ProtectedRoute />,
         children: [
           {
@@ -79,24 +75,50 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: "provider",
         element: <ProtectedRoute requiredRole="provider" />,
         children: [
           {
-            path: "provider-dashboard",
-            Component: ProviderDashboard,
+            index: true,
+            element: <Navigate to="/provider/bookings" replace />,
           },
           {
-            path: "provider-stats",
+            path: "bookings",
+            Component: ProviderBookings,
+          },
+          {
+            path: "stats",
             Component: ProviderStats,
+          },
+          {
+            path: "verification",
+            Component: ProviderVerification,
+          },
+          {
+            path: "profile",
+            Component: ProviderProfileSettings,
           },
         ],
       },
       {
+        path: "admin",
         element: <ProtectedRoute requiredRole="admin" />,
         children: [
           {
-            path: "admin-dashboard",
-            Component: AdminDashboard,
+            index: true,
+            element: <Navigate to="/admin/users" replace />,
+          },
+          {
+            path: "users",
+            Component: AdminUsers,
+          },
+          {
+            path: "verifications",
+            Component: AdminVerifications,
+          },
+          {
+            path: "metrics",
+            Component: AdminMetrics,
           },
         ],
       },

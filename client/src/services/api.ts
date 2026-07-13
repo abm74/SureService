@@ -12,17 +12,15 @@ const api = axios.create({
 
 const isProtectedAppRoute = () => {
   const path = window.location.pathname;
-  if (
-    path === "/" ||
-    path === "/about" ||
-    path === "/login" ||
-    path === "/signup" ||
-    path === "/marketplace" ||
-    (path.startsWith("/providers/") && !path.endsWith("/book"))
-  ) {
-    return false;
-  }
-  return true;
+  return (
+    path === "/admin" ||
+    path.startsWith("/admin/") ||
+    path === "/provider" ||
+    path.startsWith("/provider/") ||
+    path === "/bookings" ||
+    path.startsWith("/bookings/") ||
+    (path.startsWith("/providers/") && path.endsWith("/book"))
+  );
 };
 const isAuthEndpoint = (url: string | undefined) => {
   const authRoutes = ["/auth/login", "/auth/signup", "/auth/refresh", "/auth/logout"];
