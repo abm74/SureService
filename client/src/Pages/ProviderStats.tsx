@@ -51,7 +51,7 @@ export const ProviderStats: React.FC = () => {
 
           <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
             <VerificationBadge status={user?.verificationStatus} size="sm" />
-            <Link to="/provider-dashboard">
+            <Link to="/provider/bookings">
               <Button
                 variant="outline"
                 size="sm"
@@ -84,7 +84,7 @@ export const ProviderStats: React.FC = () => {
           </div>
 
           <Link
-            to="/provider-dashboard?tab=requests"
+            to="/provider/bookings"
             className="group rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2 hover:border-primary/40 hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer block"
           >
             <div className="flex items-center justify-between">
@@ -103,7 +103,7 @@ export const ProviderStats: React.FC = () => {
           </Link>
 
           <Link
-            to="/provider-dashboard?tab=requests"
+            to="/provider/bookings"
             className="group rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2 hover:border-primary/40 hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer block"
           >
             <div className="flex items-center justify-between">
@@ -122,7 +122,7 @@ export const ProviderStats: React.FC = () => {
           </Link>
 
           <Link
-            to="/provider-dashboard?tab=requests"
+            to="/provider/bookings"
             className="group rounded-2xl border border-hairline bg-card p-5 shadow-xs space-y-2 hover:border-primary/40 hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer block"
           >
             <div className="flex items-center justify-between">
@@ -156,7 +156,7 @@ export const ProviderStats: React.FC = () => {
                 </p>
               </div>
             </div>
-            <Link to="/provider-dashboard?tab=verification" className="shrink-0">
+            <Link to="/provider/verification" className="shrink-0">
               <Button
                 size="sm"
                 className="rounded-xl text-xs h-8 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer"
