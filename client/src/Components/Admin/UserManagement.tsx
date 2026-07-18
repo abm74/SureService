@@ -116,7 +116,7 @@ export const UserManagement: React.FC = () => {
 
   const updateUrlParams = (newFilters: Partial<AdminUserFilters>) => {
     const nextParams = new URLSearchParams(searchParams);
-    nextParams.set("tab", "users");
+    nextParams.delete("tab");
 
     const merged = { ...filters, ...newFilters };
 
@@ -183,7 +183,7 @@ export const UserManagement: React.FC = () => {
   };
 
   const handleRoleTabChange = (role: "all" | "customer" | "provider" | "admin") => {
-    updateUrlParams({ role, page: 1 });
+    updateUrlParams({ role, status: "all", page: 1 });
   };
 
   const handleStatCardClick = (type: "all" | "provider" | "customer" | "suspended") => {
@@ -573,8 +573,8 @@ export const UserManagement: React.FC = () => {
                         <div className="flex items-center gap-1 text-[11px]">
                           <MapPin className="size-3 text-muted-foreground shrink-0" />
                           <span className="truncate">
-                            {user.location?.city || "Addis Ababa"},{" "}
-                            {user.location?.subCity || "Bole"}
+                            {user.location?.subCity ? `${user.location.subCity}, ` : ""}
+                            {user.location?.city || "Ethiopia"}
                           </span>
                         </div>
                       </td>

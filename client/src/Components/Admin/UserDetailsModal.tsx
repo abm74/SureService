@@ -208,8 +208,8 @@ export const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                     <div className="flex items-center gap-2 text-ink">
                       <MapPin className="size-3.5 text-muted-foreground shrink-0" />
                       <span>
-                        {currentUser.location?.city || "Addis Ababa"},{" "}
-                        {currentUser.location?.subCity || "Bole"}
+                        {currentUser.location?.subCity ? `${currentUser.location.subCity}, ` : ""}
+                        {currentUser.location?.city || "Ethiopia"}
                         {currentUser.location?.address ? ` (${currentUser.location.address})` : ""}
                       </span>
                     </div>

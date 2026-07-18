@@ -33,7 +33,7 @@ export const PlatformStats: React.FC<PlatformStatsProps> = ({ stats, isLoading }
       icon: Briefcase,
       color: "text-blue-600 dark:text-blue-400",
       bg: "bg-blue-50 dark:bg-blue-950/40",
-      href: "/admin-dashboard?tab=users&role=provider",
+      href: "/admin/users?role=provider",
     },
     {
       title: "Total Customers",
@@ -41,7 +41,7 @@ export const PlatformStats: React.FC<PlatformStatsProps> = ({ stats, isLoading }
       icon: Users,
       color: "text-indigo-600 dark:text-indigo-400",
       bg: "bg-indigo-50 dark:bg-indigo-950/40",
-      href: "/admin-dashboard?tab=users&role=customer",
+      href: "/admin/users?role=customer",
     },
     {
       title: "Total Bookings",
@@ -49,7 +49,7 @@ export const PlatformStats: React.FC<PlatformStatsProps> = ({ stats, isLoading }
       icon: TrendingUp,
       color: "text-purple-600 dark:text-purple-400",
       bg: "bg-purple-50 dark:bg-purple-950/40",
-      href: "/marketplace",
+      href: "/admin/users",
     },
     {
       title: "Completed Jobs",
@@ -57,7 +57,7 @@ export const PlatformStats: React.FC<PlatformStatsProps> = ({ stats, isLoading }
       icon: CheckCircle,
       color: "text-emerald-600 dark:text-emerald-400",
       bg: "bg-emerald-50 dark:bg-emerald-950/40",
-      href: "/marketplace",
+      href: "/admin/users?role=provider&sortBy=completedJobs",
     },
     {
       title: "Pending Verifications",
@@ -66,7 +66,7 @@ export const PlatformStats: React.FC<PlatformStatsProps> = ({ stats, isLoading }
       color: "text-amber-600 dark:text-amber-400",
       bg: "bg-amber-50 dark:bg-amber-950/40",
       highlight: (stats.pendingVerifications ?? 0) > 0,
-      href: "/admin-dashboard?tab=verifications",
+      href: "/admin/verifications",
     },
     {
       title: "Registered Users",
@@ -74,7 +74,7 @@ export const PlatformStats: React.FC<PlatformStatsProps> = ({ stats, isLoading }
       icon: CalendarCheck,
       color: "text-teal-600 dark:text-teal-400",
       bg: "bg-teal-50 dark:bg-teal-950/40",
-      href: "/admin-dashboard?tab=users&role=all",
+      href: "/admin/users?role=all",
     },
   ];
 

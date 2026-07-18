@@ -59,6 +59,12 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
 
   const subCities = getSubCities(selectedCity);
 
+  const handleCityChange = (newCity: string) => {
+    setSelectedCity(newCity);
+    const available = getSubCities(newCity);
+    setSubCity(available.length > 0 ? available[0] : "");
+  };
+
   useEffect(() => {
     if (user) {
       setName(user.name || "");
@@ -99,7 +105,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
         bio: bio.trim(),
         location: {
           city: selectedCity,
-          subCity,
+          subCity: subCities.length > 0 ? subCity : "",
           address: address.trim(),
         },
       };
@@ -198,7 +204,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">City</Label>
-              <Select value={selectedCity} onValueChange={setSelectedCity}>
+              <Select value={selectedCity} onValueChange={handleCityChange}>
                 <SelectTrigger className="h-9 text-xs rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
@@ -212,9 +218,13 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
 
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">Sub-City / District</Label>
-              <Select value={subCity} onValueChange={setSubCity}>
+              <Select
+                value={subCity}
+                onValueChange={setSubCity}
+                disabled={subCities.length === 0}
+              >
                 <SelectTrigger className="h-9 text-xs rounded-xl">
-                  <SelectValue />
+                  <SelectValue placeholder={subCities.length === 0 ? "No sub-cities" : "Select sub-city"} />
                 </SelectTrigger>
                 <SelectContent>
                   {subCities.map((sc: string) => (
