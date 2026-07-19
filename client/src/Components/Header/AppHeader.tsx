@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate, NavLink, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import {
   ShieldCheck,
   LogOut,
   ChevronDown,
   Calendar,
   Store,
-  ShieldAlert,
-  User,
   Info,
   Users,
   Activity,
+  ExternalLink,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useAuth } from "@/store/Auth/AuthContext";
 import { useProviderBookings } from "@/hooks/useBookings";
@@ -22,13 +22,12 @@ export const AppHeader: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const role = user?.role || "customer";
   const isAdmin = Boolean(isAuthenticated && role === "admin");
-  const { data: providerBookings = [] } = useProviderBookings(isAuthenticated && role === "provider");
+  const isProvider = Boolean(isAuthenticated && role === "provider");
+  const { data: providerBookings = [] } = useProviderBookings(isProvider);
   const { data: stats } = usePlatformStats(isAdmin);
   const { data: pendingVerifications = [] } = usePendingVerifications(isAdmin);
   const navigate = useNavigate();
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-  const currentTab = searchParams.get("tab") || "requests";
+
   const pendingRequestsCount = providerBookings.filter((b) => b.status === "pending").length;
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -63,15 +62,11 @@ export const AppHeader: React.FC = () => {
   const profileAvatar = user?.avatar && !imgError ? user.avatar : defaultAvatar;
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap ${
+    `text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
       isActive
         ? "bg-primary text-primary-foreground shadow-2xs"
         : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
     }`;
-
-  const isAdminTabActive = (tab: string) =>
-    location.pathname === "/admin-dashboard" &&
-    (currentTab === tab || (!searchParams.get("tab") && tab === "users"));
 
   return (
     <header className="w-full bg-background/95 backdrop-blur-md border-b border-hairline h-16 sm:h-18 px-3 sm:px-4 md:px-8 flex items-center justify-between sticky top-0 z-40 shrink-0 select-none">
@@ -87,116 +82,99 @@ export const AppHeader: React.FC = () => {
 
         <nav className="hidden md:flex items-center gap-1.5 bg-surface-soft/80 border border-hairline/80 rounded-full p-1 shadow-2xs">
           <NavLink to="/marketplace" className={linkClass}>
-            <span className="flex items-center gap-1.5">
-              <Store className="size-3.5" />
-              <span>Marketplace</span>
-            </span>
+            <Store className="size-3.5" />
+            <span>Marketplace</span>
           </NavLink>
 
           {isAuthenticated && role === "customer" && (
             <NavLink to="/bookings" className={linkClass}>
-              <span className="flex items-center gap-1.5">
-                <Calendar className="size-3.5" />
-                <span>My Bookings</span>
-              </span>
+              <Calendar className="size-3.5" />
+              <span>My Bookings</span>
             </NavLink>
           )}
 
           {isAuthenticated && role === "provider" && (
             <>
-              <NavLink to="/provider-dashboard" className={linkClass}>
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="size-3.5" />
-                  <span>Bookings{pendingRequestsCount > 0 ? ` (${pendingRequestsCount})` : ""}</span>
-                </span>
+              <NavLink to="/provider/bookings" className={linkClass}>
+                <Calendar className="size-3.5" />
+                <span>Bookings</span>
+                {pendingRequestsCount > 0 && (
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-amber-500 text-white">
+                    {pendingRequestsCount}
+                  </span>
+                )}
               </NavLink>
 
-              <NavLink to="/provider-stats" className={linkClass}>
-                <span className="flex items-center gap-1.5">
-                  <Activity className="size-3.5" />
-                  <span>Trust & Stats</span>
-                </span>
+              <NavLink to="/provider/stats" className={linkClass}>
+                <Activity className="size-3.5" />
+                <span>Trust & Stats</span>
+              </NavLink>
+
+              <NavLink to="/provider/verification" className={linkClass}>
+                <ShieldCheck className="size-3.5" />
+                <span>Verification</span>
+              </NavLink>
+
+              <NavLink to="/provider/profile" className={linkClass}>
+                <SlidersHorizontal className="size-3.5" />
+                <span>Profile</span>
               </NavLink>
             </>
           )}
 
           {isAuthenticated && role === "admin" && (
-            location.pathname === "/admin-dashboard" ? (
-              <>
-                <Link
-                  to="/admin-dashboard?tab=users"
-                  className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    isAdminTabActive("users")
-                      ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
-                  }`}
-                >
-                  <Users className="size-3.5" />
-                  <span>Users</span>
-                  {stats?.totalUsers !== undefined && (
-                    <span
-                      className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                        isAdminTabActive("users")
-                          ? "bg-white/20 text-white"
-                          : "bg-primary/10 text-primary"
-                      }`}
-                    >
-                      {stats.totalUsers}
-                    </span>
-                  )}
-                </Link>
-
-                <Link
-                  to="/admin-dashboard?tab=verifications"
-                  className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    isAdminTabActive("verifications")
-                      ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
-                  }`}
-                >
-                  <ShieldCheck className="size-3.5" />
-                  <span>Verifications</span>
-                  {pendingVerifications.length > 0 && (
-                    <span
-                      className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                        isAdminTabActive("verifications")
-                          ? "bg-amber-400 text-amber-950 font-black"
-                          : "bg-amber-500 text-white"
-                      }`}
-                    >
-                      {pendingVerifications.length}
-                    </span>
-                  )}
-                </Link>
-
-                <Link
-                  to="/admin-dashboard?tab=metrics"
-                  className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    isAdminTabActive("metrics")
-                      ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
-                  }`}
-                >
-                  <Activity className="size-3.5" />
-                  <span>Metrics</span>
-                </Link>
-              </>
-            ) : (
-              <NavLink to="/admin-dashboard" className={linkClass}>
-                <span className="flex items-center gap-1.5">
-                  <ShieldAlert className="size-3.5" />
-                  <span>Dashboard</span>
-                </span>
+            <>
+              <NavLink to="/admin/users" className={linkClass}>
+                {({ isActive }) => (
+                  <>
+                    <Users className="size-3.5" />
+                    <span>Users</span>
+                    {stats?.totalUsers !== undefined && (
+                      <span
+                        className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
+                          isActive
+                            ? "bg-white/20 text-white"
+                            : "bg-primary/10 text-primary"
+                        }`}
+                      >
+                        {stats.totalUsers}
+                      </span>
+                    )}
+                  </>
+                )}
               </NavLink>
-            )
+
+              <NavLink to="/admin/verifications" className={linkClass}>
+                {({ isActive }) => (
+                  <>
+                    <ShieldCheck className="size-3.5" />
+                    <span>Verifications</span>
+                    {pendingVerifications.length > 0 && (
+                      <span
+                        className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
+                          isActive
+                            ? "bg-amber-400 text-amber-950 font-black"
+                            : "bg-amber-500 text-white"
+                        }`}
+                      >
+                        {pendingVerifications.length}
+                      </span>
+                    )}
+                  </>
+                )}
+              </NavLink>
+
+              <NavLink to="/admin/metrics" className={linkClass}>
+                <Activity className="size-3.5" />
+                <span>Metrics</span>
+              </NavLink>
+            </>
           )}
 
           {role !== "admin" && (
             <NavLink to="/about" className={linkClass}>
-              <span className="flex items-center gap-1.5">
-                <Info className="size-3.5" />
-                <span>About</span>
-              </span>
+              <Info className="size-3.5" />
+              <span>About</span>
             </NavLink>
           )}
         </nav>
@@ -256,7 +234,7 @@ export const AppHeader: React.FC = () => {
 
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2.5 w-[calc(100vw-2rem)] sm:w-72 max-w-xs bg-background border border-hairline rounded-2xl shadow-xl p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-md">
-                <div className="p-3 bg-surface-soft/70 rounded-xl border border-hairline/60 mb-2">
+                <div className="p-3 bg-surface-soft/70 rounded-xl border border-hairline/60 mb-1">
                   <div className="flex items-center gap-2.5 mb-1.5">
                     <img
                       className="size-10 rounded-full object-cover ring-1 ring-primary/40 shadow-xs"
@@ -276,7 +254,7 @@ export const AppHeader: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="space-y-1 py-1">
+                <div className="md:hidden space-y-1 py-1 border-b border-hairline/60">
                   <Link
                     to="/marketplace"
                     onClick={() => setIsDropdownOpen(false)}
@@ -286,6 +264,17 @@ export const AppHeader: React.FC = () => {
                     <span>Marketplace</span>
                   </Link>
 
+                  {role !== "admin" && (
+                    <Link
+                      to="/about"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
+                    >
+                      <Info className="size-3.5 text-primary" />
+                      <span>About</span>
+                    </Link>
+                  )}
+
                   {role === "customer" && (
                     <Link
                       to="/bookings"
@@ -293,43 +282,42 @@ export const AppHeader: React.FC = () => {
                       className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                     >
                       <Calendar className="size-3.5 text-primary" />
-                      <span>My Bookings & Completions</span>
+                      <span>My Bookings</span>
                     </Link>
                   )}
 
                   {role === "provider" && (
                     <>
                       <Link
-                        to="/provider-dashboard"
+                        to="/provider/bookings"
                         onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
+                        className="flex items-center justify-between px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                       >
-                        <Calendar className="size-3.5 text-primary" />
-                        <span>Bookings & Requests</span>
+                        <div className="flex items-center gap-2.5">
+                          <Calendar className="size-3.5 text-primary" />
+                          <span>Bookings</span>
+                        </div>
+                        {pendingRequestsCount > 0 && (
+                          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-amber-500 text-white">
+                            {pendingRequestsCount}
+                          </span>
+                        )}
                       </Link>
                       <Link
-                        to="/provider-stats"
+                        to="/provider/stats"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                       >
                         <Activity className="size-3.5 text-primary" />
-                        <span>Trust Standing & Stats</span>
+                        <span>Trust & Stats</span>
                       </Link>
                       <Link
-                        to="/provider-dashboard?tab=verification"
+                        to="/provider/verification"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                       >
                         <ShieldCheck className="size-3.5 text-primary" />
                         <span>ID Verification</span>
-                      </Link>
-                      <Link
-                        to="/provider-dashboard?tab=profile"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
-                      >
-                        <User className="size-3.5 text-primary" />
-                        <span>Profile & Rates</span>
                       </Link>
                     </>
                   )}
@@ -337,23 +325,37 @@ export const AppHeader: React.FC = () => {
                   {role === "admin" && (
                     <>
                       <Link
-                        to="/admin-dashboard?tab=users"
+                        to="/admin/users"
                         onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
+                        className="flex items-center justify-between px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                       >
-                        <Users className="size-3.5 text-primary" />
-                        <span>User Directory</span>
+                        <div className="flex items-center gap-2.5">
+                          <Users className="size-3.5 text-primary" />
+                          <span>User Directory</span>
+                        </div>
+                        {stats?.totalUsers !== undefined && (
+                          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-primary/10 text-primary">
+                            {stats.totalUsers}
+                          </span>
+                        )}
                       </Link>
                       <Link
-                        to="/admin-dashboard?tab=verifications"
+                        to="/admin/verifications"
                         onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
+                        className="flex items-center justify-between px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                       >
-                        <ShieldCheck className="size-3.5 text-primary" />
-                        <span>ID Verifications</span>
+                        <div className="flex items-center gap-2.5">
+                          <ShieldCheck className="size-3.5 text-primary" />
+                          <span>ID Verifications</span>
+                        </div>
+                        {pendingVerifications.length > 0 && (
+                          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-amber-500 text-white">
+                            {pendingVerifications.length}
+                          </span>
+                        )}
                       </Link>
                       <Link
-                        to="/admin-dashboard?tab=metrics"
+                        to="/admin/metrics"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                       >
@@ -362,20 +364,32 @@ export const AppHeader: React.FC = () => {
                       </Link>
                     </>
                   )}
+                </div>
 
-                  {role !== "admin" && (
+                {role === "provider" && (
+                  <div className="space-y-1 py-1">
+                    {user?.id && (
+                      <Link
+                        to={`/providers/${user.id}`}
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
+                      >
+                        <ExternalLink className="size-3.5 text-primary" />
+                        <span>View Public Profile</span>
+                      </Link>
+                    )}
                     <Link
-                      to="/about"
+                      to="/provider/profile"
                       onClick={() => setIsDropdownOpen(false)}
                       className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
                     >
-                      <Info className="size-3.5 text-primary" />
-                      <span>About Trust Architecture</span>
+                      <SlidersHorizontal className="size-3.5 text-primary" />
+                      <span>Edit Profile & Rates</span>
                     </Link>
-                  )}
-                </div>
+                  </div>
+                )}
 
-                <div className="pt-2 border-t border-hairline mt-2">
+                <div className="pt-1.5 border-t border-hairline mt-1">
                   <button
                     type="button"
                     onClick={handleLogout}

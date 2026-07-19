@@ -17,8 +17,8 @@ export const PageNav: React.FC = () => {
 
   const getDashboardPath = () => {
     if (!user) return "/marketplace";
-    if (user.role === "admin") return "/admin-dashboard";
-    if (user.role === "provider") return "/provider-dashboard";
+    if (user.role === "admin") return "/admin/users";
+    if (user.role === "provider") return "/provider/bookings";
     return "/bookings";
   };
 
