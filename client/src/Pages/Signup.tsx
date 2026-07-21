@@ -56,15 +56,15 @@ export const Signup: React.FC = () => {
       hourlyRate: role === "provider" ? Number(hourlyRate) : undefined,
       location: {
         city,
-        subCity: city === "Addis Ababa" ? subCity : "",
+        subCity: getSubCities(city).length > 0 ? subCity : "",
       },
     };
 
     setIsSubmitting(true);
     try {
       const registeredUser = await signup(payload);
-      if (registeredUser.role === "admin") navigate("/admin-dashboard", { replace: true });
-      else if (registeredUser.role === "provider") navigate("/provider-dashboard", { replace: true });
+      if (registeredUser.role === "admin") navigate("/admin/users", { replace: true });
+      else if (registeredUser.role === "provider") navigate("/provider/bookings", { replace: true });
       else navigate("/marketplace", { replace: true });
     } catch (err) {
       setError(
@@ -77,8 +77,8 @@ export const Signup: React.FC = () => {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated && user) {
-      if (user.role === "admin") navigate("/admin-dashboard", { replace: true });
-      else if (user.role === "provider") navigate("/provider-dashboard", { replace: true });
+      if (user.role === "admin") navigate("/admin/users", { replace: true });
+      else if (user.role === "provider") navigate("/provider/bookings", { replace: true });
       else navigate("/marketplace", { replace: true });
     }
   }, [isAuthenticated, isLoading, user, navigate]);

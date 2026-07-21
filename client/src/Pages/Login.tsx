@@ -53,8 +53,8 @@ export const Login: React.FC = () => {
     setIsSubmitting(true);
     try {
       const loggedUser = await login(email, password);
-      if (loggedUser.role === "admin") navigate("/admin-dashboard", { replace: true });
-      else if (loggedUser.role === "provider") navigate("/provider-dashboard", { replace: true });
+      if (loggedUser.role === "admin") navigate("/admin/users", { replace: true });
+      else if (loggedUser.role === "provider") navigate("/provider/bookings", { replace: true });
       else navigate("/marketplace", { replace: true });
     } catch (err) {
       setError(
@@ -70,8 +70,8 @@ export const Login: React.FC = () => {
     setSubmittingRole(role);
     try {
       const loggedUser = await demoLogin(role);
-      if (loggedUser.role === "admin") navigate("/admin-dashboard", { replace: true });
-      else if (loggedUser.role === "provider") navigate("/provider-dashboard", { replace: true });
+      if (loggedUser.role === "admin") navigate("/admin/users", { replace: true });
+      else if (loggedUser.role === "provider") navigate("/provider/bookings", { replace: true });
       else navigate("/marketplace", { replace: true });
     } catch (err) {
       setError(
@@ -84,8 +84,8 @@ export const Login: React.FC = () => {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated && user) {
-      if (user.role === "admin") navigate("/admin-dashboard", { replace: true });
-      else if (user.role === "provider") navigate("/provider-dashboard", { replace: true });
+      if (user.role === "admin") navigate("/admin/users", { replace: true });
+      else if (user.role === "provider") navigate("/provider/bookings", { replace: true });
       else navigate("/marketplace", { replace: true });
     }
   }, [isAuthenticated, isLoading, user, navigate]);

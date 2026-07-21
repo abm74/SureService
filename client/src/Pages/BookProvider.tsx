@@ -98,7 +98,7 @@ export const BookProvider: React.FC = () => {
       timeSlot,
       address: address.trim(),
       city,
-      subCity: city === "Addis Ababa" ? subCity : undefined,
+      subCity: getSubCities(city).length > 0 ? subCity : undefined,
       notes: notes.trim() || undefined,
     };
 
