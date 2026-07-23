@@ -264,17 +264,6 @@ export const AppHeader: React.FC = () => {
                     <span>Marketplace</span>
                   </Link>
 
-                  {role !== "admin" && (
-                    <Link
-                      to="/about"
-                      onClick={() => setIsDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
-                    >
-                      <Info className="size-3.5 text-primary" />
-                      <span>About</span>
-                    </Link>
-                  )}
-
                   {role === "customer" && (
                     <Link
                       to="/bookings"
@@ -385,6 +374,19 @@ export const AppHeader: React.FC = () => {
                     >
                       <SlidersHorizontal className="size-3.5 text-primary" />
                       <span>Edit Profile & Rates</span>
+                    </Link>
+                  </div>
+                )}
+
+                {role !== "admin" && (
+                  <div className="md:hidden space-y-1 py-1">
+                    <Link
+                      to="/about"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
+                    >
+                      <Info className="size-3.5 text-primary" />
+                      <span>About</span>
                     </Link>
                   </div>
                 )}
