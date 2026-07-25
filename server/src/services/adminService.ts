@@ -1,9 +1,20 @@
+import mongoose from "mongoose";
 import UserModel, { UserRole, VerificationStatus } from "../models/User.js";
 import BookingModel from "../models/Booking.js";
 import ReviewModel from "../models/Review.js";
 import { RefreshTokenModel } from "../models/RefreshToken.js";
 import { recalculateProviderTrust } from "./trustScoreService.js";
 import { sanitizeUser } from "./authService.js";
+
+export interface GetAdminBookingsParams {
+  status?: "all" | "pending" | "accepted" | "completed" | "cancelled" | "declined" | "active";
+  category?: string;
+  city?: string;
+  search?: string;
+  sortBy?: "newest" | "oldest" | "serviceDateAsc" | "serviceDateDesc";
+  page?: number;
+  limit?: number;
+}
 
 export interface GetUsersParams {
   role?: "all" | "customer" | "provider" | "admin";
@@ -411,4 +422,146 @@ export const getPlatformStats = async () => {
     activeBookings,
     averageTrustScore,
   };
+};
+
+export const getAdminBookings = async (params: GetAdminBookingsParams = {}) => {
+  const {
+    status = "all",
+    category = "",
+    city = "",
+    search = "",
+    sortBy = "newest",
+    page = 1,
+    limit = 15,
+  } = params;
+
+  const query: Record<string, any> = {};
+
+  if (status && status !== "all") {
+    if (status === "active") {
+      query.status = { $in: ["pending", "accepted"] };
+    } else if (status === "cancelled") {
+      query.status = { $in: ["cancelled", "declined"] };
+    } else {
+      query.status = status;
+    }
+  }
+
+  if (category && category.trim() && category !== "all") {
+    query.category = { $regex: new RegExp(`^${escapeRegex(category.trim())}$`, "i") };
+  }
+
+  if (city && city.trim() && city !== "all") {
+    query.city = { $regex: escapeRegex(city.trim()), $options: "i" };
+  }
+
+  if (search && search.trim()) {
+    const term = escapeRegex(search.trim());
+    const matchedUsers = await UserModel.find({
+      $or: [
+        { name: { $regex: term, $options: "i" } },
+        { email: { $regex: term, $options: "i" } },
+        { phone: { $regex: term, $options: "i" } },
+        { username: { $regex: term, $options: "i" } },
+      ],
+    }).select("_id");
+
+    const matchedUserIds = matchedUsers.map((u) => u._id);
+
+    const searchConditions: any[] = [
+      { category: { $regex: term, $options: "i" } },
+      { notes: { $regex: term, $options: "i" } },
+      { address: { $regex: term, $options: "i" } },
+      { city: { $regex: term, $options: "i" } },
+      { subCity: { $regex: term, $options: "i" } },
+      { customer: { $in: matchedUserIds } },
+      { provider: { $in: matchedUserIds } },
+    ];
+
+    if (mongoose.Types.ObjectId.isValid(search.trim())) {
+      searchConditions.push({ _id: search.trim() });
+    }
+
+    query.$or = searchConditions;
+  }
+
+  const sortOptions: Record<string, any> = {};
+  switch (sortBy) {
+    case "oldest":
+      sortOptions.createdAt = 1;
+      break;
+    case "serviceDateAsc":
+      sortOptions.serviceDate = 1;
+      break;
+    case "serviceDateDesc":
+      sortOptions.serviceDate = -1;
+      break;
+    case "newest":
+    default:
+      sortOptions.createdAt = -1;
+      break;
+  }
+
+  const safePage = Math.max(1, page);
+  const safeLimit = Math.max(1, Math.min(100, limit));
+  const skip = (safePage - 1) * safeLimit;
+
+  const [
+    bookings,
+    total,
+    totalGlobal,
+    totalPending,
+    totalAccepted,
+    totalCompleted,
+    totalCancelled,
+    totalDeclined,
+  ] = await Promise.all([
+    BookingModel.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(safeLimit)
+      .populate("customer", "name username avatar email phone location role")
+      .populate(
+        "provider",
+        "name username avatar email phone location role category hourlyRate trustScore verificationStatus",
+      ),
+    BookingModel.countDocuments(query),
+    BookingModel.countDocuments({}),
+    BookingModel.countDocuments({ status: "pending" }),
+    BookingModel.countDocuments({ status: "accepted" }),
+    BookingModel.countDocuments({ status: "completed" }),
+    BookingModel.countDocuments({ status: "cancelled" }),
+    BookingModel.countDocuments({ status: "declined" }),
+  ]);
+
+  return {
+    bookings: bookings.map((b) => (b.toJSON ? b.toJSON() : b)),
+    total,
+    page: safePage,
+    totalPages: Math.ceil(total / safeLimit),
+    counts: {
+      total: totalGlobal,
+      pending: totalPending,
+      accepted: totalAccepted,
+      completed: totalCompleted,
+      cancelled: totalCancelled,
+      declined: totalDeclined,
+      active: totalPending + totalAccepted,
+    },
+  };
+};
+
+export const getAdminBookingById = async (bookingId: string) => {
+  const booking = await BookingModel.findById(bookingId)
+    .populate("customer", "name username avatar email phone location role isSuspended")
+    .populate(
+      "provider",
+      "name username avatar email phone location role category hourlyRate trustScore verificationStatus isSuspended",
+    );
+
+  if (!booking) {
+    throw Object.assign(new Error("Booking not found"), { statusCode: 404 });
+  }
+
+  return booking.toJSON ? booking.toJSON() : booking;
 };

@@ -1,7 +1,7 @@
 import mongoose, { Schema, InferSchemaType } from "mongoose";
 
 export type BookingStatus = "pending" | "accepted" | "declined" | "cancelled" | "completed";
-export type CancelledBy = "customer" | "provider" | null;
+export type CancelledBy = "customer" | "provider" | "admin" | null;
 
 const bookingSchema = new Schema(
   {
@@ -53,7 +53,7 @@ const bookingSchema = new Schema(
     },
     cancelledBy: {
       type: String,
-      enum: ["customer", "provider", null],
+      enum: ["customer", "provider", "admin", null],
       default: null,
     },
     wasAccepted: {
@@ -86,6 +86,12 @@ const bookingSchema = new Schema(
     },
   },
 );
+
+bookingSchema.index({ customer: 1, createdAt: -1 });
+bookingSchema.index({ provider: 1, createdAt: -1 });
+bookingSchema.index({ status: 1, createdAt: -1 });
+bookingSchema.index({ category: 1, status: 1 });
+bookingSchema.index({ city: 1, status: 1 });
 
 export type Booking = InferSchemaType<typeof bookingSchema>;
 

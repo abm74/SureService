@@ -1,4 +1,4 @@
-import { body, param, validationResult } from "express-validator";
+import { body, param, query, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 
@@ -60,6 +60,49 @@ export const updateUserValidationRules = [
     .optional()
     .isNumeric()
     .withMessage("Hourly rate must be a number"),
+];
+
+export const adminBookingsQueryValidationRules = [
+  query("status")
+    .optional()
+    .isIn(["all", "active", "pending", "accepted", "completed", "cancelled", "declined"])
+    .withMessage("Invalid status filter"),
+  query("category")
+    .optional()
+    .trim(),
+  query("city")
+    .optional()
+    .trim(),
+  query("search")
+    .optional()
+    .trim(),
+  query("sortBy")
+    .optional()
+    .isIn(["newest", "oldest", "serviceDateAsc", "serviceDateDesc"])
+    .withMessage("Invalid sortBy option"),
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Page must be an integer greater than or equal to 1"),
+  query("limit")
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Limit must be an integer between 1 and 100"),
+];
+
+export const cancelAdminBookingValidationRules = [
+  param("bookingId")
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid Booking ID format"),
+  body("reason")
+    .optional()
+    .trim(),
+];
+
+export const bookingIdParamValidationRules = [
+  param("bookingId")
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid Booking ID format"),
 ];
 
 export const validateAdminRequest = (

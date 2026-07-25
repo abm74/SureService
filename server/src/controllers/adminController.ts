@@ -1,6 +1,7 @@
 import { Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 import * as adminService from "../services/adminService.js";
+import * as bookingService from "../services/bookingService.js";
 
 export const getPendingVerifications = async (
   req: AuthenticatedRequest,
@@ -177,6 +178,64 @@ export const getPlatformStats = async (
   try {
     const stats = await adminService.getPlatformStats();
     res.status(200).json({ stats });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAdminBookings = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { status, category, city, search, sortBy, page, limit } = req.query;
+
+    const result = await adminService.getAdminBookings({
+      status: status as any,
+      category: category as string,
+      city: city as string,
+      search: search as string,
+      sortBy: sortBy as any,
+      page: page ? Number(page) : 1,
+      limit: limit ? Number(limit) : 15,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const cancelAdminBooking = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const bookingId = req.params.bookingId as string;
+    const { reason } = req.body || {};
+    const adminId = req.user!.userId;
+
+    const booking = await bookingService.cancelBooking(bookingId, adminId, "admin", reason);
+    res.status(200).json({
+      message: "Booking cancelled successfully by administrator",
+      booking,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAdminBookingById = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const bookingId = req.params.bookingId as string;
+    const booking = await adminService.getAdminBookingById(bookingId);
+    res.status(200).json({ booking });
   } catch (error) {
     next(error);
   }

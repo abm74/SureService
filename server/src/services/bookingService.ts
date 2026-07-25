@@ -288,7 +288,7 @@ export const cancelBooking = async (
     await booking.save();
   } else {
     booking.status = "cancelled";
-    booking.cancelledBy = "customer";
+    booking.cancelledBy = "admin";
     booking.cancellationReason = reason || "Cancelled by administrator";
     await booking.save();
   }

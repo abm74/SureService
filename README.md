@@ -90,7 +90,7 @@ npm run dev:client   # Vite on http://localhost:5173
 | Role | Email | Password | Account Details |
 | :--- | :--- | :--- | :--- |
 | **Customer** | `customer@sureservice.com` | `DemoPassword123!` | Bethlehem Girma (Books & completes jobs) |
-| **Provider** | `provider@sureservice.com` | `DemoPassword123!` | Abebe Kebede (Master Electrician, 96 Trust Score) |
+| **Provider** | `provider@sureservice.com` | `DemoPassword123!` | Abebe Kebede (Master Electrician) |
 | **Admin** | `admin@sureservice.com` | `DemoPassword123!` | Dawit Haile (Audits ID verification queue) |
 
 ## API Overview

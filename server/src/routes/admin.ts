@@ -10,6 +10,9 @@ import {
   toggleUserStatus,
   deleteUser,
   getUserBookings,
+  getAdminBookings,
+  getAdminBookingById,
+  cancelAdminBooking,
 } from "../controllers/adminController.js";
 import { authenticateToken, requireRole } from "../middleware/authMiddleware.js";
 import {
@@ -18,6 +21,9 @@ import {
   userIdParamValidationRules,
   updateUserValidationRules,
   toggleUserStatusValidationRules,
+  adminBookingsQueryValidationRules,
+  cancelAdminBookingValidationRules,
+  bookingIdParamValidationRules,
   validateAdminRequest,
 } from "../validations/adminValidation.js";
 
@@ -70,6 +76,25 @@ adminRouter.get(
   userIdParamValidationRules,
   validateAdminRequest,
   getUserBookings,
+);
+
+adminRouter.get(
+  "/bookings",
+  adminBookingsQueryValidationRules,
+  validateAdminRequest,
+  getAdminBookings,
+);
+adminRouter.get(
+  "/bookings/:bookingId",
+  bookingIdParamValidationRules,
+  validateAdminRequest,
+  getAdminBookingById,
+);
+adminRouter.patch(
+  "/bookings/:bookingId/cancel",
+  cancelAdminBookingValidationRules,
+  validateAdminRequest,
+  cancelAdminBooking,
 );
 
 export default adminRouter;
