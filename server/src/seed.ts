@@ -7,7 +7,7 @@ import ReviewModel from "./models/Review.js";
 import CategoryModel from "./models/Category.js";
 import LocationModel from "./models/Location.js";
 import SystemConfigModel from "./models/SystemConfig.js";
-import { computeTrustScore } from "./services/trustScoreService.js";
+import { computeTrustScore, recalculateProviderTrust } from "./services/trustScoreService.js";
 
 const DEMO_PASSWORD = process.env.DEMO_USER_PASSWORD || "DemoPassword123!";
 
@@ -327,6 +327,12 @@ interface ProviderDef {
   verificationStatus: VerificationStatus;
   verificationDocType: string;
   verificationDocUrl: string;
+  verificationSubmittedAt?: Date | null;
+  verificationReviewedAt?: Date | null;
+  verificationRejectionReason?: string;
+  isSuspended?: boolean;
+  suspensionReason?: string;
+  suspendedAt?: Date | null;
   completedJobsCount: number;
   repeatCustomerCount: number;
   providerCancelledCount: number;
@@ -891,9 +897,10 @@ const PRESERVED_PROVIDERS: ProviderDef[] = [
     phone: "+251 91 699 5588",
     bio: "Automotive and residential key maker offering laser key duplication and electronic remote key fobs in Gotera.",
     location: { city: "Addis Ababa", subCity: "Gotera", address: "Gotera Interchange" },
-    verificationStatus: "approved",
+    verificationStatus: "pending",
     verificationDocType: "Security Trade License & Police Clearance",
     verificationDocUrl: "https://res.cloudinary.com/tlbpdthp/image/upload/v1787057064/fayda_sample_uao4ae.jpg",
+    verificationSubmittedAt: new Date("2026-08-29T11:15:00Z"),
     completedJobsCount: 3,
     repeatCustomerCount: 0,
     providerCancelledCount: 2,
@@ -927,9 +934,10 @@ const PRESERVED_PROVIDERS: ProviderDef[] = [
     phone: "+251 91 011 2233",
     bio: "Tile installer for bathrooms, kitchens and terrace corridors across Bole and surrounding areas.",
     location: { city: "Addis Ababa", subCity: "Bole", address: "Rwanda St" },
-    verificationStatus: "approved",
+    verificationStatus: "pending",
     verificationDocType: "Flooring Trade Competency Certificate Level IV",
     verificationDocUrl: "https://res.cloudinary.com/tlbpdthp/image/upload/v1787057064/fayda_sample_uao4ae.jpg",
+    verificationSubmittedAt: new Date("2026-08-28T09:00:00Z"),
     completedJobsCount: 2,
     repeatCustomerCount: 0,
     providerCancelledCount: 2,
@@ -1059,6 +1067,123 @@ const PRESERVED_PROVIDERS: ProviderDef[] = [
     completedJobsCount: 11,
     repeatCustomerCount: 3,
     providerCancelledCount: 0,
+  },
+  {
+    name: "Hana Desta",
+    username: "hana_tutor",
+    email: "hana.tutor@sureservice.com",
+    category: "Tutor",
+    hourlyRate: 380,
+    experienceYears: 5,
+    skills: ["Conversational English & IELTS", "Amharic Grammar & Writing", "Mathematics (Grade 9-12)"],
+    phone: "+251 91 222 6677",
+    bio: "Certified language and mathematics tutor offering tailored curriculum for high school and university students in Kazanchis.",
+    location: { city: "Addis Ababa", subCity: "Kazanchis", address: "Menelik II Ave" },
+    verificationStatus: "pending",
+    verificationDocType: "B.Sc. Education & Teaching License",
+    verificationDocUrl: "https://res.cloudinary.com/tlbpdthp/image/upload/v1787057064/fayda_sample_uao4ae.jpg",
+    verificationSubmittedAt: new Date("2026-08-30T08:30:00Z"),
+    completedJobsCount: 4,
+    repeatCustomerCount: 1,
+    providerCancelledCount: 0,
+  },
+  {
+    name: "Kassahun Worku",
+    username: "kassahun_solar",
+    email: "kassahun.solar@sureservice.com",
+    category: "Solar & Generator Tech",
+    hourlyRate: 460,
+    experienceYears: 7,
+    skills: ["Perkins/Cummins Generator Maintenance", "Off-Grid Battery Bank Sizing", "Solar PV Rooftop Array Mounting"],
+    phone: "+251 91 333 9900",
+    bio: "Solar installation technician and backup power specialist serving commercial clients and residential estates in Hawassa.",
+    location: { city: "Hawassa", subCity: "Tabor", address: "Tabor Mountain Rd" },
+    verificationStatus: "pending",
+    verificationDocType: "Energy Authority Solar Competency Class A",
+    verificationDocUrl: "https://res.cloudinary.com/tlbpdthp/image/upload/v1787057064/fayda_sample_uao4ae.jpg",
+    verificationSubmittedAt: new Date("2026-08-30T14:45:00Z"),
+    completedJobsCount: 3,
+    repeatCustomerCount: 0,
+    providerCancelledCount: 0,
+  },
+  {
+    name: "Genet Assefa",
+    username: "genet_clean",
+    email: "genet.cleaning@sureservice.com",
+    category: "Home Cleaner",
+    hourlyRate: 260,
+    experienceYears: 4,
+    skills: ["Deep House Cleaning", "Move-in/Move-out Sanitization", "Kitchen Grease Removal"],
+    phone: "+251 91 444 1122",
+    bio: "Meticulous residential cleaning professional offering deep sanitization and kitchen detailing in Piassa.",
+    location: { city: "Addis Ababa", subCity: "Piassa", address: "Arada St" },
+    verificationStatus: "pending",
+    verificationDocType: "National ID (Fayda)",
+    verificationDocUrl: "https://res.cloudinary.com/tlbpdthp/image/upload/v1787057064/fayda_sample_uao4ae.jpg",
+    verificationSubmittedAt: new Date("2026-08-31T10:20:00Z"),
+    completedJobsCount: 2,
+    repeatCustomerCount: 0,
+    providerCancelledCount: 0,
+  },
+  {
+    name: "Tewodros Alemu",
+    username: "tewodros_auto",
+    email: "tewodros.mechanic@sureservice.com",
+    category: "Auto Mechanic",
+    hourlyRate: 400,
+    experienceYears: 6,
+    skills: ["OBD-II Computer Diagnostics", "Brake Pad Replacement", "Cooling Radiator Flushes"],
+    phone: "+251 91 555 3344",
+    bio: "Mobile auto technician providing engine fault scanning, brake services, and electrical troubleshooting across Adama.",
+    location: { city: "Adama", subCity: "Posta", address: "Posta Bet Central" },
+    verificationStatus: "pending",
+    verificationDocType: "Automotive Engineering Master License",
+    verificationDocUrl: "https://res.cloudinary.com/tlbpdthp/image/upload/v1787057064/fayda_sample_uao4ae.jpg",
+    verificationSubmittedAt: new Date("2026-08-31T16:00:00Z"),
+    completedJobsCount: 3,
+    repeatCustomerCount: 1,
+    providerCancelledCount: 0,
+  },
+  {
+    name: "Dawit Teshome",
+    username: "dawit_paint_rejected",
+    email: "dawit.paint.audit@sureservice.com",
+    category: "Painter",
+    hourlyRate: 300,
+    experienceYears: 3,
+    skills: ["Interior Emulsion", "Textured Wall Finishes"],
+    phone: "+251 91 666 4455",
+    bio: "Painter specializing in interior residential paintwork in Bole.",
+    location: { city: "Addis Ababa", subCity: "Bole", address: "Rwanda St" },
+    verificationStatus: "rejected",
+    verificationDocType: "Kebele ID",
+    verificationDocUrl: "https://res.cloudinary.com/tlbpdthp/image/upload/v1787057064/fayda_sample_uao4ae.jpg",
+    verificationReviewedAt: new Date("2026-08-27T12:00:00Z"),
+    verificationRejectionReason: "ID photo was blurry and expired. Please upload a clear copy of your valid National ID or Ethiopian Trade License.",
+    completedJobsCount: 1,
+    repeatCustomerCount: 0,
+    providerCancelledCount: 0,
+  },
+  {
+    name: "Tamirat Desta",
+    username: "tamirat_susp",
+    email: "tamirat.susp@sureservice.com",
+    category: "Electrician",
+    hourlyRate: 350,
+    experienceYears: 4,
+    skills: ["Short Circuit Repair", "Socket & Switch Fitting"],
+    phone: "+251 91 777 5566",
+    bio: "Electrician in CMC.",
+    location: { city: "Addis Ababa", subCity: "CMC", address: "Michael Roundabout" },
+    verificationStatus: "unverified",
+    verificationDocType: "Kebele ID",
+    verificationDocUrl: "",
+    isSuspended: true,
+    suspensionReason: "Policy violation: off-platform solicitation and unfulfilled accepted bookings",
+    suspendedAt: new Date("2026-08-20T10:00:00Z"),
+    completedJobsCount: 1,
+    repeatCustomerCount: 0,
+    providerCancelledCount: 3,
   },
 ];
 
@@ -1510,7 +1635,23 @@ const seedDatabase = async () => {
       location: { city: "Dire Dawa", subCity: "Megala", address: "Avenue Gabriel" },
     });
 
-    // 3. Generate 275 Providers across all 55 Ethiopian Subcities (5 distinct categories per subcity)
+    const customerKalkidanSusp = await UserModel.create({
+      name: "Kalkidan Tesfaye",
+      username: "kalkidan_susp",
+      email: "kalkidan.susp@example.com",
+      password: DEMO_PASSWORD,
+      role: "customer",
+      phone: "+251 91 700 8899",
+      avatar: "https://api.dicebear.com/7.x/initials/svg?seed=KalkidanSusp&backgroundColor=f43f5e",
+      bio: "Resident in Bole under account review.",
+      location: { city: "Addis Ababa", subCity: "Bole", address: "Rwanda Street" },
+      isSuspended: true,
+      isActive: false,
+      suspensionReason: "Repeated non-payment for completed in-person services",
+      suspendedAt: new Date("2026-08-15T10:00:00Z"),
+    });
+
+    // 3. Generate 275+ Providers across all 55 Ethiopian Subcities
     const providerDefs = generateAllProviderDefs();
     const seededProviders: Record<string, any> = {};
 
@@ -1536,6 +1677,19 @@ const seedDatabase = async () => {
         verificationStatus: def.verificationStatus,
         verificationDocType: def.verificationDocType,
         verificationDocUrl: def.verificationDocUrl,
+        verificationSubmittedAt:
+          def.verificationSubmittedAt ||
+          (def.verificationStatus === "pending" ? new Date("2026-08-28T09:30:00Z") : null),
+        verificationReviewedAt:
+          def.verificationReviewedAt ||
+          (def.verificationStatus === "approved" || def.verificationStatus === "rejected"
+            ? new Date("2026-08-25T14:00:00Z")
+            : null),
+        verificationRejectionReason: def.verificationRejectionReason || "",
+        isSuspended: def.isSuspended || false,
+        isActive: def.isSuspended ? false : true,
+        suspensionReason: def.suspensionReason || "",
+        suspendedAt: def.suspendedAt || null,
         trustScore,
         trustBreakdown: breakdown,
         completedJobsCount: def.completedJobsCount,
@@ -1548,7 +1702,7 @@ const seedDatabase = async () => {
 
     console.log(`Seeded ${providerDefs.length} providers across all 55 subcities in 8 Ethiopian cities.`);
 
-    // 4. Seed Verified Completed Bookings & Reviews across Services
+    // 4. Seed Verified Bookings, Inquiries, Active Jobs, Cancellations & Reviews across Services
     interface BookingSeedSpec {
       customer: any;
       providerUsername: string;
@@ -1559,9 +1713,10 @@ const seedDatabase = async () => {
       city: string;
       subCity: string;
       notes: string;
-      status: "completed" | "accepted" | "pending" | "cancelled";
+      status: "completed" | "accepted" | "pending" | "cancelled" | "declined";
       wasAccepted: boolean;
       cancelledBy?: "provider" | "customer";
+      cancellationReason?: string;
       acceptedAt?: Date;
       completedAt?: Date;
       rating?: number;
@@ -1569,7 +1724,11 @@ const seedDatabase = async () => {
     }
 
     const bookingSpecs: BookingSeedSpec[] = [
-      // 1. Electrical Bookings
+      // ==========================================
+      // SECTION 1: DEMO CUSTOMER (Bethlehem Girma) & DEMO PROVIDER (Abebe Kebede)
+      // ==========================================
+
+      // 1.1 Completed Jobs with 5-Star Reviews (Abebe & Bethlehem - Repeat Client #1)
       {
         customer: customerBethlehem,
         providerUsername: "abebe_electric",
@@ -1605,60 +1764,103 @@ const seedDatabase = async () => {
         reviewComment: "Hired Abebe again for inverter setup. Clean workmanship, fair pricing, and clear explanations.",
       },
       {
-        customer: customerMahlet,
-        providerUsername: "ermias_solar",
+        customer: customerBethlehem,
+        providerUsername: "abebe_electric",
         category: "Electrician",
-        serviceDate: "2026-08-06",
-        timeSlot: "Full Day (09:00 AM - 04:00 PM)",
-        address: "Lake Awassa Drive, Villa 4",
-        city: "Hawassa",
-        subCity: "Piazza",
-        notes: "10kVA solar hybrid inverter installation with 8 lithium battery modules.",
+        serviceDate: "2026-08-20",
+        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Conduit wiring and surge protection for home entertainment suite.",
         status: "completed",
         wasAccepted: true,
-        acceptedAt: new Date("2026-08-05T08:30:00Z"),
-        completedAt: new Date("2026-08-06T16:00:00Z"),
+        acceptedAt: new Date("2026-08-19T10:00:00Z"),
+        completedAt: new Date("2026-08-20T17:00:00Z"),
         rating: 5,
-        reviewComment: "Flawless solar hybrid installation in Hawassa. Our resort now operates 24/7 without power disruptions.",
+        reviewComment: "Third time hiring Abebe! Replaced emergency conduit cabling flawlessly. Our go-to master electrician in Bole.",
       },
 
-      // 2. Plumbing Bookings
+      // 1.2 Active / In-Progress Scheduled Job (Bethlehem & Abebe)
       {
-        customer: customerSenait,
-        providerUsername: "samuel_plumb",
-        category: "Plumber",
-        serviceDate: "2026-08-09",
-        timeSlot: "Afternoon (01:30 PM - 04:30 PM)",
-        address: "Main Expressway Road, Villa 22",
-        city: "Adama",
+        customer: customerBethlehem,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-09-04",
+        timeSlot: "Morning (09:30 AM - 12:30 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
         subCity: "Bole",
-        notes: "Replace overhead water tank float valve and pressurized booster pump.",
-        status: "completed",
+        notes: "Smart surge protector & earthing ground verification for high-end audio setup.",
+        status: "accepted",
         wasAccepted: true,
-        acceptedAt: new Date("2026-08-08T10:00:00Z"),
-        completedAt: new Date("2026-08-09T16:00:00Z"),
-        rating: 5,
-        reviewComment: "Samuel fixed our pump pressure in Adama swiftly. Fair pricing, genuine parts, and friendly demeanor.",
+        acceptedAt: new Date("2026-09-01T10:00:00Z"),
       },
+
+      // 1.3 Open Pending Inquiry (Bethlehem & Abebe)
       {
-        customer: customerEyerusalem,
+        customer: customerBethlehem,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-09-12",
+        timeSlot: "Morning (09:00 AM - 12:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Breaker panel inspection & smart submeter setup for second-floor guest suite.",
+        status: "pending",
+        wasAccepted: false,
+      },
+
+      // ==========================================
+      // SECTION 2: DEMO CUSTOMER (Bethlehem Girma) - Other Diverse Bookings
+      // ==========================================
+
+      // 2.1 Pending Inquiries with Other Providers
+      {
+        customer: customerBethlehem,
         providerUsername: "yohannes_plumb",
         category: "Plumber",
-        serviceDate: "2026-08-04",
+        serviceDate: "2026-09-08",
         timeSlot: "Morning (09:00 AM - 12:00 PM)",
-        address: "Cunningham Street, Gallery 10",
+        address: "Bole Medhanialem, House 412",
         city: "Addis Ababa",
-        subCity: "Piassa",
-        notes: "Underground water pipe leakage diagnosis and pressure valve replacement.",
-        status: "completed",
-        wasAccepted: true,
-        acceptedAt: new Date("2026-08-03T11:00:00Z"),
-        completedAt: new Date("2026-08-04T12:30:00Z"),
-        rating: 5,
-        reviewComment: "Yohannes accurately pinpointed the underground leak without destroying our tile walkway. True professional.",
+        subCity: "Bole",
+        notes: "Kitchen sink main drainage clogged and leaking into lower cabinet.",
+        status: "pending",
+        wasAccepted: false,
+      },
+      {
+        customer: customerBethlehem,
+        providerUsername: "fikadu_carpentry",
+        category: "Carpenter",
+        serviceDate: "2026-09-10",
+        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Custom solid oak living room bookshelf assembly and wall anchoring.",
+        status: "pending",
+        wasAccepted: false,
       },
 
-      // 3. Home Cleaner Bookings
+      // 2.2 Accepted Scheduled Job with Appliance Specialist
+      {
+        customer: customerBethlehem,
+        providerUsername: "melaku_appliance",
+        category: "Appliance Repair",
+        serviceDate: "2026-09-05",
+        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Commercial electric mitad thermostat calibration and temperature gauge check.",
+        status: "accepted",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-09-01T14:30:00Z"),
+      },
+
+      // 2.3 Completed with 5-Star Reviews (Cleaning & Security)
       {
         customer: customerBethlehem,
         providerUsername: "almaz_cleaning",
@@ -1677,6 +1879,562 @@ const seedDatabase = async () => {
         reviewComment: "Almaz and her team did an immaculate job. Every corner of the house was spotless and fresh.",
       },
       {
+        customer: customerBethlehem,
+        providerUsername: "tariku_security",
+        category: "Locksmith & Security",
+        serviceDate: "2026-08-07",
+        timeSlot: "Morning (10:00 AM - 12:30 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Install digital biometric fingerprint handle lock on main steel entrance door.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-06T16:00:00Z"),
+        completedAt: new Date("2026-08-07T12:15:00Z"),
+        rating: 5,
+        reviewComment: "Tariku installed our digital smart lock flawlessly. Great security upgrade and easy to program codes.",
+      },
+
+      // 2.4 Completed WITHOUT Review (Awaiting Customer Review in UI)
+      {
+        customer: customerBethlehem,
+        providerUsername: "eskinder_paint",
+        category: "Painter",
+        serviceDate: "2026-08-25",
+        timeSlot: "Full Day (09:00 AM - 05:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Living room satin wall painting and ceiling mold treatment.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-24T09:00:00Z"),
+        completedAt: new Date("2026-08-25T16:30:00Z"),
+      },
+      {
+        customer: customerBethlehem,
+        providerUsername: "yonas_hvac",
+        category: "HVAC Technician",
+        serviceDate: "2026-08-27",
+        timeSlot: "Morning (09:00 AM - 12:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Split AC deep coil cleaning and refrigerant pressure test.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-26T11:00:00Z"),
+        completedAt: new Date("2026-08-27T11:45:00Z"),
+      },
+
+      // 2.5 Cancelled by Customer (Safe Cancellation)
+      {
+        customer: customerBethlehem,
+        providerUsername: "eden_gardens",
+        category: "Landscaper & Gardener",
+        serviceDate: "2026-08-15",
+        timeSlot: "Morning (09:00 AM - 01:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Lawn sodding and decorative flowerbed shaping.",
+        status: "cancelled",
+        wasAccepted: false,
+        cancelledBy: "customer",
+        cancellationReason: "Rescheduled garden landscaping project; will book again next month.",
+      },
+      {
+        customer: customerBethlehem,
+        providerUsername: "danait_movers",
+        category: "Moving & Relocation",
+        serviceDate: "2026-08-18",
+        timeSlot: "Morning (08:00 AM - 01:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Apartment furniture relocation to Bole Atlas.",
+        status: "cancelled",
+        wasAccepted: true,
+        cancelledBy: "customer",
+        cancellationReason: "Apartment lease extended by landlord; postponed moving date.",
+      },
+
+      // 2.6 Cancelled by Provider (Penalty Applied)
+      {
+        customer: customerBethlehem,
+        providerUsername: "binyam_tile",
+        category: "Flooring & Tiling",
+        serviceDate: "2026-07-30",
+        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Balcony tile regrouting & sealant application.",
+        status: "cancelled",
+        wasAccepted: true,
+        cancelledBy: "provider",
+        cancellationReason: "Emergency workshop machinery failure.",
+      },
+
+      // 2.7 Declined by Provider
+      {
+        customer: customerBethlehem,
+        providerUsername: "muluken_garage",
+        category: "Auto Mechanic",
+        serviceDate: "2026-08-22",
+        timeSlot: "Morning (09:00 AM - 12:00 PM)",
+        address: "Bole Medhanialem, House 412",
+        city: "Addis Ababa",
+        subCity: "Bole",
+        notes: "Emergency mobile brake pad replacement.",
+        status: "declined",
+        wasAccepted: false,
+        cancellationReason: "Fully booked with engine overhaul commitments for the requested Saturday morning slot.",
+      },
+
+      // ==========================================
+      // SECTION 3: DEMO PROVIDER (Abebe Kebede) - Additional Track Record & States
+      // ==========================================
+
+      // 3.1 Repeat Client #2: Yared Demisse (2 Completed + 1 Pending)
+      {
+        customer: customerYared,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-03",
+        timeSlot: "Morning (09:00 AM - 12:00 PM)",
+        address: "ECA Road, Office 204",
+        city: "Addis Ababa",
+        subCity: "Kazanchis",
+        notes: "Server room dedicated electrical line & surge protection.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-02T10:00:00Z"),
+        completedAt: new Date("2026-08-03T12:00:00Z"),
+        rating: 5,
+        reviewComment: "Abebe wired dedicated surge-isolated lines for our server racks. Rock solid reliability.",
+      },
+      {
+        customer: customerYared,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-16",
+        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
+        address: "ECA Road, Office 204",
+        city: "Addis Ababa",
+        subCity: "Kazanchis",
+        notes: "Conference room architectural LED track lighting.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-15T11:00:00Z"),
+        completedAt: new Date("2026-08-16T16:00:00Z"),
+        rating: 5,
+        reviewComment: "Hired Abebe again for our executive boardroom lighting. Punctual, neat, and highly skilled.",
+      },
+      {
+        customer: customerYared,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-09-14",
+        timeSlot: "Morning (09:00 AM - 01:00 PM)",
+        address: "ECA Road, Office 204",
+        city: "Addis Ababa",
+        subCity: "Kazanchis",
+        notes: "Office 3-phase generator ATS automatic transfer switch installation.",
+        status: "pending",
+        wasAccepted: false,
+      },
+
+      // 3.2 Repeat Client #3: Rahel Tadesse (2 Completed)
+      {
+        customer: customerRahel,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-05",
+        timeSlot: "Full Day (09:00 AM - 05:00 PM)",
+        address: "Tsehay Real Estate, Building C",
+        city: "Addis Ababa",
+        subCity: "CMC",
+        notes: "Tsehay Real Estate luxury chandelier and ceiling cove lighting.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-04T12:00:00Z"),
+        completedAt: new Date("2026-08-05T17:00:00Z"),
+        rating: 5,
+        reviewComment: "Masterful installation of our heavy crystal chandelier. Balanced perfectly with concealed wiring.",
+      },
+      {
+        customer: customerRahel,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-19",
+        timeSlot: "Afternoon (02:00 PM - 05:30 PM)",
+        address: "Tsehay Real Estate, Building C",
+        city: "Addis Ababa",
+        subCity: "CMC",
+        notes: "Kitchen 380V three-phase heavy appliance circuit wiring.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-18T14:00:00Z"),
+        completedAt: new Date("2026-08-19T17:30:00Z"),
+        rating: 4,
+        reviewComment: "Great electrical work on our induction cooktop line. Very thorough with safety earthing tests.",
+      },
+
+      // 3.3 Other Completed Deliveries for Abebe (Solomon, Biruk, Abel, Dawit, Frehiwot)
+      {
+        customer: customerSolomon,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-07",
+        timeSlot: "Full Day (09:00 AM - 04:00 PM)",
+        address: "Near Safari Junction, Villa 88",
+        city: "Addis Ababa",
+        subCity: "Summit",
+        notes: "Villa 10kVA solar hybrid inverter integration.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-06T09:00:00Z"),
+        completedAt: new Date("2026-08-07T16:00:00Z"),
+        rating: 5,
+        reviewComment: "Abebe integrated our solar battery bank with the main distribution board seamlessly. Zero flicker on switchover.",
+      },
+      {
+        customer: customerBiruk,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-12",
+        timeSlot: "Full Day (09:00 AM - 05:00 PM)",
+        address: "South Africa Street, Villa 2",
+        city: "Addis Ababa",
+        subCity: "Old Airport",
+        notes: "Perimeter wall security lighting & motion sensor conduits.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-11T10:00:00Z"),
+        completedAt: new Date("2026-08-12T16:30:00Z"),
+        rating: 5,
+        reviewComment: "Top quality conduit cabling and sensor calibration. Works like clockwork.",
+      },
+      {
+        customer: customerAbelG,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-14",
+        timeSlot: "Full Day (09:00 AM - 04:00 PM)",
+        address: "Gofa Sefer, Garage 5",
+        city: "Addis Ababa",
+        subCity: "Kera",
+        notes: "Commercial auto garage 380V compressor connection & fuse panel.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-13T09:00:00Z"),
+        completedAt: new Date("2026-08-14T15:30:00Z"),
+        rating: 5,
+        reviewComment: "Industrial electrical work done to perfection. Handled the 3-phase machinery without issue.",
+      },
+      {
+        customer: customerDawitB,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-17",
+        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
+        address: "Ayat Zone 2, House 14",
+        city: "Addis Ababa",
+        subCity: "Ayat",
+        notes: "Smart home automated dimmer switch installation.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-16T13:00:00Z"),
+        completedAt: new Date("2026-08-17T16:30:00Z"),
+        rating: 5,
+        reviewComment: "Abebe configured all our smart switches and explained the mobile control setup clearly.",
+      },
+      {
+        customer: customerFrehiwot,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-22",
+        timeSlot: "Full Day (09:00 AM - 05:00 PM)",
+        address: "Lakeside Road, Villa 10",
+        city: "Bishoftu",
+        subCity: "Babogaya",
+        notes: "Lakeside villa backup generator transfer switch wiring.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-21T09:00:00Z"),
+        completedAt: new Date("2026-08-22T16:00:00Z"),
+        rating: 5,
+        reviewComment: "Traveled to Bishoftu on time and wired our generator ATS flawlessly. Highly recommended master electrician.",
+      },
+
+      // 3.4 Abebe - Active / In-Progress Scheduled Jobs with Tsion & Henok
+      {
+        customer: customerTsion,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-09-06",
+        timeSlot: "Morning (09:00 AM - 01:00 PM)",
+        address: "Karl Square, Villa 18",
+        city: "Addis Ababa",
+        subCity: "Sarbet",
+        notes: "Main electrical distribution box rewire & safety inspection.",
+        status: "accepted",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-09-01T15:00:00Z"),
+      },
+      {
+        customer: customerHenok,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-09-07",
+        timeSlot: "Full Day (09:00 AM - 04:00 PM)",
+        address: "Mebrat Hail Condominium, Block 12",
+        city: "Addis Ababa",
+        subCity: "Gerji",
+        notes: "Apartment building digital sub-meter installation for 6 units.",
+        status: "accepted",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-09-02T08:30:00Z"),
+      },
+
+      // 3.5 Abebe - Pending Inquiries (from Solomon)
+      {
+        customer: customerSolomon,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-09-15",
+        timeSlot: "Afternoon (02:00 PM - 05:30 PM)",
+        address: "Near Safari Junction, Villa 88",
+        city: "Addis Ababa",
+        subCity: "Summit",
+        notes: "Villa backup solar battery rack cabling & inverter calibration.",
+        status: "pending",
+        wasAccepted: false,
+      },
+
+      // 3.6 Abebe - Completed Job Awaiting Customer Review
+      {
+        customer: customerKalkidan,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-28",
+        timeSlot: "Morning (10:00 AM - 01:00 PM)",
+        address: "Haya Hulet Square, Commercial Kitchen",
+        city: "Addis Ababa",
+        subCity: "22 Mazoria",
+        notes: "Restaurant commercial freezer breaker tripping diagnosis.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-27T14:00:00Z"),
+        completedAt: new Date("2026-08-28T12:30:00Z"),
+      },
+
+      // 3.7 Abebe - Customer Cancelled Request
+      {
+        customer: customerSelamawitG,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-11",
+        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
+        address: "Athletics Federation Building",
+        city: "Addis Ababa",
+        subCity: "Gurd Shola",
+        notes: "Office ceiling recessed spotlight replacement.",
+        status: "cancelled",
+        wasAccepted: true,
+        cancelledBy: "customer",
+        cancellationReason: "Building facility management replaced the spotlights under corporate warranty.",
+      },
+
+      // 3.8 Abebe - Declined Inquiry
+      {
+        customer: customerTigistM,
+        providerUsername: "abebe_electric",
+        category: "Electrician",
+        serviceDate: "2026-08-23",
+        timeSlot: "Morning (09:00 AM - 12:00 PM)",
+        address: "Musika Sefer Avenue",
+        city: "Addis Ababa",
+        subCity: "Lebu",
+        notes: "Emergency midnight generator short circuit repair.",
+        status: "declined",
+        wasAccepted: false,
+        cancellationReason: "Outside standard emergency coverage hours; referred to local Lebu on-call electrician.",
+      },
+
+      // ==========================================
+      // SECTION 4: REGIONAL CITIES & OTHER SPECIALIZED CATEGORIES
+      // ==========================================
+
+      // 4.1 Hawassa
+      {
+        customer: customerMahlet,
+        providerUsername: "ermias_solar",
+        category: "Electrician",
+        serviceDate: "2026-08-06",
+        timeSlot: "Full Day (09:00 AM - 04:00 PM)",
+        address: "Lake Awassa Drive, Villa 4",
+        city: "Hawassa",
+        subCity: "Piazza",
+        notes: "10kVA solar hybrid inverter installation with 8 lithium battery modules.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-05T08:30:00Z"),
+        completedAt: new Date("2026-08-06T16:00:00Z"),
+        rating: 5,
+        reviewComment: "Flawless solar hybrid installation in Hawassa. Our resort now operates 24/7 without power disruptions.",
+      },
+      {
+        customer: customerMahlet,
+        providerUsername: "kidus_hvac",
+        category: "HVAC Technician",
+        serviceDate: "2026-08-04",
+        timeSlot: "Morning (09:00 AM - 12:30 PM)",
+        address: "Lake Awassa Drive, Villa 4",
+        city: "Hawassa",
+        subCity: "Piazza",
+        notes: "Restaurant walk-in refrigerator compressor replacement and freon gas refill.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-03T16:00:00Z"),
+        completedAt: new Date("2026-08-04T12:00:00Z"),
+        rating: 5,
+        reviewComment: "Kidus restored our restaurant cold room cooling in Hawassa within hours. Saved all our food supplies.",
+      },
+      {
+        customer: customerMahlet,
+        providerUsername: "kidus_hvac",
+        category: "HVAC Technician",
+        serviceDate: "2026-08-24",
+        timeSlot: "Morning (10:00 AM - 01:00 PM)",
+        address: "Lake Awassa Drive, Villa 4",
+        city: "Hawassa",
+        subCity: "Piazza",
+        notes: "Dining room dual-inverter AC unit not blowing cool air.",
+        status: "pending",
+        wasAccepted: false,
+      },
+
+      // 4.2 Adama
+      {
+        customer: customerSenait,
+        providerUsername: "samuel_plumb",
+        category: "Plumber",
+        serviceDate: "2026-08-09",
+        timeSlot: "Afternoon (01:30 PM - 04:30 PM)",
+        address: "Main Expressway Road, Villa 22",
+        city: "Adama",
+        subCity: "Bole",
+        notes: "Replace overhead water tank float valve and pressurized booster pump.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-08T10:00:00Z"),
+        completedAt: new Date("2026-08-09T16:00:00Z"),
+        rating: 5,
+        reviewComment: "Samuel fixed our pump pressure in Adama swiftly. Fair pricing, genuine parts, and friendly demeanor.",
+      },
+
+      // 4.3 Bahir Dar
+      {
+        customer: customerNatnael,
+        providerUsername: "meron_paint",
+        category: "Painter",
+        serviceDate: "2026-08-07",
+        timeSlot: "Full Day (08:30 AM - 04:30 PM)",
+        address: "Lake Tana Promenade, Office 10",
+        city: "Bahir Dar",
+        subCity: "Kebele 04",
+        notes: "Interior wall refresh with washable satin emulsion paint.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-06T10:00:00Z"),
+        completedAt: new Date("2026-08-07T16:30:00Z"),
+        rating: 5,
+        reviewComment: "Meron painted our tech office in Bahir Dar with great precision. Edges are laser-sharp and clean.",
+      },
+      {
+        customer: customerNatnael,
+        providerUsername: "selam_solar",
+        category: "Solar & Generator Tech",
+        serviceDate: "2026-08-03",
+        timeSlot: "Full Day (09:00 AM - 05:00 PM)",
+        address: "Lake Tana Promenade, Tech Hub",
+        city: "Bahir Dar",
+        subCity: "Kebele 04",
+        notes: "Install 5kW roof solar system with 10kWh LiFePO4 battery storage bank.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-02T10:00:00Z"),
+        completedAt: new Date("2026-08-03T17:00:00Z"),
+        rating: 5,
+        reviewComment: "Selam configured our solar backup system in Bahir Dar brilliantly. Continuous power without noise.",
+      },
+      {
+        customer: customerNatnael,
+        providerUsername: "meron_paint",
+        category: "Painter",
+        serviceDate: "2026-08-23",
+        timeSlot: "Morning (09:00 AM - 01:00 PM)",
+        address: "Lake Tana Promenade, Office 10",
+        city: "Bahir Dar",
+        subCity: "Kebele 04",
+        notes: "Two meeting room interior wall refresh with washable satin emulsion.",
+        status: "accepted",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-20T14:30:00Z"),
+      },
+
+      // 4.4 Dire Dawa
+      {
+        customer: customerMeseret,
+        providerUsername: "nebiyu_hvac",
+        category: "HVAC Technician",
+        serviceDate: "2026-08-26",
+        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
+        address: "Avenue Gabriel, Shop 4",
+        city: "Dire Dawa",
+        subCity: "Megala",
+        notes: "Store cooling unit refrigerant recharge.",
+        status: "pending",
+        wasAccepted: false,
+      },
+
+      // 4.5 Bishoftu
+      {
+        customer: customerFrehiwot,
+        providerUsername: "eden_gardens",
+        category: "Landscaper & Gardener",
+        serviceDate: "2026-08-25",
+        timeSlot: "Morning (09:00 AM - 01:00 PM)",
+        address: "Lakeside Road, Villa 10",
+        city: "Bishoftu",
+        subCity: "Babogaya",
+        notes: "Lawn sodding and flowering shrub planting along the lakefront fence.",
+        status: "pending",
+        wasAccepted: false,
+      },
+
+      // 4.6 Additional Qualitative Reviews across Categories
+      {
+        customer: customerEyerusalem,
+        providerUsername: "yohannes_plumb",
+        category: "Plumber",
+        serviceDate: "2026-08-04",
+        timeSlot: "Morning (09:00 AM - 12:00 PM)",
+        address: "Cunningham Street, Gallery 10",
+        city: "Addis Ababa",
+        subCity: "Piassa",
+        notes: "Underground water pipe leakage diagnosis and pressure valve replacement.",
+        status: "completed",
+        wasAccepted: true,
+        acceptedAt: new Date("2026-08-03T11:00:00Z"),
+        completedAt: new Date("2026-08-04T12:30:00Z"),
+        rating: 5,
+        reviewComment: "Yohannes accurately pinpointed the underground leak without destroying our tile walkway. True professional.",
+      },
+      {
         customer: customerRahel,
         providerUsername: "hiwot_clean",
         category: "Home Cleaner",
@@ -1693,8 +2451,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Hiwot's steam cleaning equipment removed all renovation gypsum dust without a trace. Highly recommended!",
       },
-
-      // 4. Tutor Bookings
       {
         customer: customerTsion,
         providerUsername: "selam_tutor",
@@ -1729,8 +2485,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Dr. Bereket is unmatched in physics problem-solving. Structured pedagogy and deep conceptual clarity.",
       },
-
-      // 5. Carpenter Bookings
       {
         customer: customerSolomon,
         providerUsername: "surafel_wood",
@@ -1765,24 +2519,19 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Fikadu's woodwork transformed our executive boardroom completely. Solid, elegant, and perfectly fitted.",
       },
-
-      // 6. Painter Bookings
       {
-        customer: customerNatnael,
-        providerUsername: "meron_paint",
-        category: "Painter",
-        serviceDate: "2026-08-07",
-        timeSlot: "Full Day (08:30 AM - 04:30 PM)",
-        address: "Lake Tana Promenade, Office 10",
-        city: "Bahir Dar",
-        subCity: "Kebele 04",
-        notes: "Interior wall refresh with washable satin emulsion paint.",
-        status: "completed",
+        customer: customerYared,
+        providerUsername: "fitsum_wood",
+        category: "Carpenter",
+        serviceDate: "2026-08-20",
+        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
+        address: "ECA Road, Office 204",
+        city: "Addis Ababa",
+        subCity: "Kazanchis",
+        notes: "Custom conference room storage shelves and document organizer.",
+        status: "accepted",
         wasAccepted: true,
-        acceptedAt: new Date("2026-08-06T10:00:00Z"),
-        completedAt: new Date("2026-08-07T16:30:00Z"),
-        rating: 5,
-        reviewComment: "Meron painted our tech office in Bahir Dar with great precision. Edges are laser-sharp and clean.",
+        acceptedAt: new Date("2026-08-19T11:00:00Z"),
       },
       {
         customer: customerBiruk,
@@ -1801,25 +2550,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Eskinder provided top-quality exterior paintwork. Completely waterproof and beautiful finish.",
       },
-
-      // 7. HVAC Technician Bookings
-      {
-        customer: customerMahlet,
-        providerUsername: "kidus_hvac",
-        category: "HVAC Technician",
-        serviceDate: "2026-08-04",
-        timeSlot: "Morning (09:00 AM - 12:30 PM)",
-        address: "Lake Awassa Drive, Villa 4",
-        city: "Hawassa",
-        subCity: "Piazza",
-        notes: "Restaurant walk-in refrigerator compressor replacement and freon gas refill.",
-        status: "completed",
-        wasAccepted: true,
-        acceptedAt: new Date("2026-08-03T16:00:00Z"),
-        completedAt: new Date("2026-08-04T12:00:00Z"),
-        rating: 5,
-        reviewComment: "Kidus restored our restaurant cold room cooling in Hawassa within hours. Saved all our food supplies.",
-      },
       {
         customer: customerKalkidan,
         providerUsername: "yonas_hvac",
@@ -1837,8 +2567,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Yonas did thorough maintenance on our commercial AC units. Noticeably cooler and whisper quiet.",
       },
-
-      // 8. Appliance Repair Bookings
       {
         customer: customerKalkidan,
         providerUsername: "melaku_appliance",
@@ -1873,8 +2601,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Bezawit identified the coin blockage in our washing machine pump immediately. Very honest and skilled.",
       },
-
-      // 9. Auto Mechanic Bookings
       {
         customer: customerAbelG,
         providerUsername: "muluken_garage",
@@ -1909,8 +2635,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Robel cleared our hybrid warning light and balanced the battery cells. Fuel economy back to normal!",
       },
-
-      // 10. IT & Network Support Bookings
       {
         customer: customerSelamawitG,
         providerUsername: "hailemariam_it",
@@ -1945,8 +2669,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Blen set up our office security cameras cleanly without dangling wires. Crystal clear video on my phone.",
       },
-
-      // 11. Landscaper & Gardener Bookings
       {
         customer: customerEyerusalem,
         providerUsername: "eden_gardens",
@@ -1981,27 +2703,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Wondwossen shaped our compound trees and hedges with exceptional skill. Very safe and tidy cleanup.",
       },
-
-      // 12. Locksmith & Security Bookings
-      {
-        customer: customerBethlehem,
-        providerUsername: "tariku_security",
-        category: "Locksmith & Security",
-        serviceDate: "2026-08-07",
-        timeSlot: "Morning (10:00 AM - 12:30 PM)",
-        address: "Bole Medhanialem, House 412",
-        city: "Addis Ababa",
-        subCity: "Bole",
-        notes: "Install digital biometric fingerprint handle lock on main steel entrance door.",
-        status: "completed",
-        wasAccepted: true,
-        acceptedAt: new Date("2026-08-06T16:00:00Z"),
-        completedAt: new Date("2026-08-07T12:15:00Z"),
-        rating: 5,
-        reviewComment: "Tariku installed our digital smart lock flawlessly. Great security upgrade and easy to program codes.",
-      },
-
-      // 13. Flooring & Tiling Bookings
       {
         customer: customerTigistM,
         providerUsername: "endale_terrazzo",
@@ -2019,8 +2720,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Endale brought our 20-year-old terrazzo floor back to life. Looks like brand new marble!",
       },
-
-      // 14. Roofing & Waterproofing Bookings
       {
         customer: customerSelamawitG,
         providerUsername: "teshome_roof",
@@ -2038,8 +2737,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Teshome sealed our roof deck right before the heavy rains. Zero leaks through three days of downpours.",
       },
-
-      // 15. Upholsterer & Furniture Bookings
       {
         customer: customerAbelG,
         providerUsername: "dagnachew_leather",
@@ -2057,8 +2754,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Dagnachew's upholstery work is sublime. The stitching and foam firmness exceed factory quality.",
       },
-
-      // 16. Welder & Metalworker Bookings
       {
         customer: customerHenok,
         providerUsername: "girum_metal",
@@ -2076,8 +2771,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Girum welded sturdy, artistic window grills and aligned our compound gate seamlessly.",
       },
-
-      // 17. Moving & Relocation Bookings
       {
         customer: customerRahel,
         providerUsername: "danait_movers",
@@ -2095,8 +2788,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Danait and her moving crew were punctual, careful, and fast. Not a single glass scratch.",
       },
-
-      // 18. Satellite & TV Tech Bookings
       {
         customer: customerTsion,
         providerUsername: "elsabeth_dish",
@@ -2114,27 +2805,6 @@ const seedDatabase = async () => {
         rating: 5,
         reviewComment: "Elsabeth did a super clean flush TV mount and got maximum signal strength on all channels.",
       },
-
-      // 19. Solar & Generator Tech Bookings
-      {
-        customer: customerNatnael,
-        providerUsername: "selam_solar",
-        category: "Solar & Generator Tech",
-        serviceDate: "2026-08-03",
-        timeSlot: "Full Day (09:00 AM - 05:00 PM)",
-        address: "Lake Tana Promenade, Tech Hub",
-        city: "Bahir Dar",
-        subCity: "Kebele 04",
-        notes: "Install 5kW roof solar system with 10kWh LiFePO4 battery storage bank.",
-        status: "completed",
-        wasAccepted: true,
-        acceptedAt: new Date("2026-08-02T10:00:00Z"),
-        completedAt: new Date("2026-08-03T17:00:00Z"),
-        rating: 5,
-        reviewComment: "Selam configured our solar backup system in Bahir Dar brilliantly. Continuous power without noise.",
-      },
-
-      // 20. Tailor & Habesha Craft Bookings
       {
         customer: customerEyerusalem,
         providerUsername: "tizita_kemis",
@@ -2153,89 +2823,7 @@ const seedDatabase = async () => {
         reviewComment: "Tizita is a true master artist. The Habesha Kemis embroidery detail and fit were breathtaking.",
       },
 
-      // Active / In-Progress & Pending Bookings
-      {
-        customer: customerBethlehem,
-        providerUsername: "yohannes_plumb",
-        category: "Plumber",
-        serviceDate: "2026-08-22",
-        timeSlot: "Morning (09:00 AM - 12:00 PM)",
-        address: "Bole Medhanialem, House 412",
-        city: "Addis Ababa",
-        subCity: "Bole",
-        notes: "Kitchen sink drain is clogged and leaking under the wooden counter.",
-        status: "pending",
-        wasAccepted: false,
-      },
-      {
-        customer: customerYared,
-        providerUsername: "fitsum_wood",
-        category: "Carpenter",
-        serviceDate: "2026-08-20",
-        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
-        address: "ECA Road, Office 204",
-        city: "Addis Ababa",
-        subCity: "Kazanchis",
-        notes: "Custom conference room storage shelves and document organizer.",
-        status: "accepted",
-        wasAccepted: true,
-        acceptedAt: new Date("2026-08-19T11:00:00Z"),
-      },
-      {
-        customer: customerMahlet,
-        providerUsername: "kidus_hvac",
-        category: "HVAC Technician",
-        serviceDate: "2026-08-24",
-        timeSlot: "Morning (10:00 AM - 01:00 PM)",
-        address: "Lake Awassa Drive, Villa 4",
-        city: "Hawassa",
-        subCity: "Piazza",
-        notes: "Dining room dual-inverter AC unit not blowing cool air.",
-        status: "pending",
-        wasAccepted: false,
-      },
-      {
-        customer: customerNatnael,
-        providerUsername: "meron_paint",
-        category: "Painter",
-        serviceDate: "2026-08-23",
-        timeSlot: "Morning (09:00 AM - 01:00 PM)",
-        address: "Lake Tana Promenade, Office 10",
-        city: "Bahir Dar",
-        subCity: "Kebele 04",
-        notes: "Two meeting room interior wall refresh with washable satin emulsion.",
-        status: "accepted",
-        wasAccepted: true,
-        acceptedAt: new Date("2026-08-20T14:30:00Z"),
-      },
-      {
-        customer: customerFrehiwot,
-        providerUsername: "eden_gardens",
-        category: "Landscaper & Gardener",
-        serviceDate: "2026-08-25",
-        timeSlot: "Morning (09:00 AM - 01:00 PM)",
-        address: "Lakeside Road, Villa 10",
-        city: "Bishoftu",
-        subCity: "Babogaya",
-        notes: "Lawn sodding and flowering shrub planting along the lakefront fence.",
-        status: "pending",
-        wasAccepted: false,
-      },
-      {
-        customer: customerMeseret,
-        providerUsername: "nebiyu_hvac",
-        category: "HVAC Technician",
-        serviceDate: "2026-08-26",
-        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
-        address: "Avenue Gabriel, Shop 4",
-        city: "Dire Dawa",
-        subCity: "Megala",
-        notes: "Store cooling unit refrigerant recharge.",
-        status: "pending",
-        wasAccepted: false,
-      },
-
-      // Provider Cancelled Bookings (Demonstrating Anti-Gaming Score Penalties)
+      // 4.7 Historical Provider Cancelled Bookings (Demonstrating Anti-Gaming Score Penalties)
       {
         customer: customerHenok,
         providerUsername: "girma_appliance",
@@ -2249,6 +2837,7 @@ const seedDatabase = async () => {
         status: "cancelled",
         wasAccepted: true,
         cancelledBy: "provider",
+        cancellationReason: "Emergency workshop tooling malfunction.",
       },
       {
         customer: customerSolomon,
@@ -2263,6 +2852,7 @@ const seedDatabase = async () => {
         status: "cancelled",
         wasAccepted: true,
         cancelledBy: "provider",
+        cancellationReason: "Technician illness.",
       },
       {
         customer: customerDawitB,
@@ -2277,6 +2867,7 @@ const seedDatabase = async () => {
         status: "cancelled",
         wasAccepted: true,
         cancelledBy: "provider",
+        cancellationReason: "Parts shipment delay.",
       },
       {
         customer: customerYared,
@@ -2291,20 +2882,7 @@ const seedDatabase = async () => {
         status: "cancelled",
         wasAccepted: true,
         cancelledBy: "provider",
-      },
-      {
-        customer: customerBethlehem,
-        providerUsername: "binyam_tile",
-        category: "Flooring & Tiling",
-        serviceDate: "2026-07-30",
-        timeSlot: "Afternoon (02:00 PM - 05:00 PM)",
-        address: "Bole Medhanialem",
-        city: "Addis Ababa",
-        subCity: "Bole",
-        notes: "Balcony tile regrouting.",
-        status: "cancelled",
-        wasAccepted: true,
-        cancelledBy: "provider",
+        cancellationReason: "Double-booking scheduling error.",
       },
       {
         customer: customerTsion,
@@ -2319,6 +2897,7 @@ const seedDatabase = async () => {
         status: "cancelled",
         wasAccepted: true,
         cancelledBy: "provider",
+        cancellationReason: "Key cutter equipment calibration issue.",
       },
       {
         customer: customerBiruk,
@@ -2333,6 +2912,7 @@ const seedDatabase = async () => {
         status: "cancelled",
         wasAccepted: true,
         cancelledBy: "provider",
+        cancellationReason: "Vehicle transit breakdown.",
       },
     ];
 
@@ -2356,10 +2936,10 @@ const seedDatabase = async () => {
         status: spec.status,
         wasAccepted: spec.wasAccepted,
         cancelledBy: spec.cancelledBy || null,
+        cancellationReason: spec.cancellationReason || "",
         acceptedAt: spec.acceptedAt,
         completedAt: spec.completedAt,
       });
-
       if (spec.status === "completed" && spec.rating && spec.reviewComment) {
         await ReviewModel.create({
           booking: booking._id,
@@ -2371,15 +2951,101 @@ const seedDatabase = async () => {
       }
     }
 
+    const customersByCity: Record<string, any[]> = {
+      "Addis Ababa": [customerBethlehem, customerYared, customerTsion, customerHenok, customerRahel, customerSolomon, customerDawitB, customerKalkidan, customerBiruk, customerSelamawitG, customerTigistM, customerAbelG, customerEyerusalem],
+      "Hawassa": [customerMahlet],
+      "Bahir Dar": [customerNatnael],
+      "Adama": [customerSenait],
+      "Dire Dawa": [customerMeseret],
+      "Bishoftu": [customerFrehiwot],
+      "Gondar": [customerYared, customerBiruk],
+      "Jimma": [customerSolomon, customerHenok],
+    };
+
+    const backgroundBookings: any[] = [];
+    for (const def of providerDefs) {
+      const isPreserved = PRESERVED_PROVIDERS.some((p) => p.username === def.username);
+      if (isPreserved) continue;
+
+      const provider = seededProviders[def.username];
+      if (!provider) continue;
+
+      const cityPool = customersByCity[def.location.city] || customersByCity["Addis Ababa"];
+
+      for (let i = 0; i < def.completedJobsCount; i++) {
+        const assignedCustomer = (i < def.repeatCustomerCount * 2)
+          ? cityPool[i % Math.max(1, def.repeatCustomerCount)]
+          : cityPool[i % cityPool.length];
+
+        const monthNum = 5 + ((i + def.username.length) % 4);
+        const dayNum = 1 + ((i * 7 + def.username.length) % 27);
+        const monthStr = String(monthNum).padStart(2, "0");
+        const dayStr = String(dayNum).padStart(2, "0");
+        const dateStr = `2026-${monthStr}-${dayStr}`;
+
+        backgroundBookings.push({
+          customer: assignedCustomer._id,
+          provider: provider._id,
+          category: def.category,
+          serviceDate: dateStr,
+          timeSlot: i % 2 === 0 ? "Morning (09:00 AM - 12:00 PM)" : "Afternoon (02:00 PM - 05:00 PM)",
+          address: def.location.address,
+          city: def.location.city,
+          subCity: def.location.subCity,
+          notes: `Confirmed delivery of ${def.category.toLowerCase()} services.`,
+          status: "completed",
+          wasAccepted: true,
+          completedAt: new Date(`${dateStr}T15:30:00Z`),
+        });
+      }
+
+      for (let j = 0; j < (def.providerCancelledCount || 0); j++) {
+        const assignedCustomer = cityPool[j % cityPool.length];
+        const monthNum = 5 + ((j + def.username.length + 1) % 4);
+        const dayNum = 1 + ((j * 9 + 4) % 27);
+        const monthStr = String(monthNum).padStart(2, "0");
+        const dayStr = String(dayNum).padStart(2, "0");
+        const dateStr = `2026-${monthStr}-${dayStr}`;
+
+        backgroundBookings.push({
+          customer: assignedCustomer._id,
+          provider: provider._id,
+          category: def.category,
+          serviceDate: dateStr,
+          timeSlot: "Afternoon (01:00 PM - 04:00 PM)",
+          address: def.location.address,
+          city: def.location.city,
+          subCity: def.location.subCity,
+          notes: `Provider cancellation: scheduling conflict for ${def.category.toLowerCase()} service.`,
+          status: "cancelled",
+          wasAccepted: true,
+          cancelledBy: "provider",
+          cancellationReason: "Provider emergency scheduling conflict",
+        });
+      }
+    }
+
+    if (backgroundBookings.length > 0) {
+      await BookingModel.insertMany(backgroundBookings);
+    }
+
+    // 5. Dynamic Trust Score & Stats Recalculation for All Seeded Providers
+    console.log("Synchronizing algorithmic trust scores for all providers...");
+    for (const username of Object.keys(seededProviders)) {
+      const p = seededProviders[username];
+      await recalculateProviderTrust(p._id);
+    }
+
     console.log("\n========================================================");
-    console.log("Database successfully seeded!");
+    console.log("Database successfully seeded with comprehensive demo data!");
     console.log("========================================================");
     console.log(`Summary:`);
     console.log(`  - 1 Admin account (Dawit Haile)`);
-    console.log(`  - 18 Customer accounts across Addis Ababa, Hawassa, Bahir Dar, Adama, Dire Dawa, Bishoftu`);
-    console.log(`  - ${providerDefs.length} Provider accounts spanning 20 service categories and 8 Ethiopian cities`);
-    console.log(`  - ${bookingSpecs.length} Bookings (Completed, Accepted, Pending, and Provider-Penalized Cancellations)`);
-    console.log(`  - 20+ Qualitative 5-Star Reviews`);
+    console.log(`  - 19 Customer accounts (Bethlehem Girma + regional + 1 suspended)`);
+    console.log(`  - ${providerDefs.length} Provider accounts (20 categories, 8 cities, approved/pending/rejected/suspended)`);
+    console.log(`  - ${bookingSpecs.length + backgroundBookings.length} Bookings (Completed [Reviewed & Unreviewed], Accepted, Pending, Cancelled by Customer/Provider, Declined)`);
+    console.log(`  - 25+ Qualitative 5-Star and 4-Star Reviews`);
+    console.log(`  - 6 Pending ID verification audit queue records`);
     console.log("\nDemo Credentials:");
     console.log("  Customer: customer@sureservice.com | DemoPassword123! (Bethlehem Girma)");
     console.log("  Provider: provider@sureservice.com | DemoPassword123! (Abebe Kebede - Master Electrician)");
