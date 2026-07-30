@@ -7,6 +7,8 @@ import type {
   AdminUserDetailsResponse,
   AdminUpdateUserPayload,
   Booking,
+  AdminBookingFilters,
+  AdminBookingsResponse,
 } from "../types";
 
 export const getPendingVerifications = async (): Promise<User[]> => {
@@ -93,4 +95,36 @@ export const deleteUser = async (
 export const getUserBookings = async (userId: string): Promise<Booking[]> => {
   const response = await api.get<{ bookings: Booking[] }>(`/admin/users/${userId}/bookings`);
   return response.data.bookings;
+};
+
+export const getAdminBookings = async (
+  filters: AdminBookingFilters = {},
+): Promise<AdminBookingsResponse> => {
+  const params = new URLSearchParams();
+  if (filters.status && filters.status !== "all") params.append("status", filters.status);
+  if (filters.category && filters.category !== "all") params.append("category", filters.category);
+  if (filters.city && filters.city !== "all") params.append("city", filters.city);
+  if (filters.search) params.append("search", filters.search);
+  if (filters.sortBy) params.append("sortBy", filters.sortBy);
+  if (filters.page) params.append("page", String(filters.page));
+  if (filters.limit) params.append("limit", String(filters.limit));
+
+  const response = await api.get<AdminBookingsResponse>(`/admin/bookings?${params.toString()}`);
+  return response.data;
+};
+
+export const getAdminBookingById = async (bookingId: string): Promise<Booking> => {
+  const response = await api.get<{ booking: Booking }>(`/admin/bookings/${bookingId}`);
+  return response.data.booking;
+};
+
+export const cancelAdminBooking = async (
+  bookingId: string,
+  reason?: string,
+): Promise<Booking> => {
+  const response = await api.patch<{ message: string; booking: Booking }>(
+    `/admin/bookings/${bookingId}/cancel`,
+    { reason },
+  );
+  return response.data.booking;
 };

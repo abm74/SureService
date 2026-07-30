@@ -1,4 +1,4 @@
-import type { ProviderFilters, AdminUserFilters } from "../types";
+import type { ProviderFilters, AdminUserFilters, AdminBookingFilters } from "../types";
 
 export const queryKeys = {
   categories: {
@@ -28,6 +28,8 @@ export const queryKeys = {
     userList: (filters?: AdminUserFilters) => [...queryKeys.admin.users(), filters] as const,
     userDetail: (id: string) => [...queryKeys.admin.all, "user", id] as const,
     userBookings: (id: string) => [...queryKeys.admin.all, "user-bookings", id] as const,
+    bookingList: (filters?: AdminBookingFilters) => [...queryKeys.admin.all, "bookings", filters] as const,
+    bookingDetail: (id: string) => [...queryKeys.admin.all, "booking", id] as const,
   },
   auth: {
     all: ["auth"] as const,

@@ -10,9 +10,12 @@ import {
   toggleUserStatus,
   deleteUser,
   getUserBookings,
+  getAdminBookings,
+  getAdminBookingById,
+  cancelAdminBooking,
 } from "@/services/adminService";
 import { queryKeys } from "@/constants/queryKeys";
-import type { AdminUserFilters, AdminUpdateUserPayload } from "@/types";
+import type { AdminUserFilters, AdminUpdateUserPayload, AdminBookingFilters } from "@/types";
 
 export const usePlatformStats = (enabled: boolean = true) => {
   return useQuery({
@@ -137,5 +140,39 @@ export const useAdminUserBookings = (userId: string | null) => {
     queryKey: queryKeys.admin.userBookings(userId || ""),
     queryFn: () => getUserBookings(userId!),
     enabled: Boolean(userId),
+  });
+};
+
+export const useAdminBookings = (
+  filters: AdminBookingFilters = {},
+  enabled: boolean = true,
+) => {
+  return useQuery({
+    queryKey: queryKeys.admin.bookingList(filters),
+    queryFn: () => getAdminBookings(filters),
+    placeholderData: keepPreviousData,
+    enabled,
+  });
+};
+
+export const useAdminBookingDetails = (bookingId: string | null) => {
+  return useQuery({
+    queryKey: queryKeys.admin.bookingDetail(bookingId || ""),
+    queryFn: () => getAdminBookingById(bookingId!),
+    enabled: Boolean(bookingId),
+  });
+};
+
+export const useAdminCancelBooking = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
+      cancelAdminBooking(id, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.providers.all });
+    },
   });
 };

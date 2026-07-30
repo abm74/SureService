@@ -92,7 +92,7 @@ export const useCancelBooking = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.bookings.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.providers.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.admin.stats() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
     },
   });

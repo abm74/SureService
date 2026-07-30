@@ -4,7 +4,7 @@ export type VerificationStatus = "unverified" | "pending" | "approved" | "reject
 
 export type BookingStatus = "pending" | "accepted" | "declined" | "cancelled" | "completed";
 
-export type CancelledBy = "customer" | "provider" | null;
+export type CancelledBy = "customer" | "provider" | "admin" | null;
 
 export interface TrustBreakdown {
   profileScore: number;
@@ -249,3 +249,30 @@ export interface AdminUpdateUserPayload {
   verificationStatus?: VerificationStatus;
   verificationRejectionReason?: string;
 }
+
+export interface AdminBookingFilters {
+  status?: "all" | "pending" | "accepted" | "completed" | "cancelled" | "declined" | "active";
+  category?: string;
+  city?: string;
+  search?: string;
+  sortBy?: "newest" | "oldest" | "serviceDateAsc" | "serviceDateDesc";
+  page?: number;
+  limit?: number;
+}
+
+export interface AdminBookingsResponse {
+  bookings: Booking[];
+  total: number;
+  page: number;
+  totalPages: number;
+  counts: {
+    total: number;
+    pending: number;
+    accepted: number;
+    completed: number;
+    cancelled: number;
+    declined: number;
+    active: number;
+  };
+}
+
