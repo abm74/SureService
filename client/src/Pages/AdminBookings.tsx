@@ -1,30 +1,31 @@
 import React from "react";
 import { RefreshCw } from "lucide-react";
 import AppHeader from "@/Components/Header/AppHeader";
-import PlatformStats from "@/Components/Admin/PlatformStats";
-import { usePlatformStats } from "@/hooks/useAdmin";
+import BookingManagement from "@/Components/Admin/BookingManagement";
 import { Button } from "@/Components/UI/button";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/constants/queryKeys";
 
-export const AdminMetrics: React.FC = () => {
-  const {
-    data: stats = null,
-    isLoading,
-    refetch,
-    isRefetching,
-  } = usePlatformStats();
+export const AdminBookings: React.FC = () => {
+  const queryClient = useQueryClient();
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: queryKeys.admin.all });
+    queryClient.invalidateQueries({ queryKey: queryKeys.bookings.all });
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <AppHeader />
 
-      <main className="grow px-4 md:px-8 lg:px-12 py-8 max-w-6xl mx-auto w-full space-y-6 text-left">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <main className="grow px-3 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 md:py-8 max-w-6xl mx-auto w-full space-y-4 sm:space-y-6 text-left min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-ink leading-tight">
-              Platform Pulse & Marketplace Metrics
+              Booking Management
             </h1>
             <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
-              Comprehensive health, trust scores, and booking lifecycle metrics.
+              Audit, search, filter, and moderate service bookings across all marketplace clients and providers.
             </p>
           </div>
 
@@ -32,21 +33,18 @@ export const AdminMetrics: React.FC = () => {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => refetch()}
-            disabled={isLoading || isRefetching}
+            onClick={handleRefresh}
             className="rounded-full text-[11px] sm:text-xs h-7.5 sm:h-8 px-2.5 sm:px-3.5 font-semibold text-ink bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
           >
-            <RefreshCw className={`size-3 sm:size-3.5 text-primary ${isRefetching ? "animate-spin" : ""}`} />
+            <RefreshCw className="size-3 sm:size-3.5 text-primary" />
             <span>Refresh Data</span>
           </Button>
         </div>
 
-        <div className="space-y-4">
-          <PlatformStats stats={stats} isLoading={isLoading} />
-        </div>
+        <BookingManagement />
       </main>
     </div>
   );
 };
 
-export default AdminMetrics;
+export default AdminBookings;
