@@ -250,7 +250,7 @@ export const Login: React.FC = () => {
                       <div className="flex-1 min-w-0 text-left">
                         <div className="flex items-center justify-between gap-1.5">
                           <p className="font-bold text-xs text-ink shrink-0">Provider Demo</p>
-                          <span className="text-[10px] sm:text-[11px] text-blue-600 font-semibold truncate">Abebe Kebede (90 Score)</span>
+                          <span className="text-[10px] sm:text-[11px] text-blue-600 font-semibold truncate">Abebe Kebede (Master Electrician)</span>
                         </div>
                         <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight sm:leading-snug truncate sm:whitespace-normal">
                           Master electrician, manage requests & live Trust score
@@ -271,7 +271,7 @@ export const Login: React.FC = () => {
                           <span className="text-[10px] sm:text-[11px] text-rose-600 font-semibold truncate">Dawit Haile</span>
                         </div>
                         <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight sm:leading-snug truncate sm:whitespace-normal">
-                          Review ID verification queue & platform metrics
+                          Audit verifications, manage users & bookings
                         </p>
                       </div>
                     </DropdownMenuItem>

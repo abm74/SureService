@@ -24,8 +24,9 @@ const ProviderStats = lazy(() => import("./Pages/ProviderStats.tsx"));
 const ProviderVerification = lazy(() => import("./Pages/ProviderVerification.tsx"));
 const ProviderProfileSettings = lazy(() => import("./Pages/ProviderProfileSettings.tsx"));
 const AdminUsers = lazy(() => import("./Pages/AdminUsers.tsx"));
+const AdminBookings = lazy(() => import("./Pages/AdminBookings.tsx"));
+const AdminBookingDetails = lazy(() => import("./Pages/AdminBookingDetails.tsx"));
 const AdminVerifications = lazy(() => import("./Pages/AdminVerifications.tsx"));
-const AdminMetrics = lazy(() => import("./Pages/AdminMetrics.tsx"));
 const Login = lazy(() => import("./Pages/Login.tsx"));
 const Signup = lazy(() => import("./Pages/Signup.tsx"));
 const PageNotFound = lazy(() => import("./Pages/PageNotFound.tsx"));
@@ -113,12 +114,16 @@ const router = createBrowserRouter([
             Component: AdminUsers,
           },
           {
-            path: "verifications",
-            Component: AdminVerifications,
+            path: "bookings",
+            Component: AdminBookings,
           },
           {
-            path: "metrics",
-            Component: AdminMetrics,
+            path: "bookings/:id",
+            Component: AdminBookingDetails,
+          },
+          {
+            path: "verifications",
+            Component: AdminVerifications,
           },
         ],
       },

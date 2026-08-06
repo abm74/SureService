@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/store/Auth/AuthContext";
 import { useProviderBookings } from "@/hooks/useBookings";
-import { usePlatformStats, usePendingVerifications } from "@/hooks/useAdmin";
+import { usePendingVerifications } from "@/hooks/useAdmin";
 import { Button } from "@/Components/UI/button";
 import { Badge } from "@/Components/UI/badge";
 
@@ -24,7 +24,6 @@ export const AppHeader: React.FC = () => {
   const isAdmin = Boolean(isAuthenticated && role === "admin");
   const isProvider = Boolean(isAuthenticated && role === "provider");
   const { data: providerBookings = [] } = useProviderBookings(isProvider);
-  const { data: stats } = usePlatformStats(isAdmin);
   const { data: pendingVerifications = [] } = usePendingVerifications(isAdmin);
   const navigate = useNavigate();
 
@@ -125,23 +124,13 @@ export const AppHeader: React.FC = () => {
           {isAuthenticated && role === "admin" && (
             <>
               <NavLink to="/admin/users" className={linkClass}>
-                {({ isActive }) => (
-                  <>
-                    <Users className="size-3.5" />
-                    <span>Users</span>
-                    {stats?.totalUsers !== undefined && (
-                      <span
-                        className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                          isActive
-                            ? "bg-white/20 text-white"
-                            : "bg-primary/10 text-primary"
-                        }`}
-                      >
-                        {stats.totalUsers}
-                      </span>
-                    )}
-                  </>
-                )}
+                <Users className="size-3.5" />
+                <span>Users</span>
+              </NavLink>
+
+              <NavLink to="/admin/bookings" className={linkClass}>
+                <Calendar className="size-3.5" />
+                <span>Bookings</span>
               </NavLink>
 
               <NavLink to="/admin/verifications" className={linkClass}>
@@ -162,11 +151,6 @@ export const AppHeader: React.FC = () => {
                     )}
                   </>
                 )}
-              </NavLink>
-
-              <NavLink to="/admin/metrics" className={linkClass}>
-                <Activity className="size-3.5" />
-                <span>Metrics</span>
               </NavLink>
             </>
           )}
@@ -322,11 +306,16 @@ export const AppHeader: React.FC = () => {
                           <Users className="size-3.5 text-primary" />
                           <span>User Directory</span>
                         </div>
-                        {stats?.totalUsers !== undefined && (
-                          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-primary/10 text-primary">
-                            {stats.totalUsers}
-                          </span>
-                        )}
+                      </Link>
+                      <Link
+                        to="/admin/bookings"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center justify-between px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Calendar className="size-3.5 text-primary" />
+                          <span>Bookings</span>
+                        </div>
                       </Link>
                       <Link
                         to="/admin/verifications"
@@ -342,14 +331,6 @@ export const AppHeader: React.FC = () => {
                             {pendingVerifications.length}
                           </span>
                         )}
-                      </Link>
-                      <Link
-                        to="/admin/metrics"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-ink hover:bg-surface-soft rounded-xl transition-colors"
-                      >
-                        <Activity className="size-3.5 text-primary" />
-                        <span>Platform Metrics</span>
                       </Link>
                     </>
                   )}
