@@ -2951,15 +2951,55 @@ const seedDatabase = async () => {
       }
     }
 
+    const allActiveCustomers = [
+      customerBethlehem,
+      customerYared,
+      customerTsion,
+      customerHenok,
+      customerRahel,
+      customerSolomon,
+      customerDawitB,
+      customerKalkidan,
+      customerBiruk,
+      customerSelamawitG,
+      customerTigistM,
+      customerAbelG,
+      customerEyerusalem,
+      customerMahlet,
+      customerNatnael,
+      customerSenait,
+      customerFrehiwot,
+      customerMeseret,
+    ];
+
+    const buildCityPool = (primaryCustomers: any[]) => [
+      ...primaryCustomers,
+      ...allActiveCustomers.filter((c) => !primaryCustomers.some((p) => p._id.toString() === c._id.toString())),
+    ];
+
     const customersByCity: Record<string, any[]> = {
-      "Addis Ababa": [customerBethlehem, customerYared, customerTsion, customerHenok, customerRahel, customerSolomon, customerDawitB, customerKalkidan, customerBiruk, customerSelamawitG, customerTigistM, customerAbelG, customerEyerusalem],
-      "Hawassa": [customerMahlet],
-      "Bahir Dar": [customerNatnael],
-      "Adama": [customerSenait],
-      "Dire Dawa": [customerMeseret],
-      "Bishoftu": [customerFrehiwot],
-      "Gondar": [customerYared, customerBiruk],
-      "Jimma": [customerSolomon, customerHenok],
+      "Addis Ababa": [
+        customerBethlehem,
+        customerYared,
+        customerTsion,
+        customerHenok,
+        customerRahel,
+        customerSolomon,
+        customerDawitB,
+        customerKalkidan,
+        customerBiruk,
+        customerSelamawitG,
+        customerTigistM,
+        customerAbelG,
+        customerEyerusalem,
+      ],
+      "Hawassa": buildCityPool([customerMahlet]),
+      "Bahir Dar": buildCityPool([customerNatnael]),
+      "Adama": buildCityPool([customerSenait]),
+      "Dire Dawa": buildCityPool([customerMeseret]),
+      "Bishoftu": buildCityPool([customerFrehiwot]),
+      "Gondar": buildCityPool([customerYared, customerBiruk]),
+      "Jimma": buildCityPool([customerSolomon, customerHenok]),
     };
 
     const backgroundBookings: any[] = [];
@@ -2970,12 +3010,24 @@ const seedDatabase = async () => {
       const provider = seededProviders[def.username];
       if (!provider) continue;
 
-      const cityPool = customersByCity[def.location.city] || customersByCity["Addis Ababa"];
+      const cityPool = customersByCity[def.location.city] || allActiveCustomers;
+      const targetRepeatCount = Math.min(def.repeatCustomerCount || 0, Math.floor(def.completedJobsCount / 2));
 
       for (let i = 0; i < def.completedJobsCount; i++) {
-        const assignedCustomer = (i < def.repeatCustomerCount * 2)
-          ? cityPool[i % Math.max(1, def.repeatCustomerCount)]
-          : cityPool[i % cityPool.length];
+        let assignedCustomer;
+        if (targetRepeatCount > 0 && i < targetRepeatCount * 2) {
+          assignedCustomer = cityPool[i % targetRepeatCount];
+        } else if (targetRepeatCount > 0) {
+          const nonRepeatPool = cityPool.slice(targetRepeatCount);
+          const poolToUse = nonRepeatPool.length > 0 ? nonRepeatPool : cityPool;
+          assignedCustomer = poolToUse[(i - targetRepeatCount * 2) % poolToUse.length];
+        } else {
+          assignedCustomer = cityPool[i % cityPool.length];
+        }
+
+        if (!assignedCustomer) {
+          assignedCustomer = cityPool[0] || allActiveCustomers[0];
+        }
 
         const monthNum = 5 + ((i + def.username.length) % 4);
         const dayNum = 1 + ((i * 7 + def.username.length) % 27);
@@ -3000,7 +3052,7 @@ const seedDatabase = async () => {
       }
 
       for (let j = 0; j < (def.providerCancelledCount || 0); j++) {
-        const assignedCustomer = cityPool[j % cityPool.length];
+        const assignedCustomer = cityPool[j % cityPool.length] || cityPool[0] || allActiveCustomers[0];
         const monthNum = 5 + ((j + def.username.length + 1) % 4);
         const dayNum = 1 + ((j * 9 + 4) % 27);
         const monthStr = String(monthNum).padStart(2, "0");
