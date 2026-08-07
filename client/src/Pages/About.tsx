@@ -27,11 +27,11 @@ export const About: React.FC = () => {
             <ShieldCheck className="size-3.5 sm:size-4 shrink-0" />
             <span>Anti-Gaming Integrity Framework</span>
           </div>
-          <h1 className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-ink leading-snug sm:leading-tight text-balance">
-            Why Star Ratings Fail & How Trust Score Fixes It
+          <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-3xl font-extrabold tracking-tight text-ink leading-snug sm:leading-tight text-balance">
+            Trust Scores Over Star Ratings
           </h1>
-          <p className="text-[11.5px] sm:text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl mx-auto text-balance">
-            Traditional 5-star ratings suffer from review blackmail, fake upvotes, and lack of accountability. SureService replaces subjective stars with a behavior-based, anti-collusion <strong className="text-ink font-semibold">Trust Score (0–100)</strong> built on explainable evaluation pillars.
+          <p className="text-[11.5px] sm:text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto text-balance">
+            Star ratings are easily gamed. SureService replaces subjective reviews with an objective, anti-collusion <strong className="text-ink font-semibold">Trust Score (0–100)</strong> based on real performance.
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export const About: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-200 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/20 space-y-1.5 sm:space-y-2 md:col-span-2">
+            <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-200 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/20 space-y-1.5 sm:space-y-2">
               <div className="flex items-start justify-between gap-2 text-rose-800 dark:text-rose-300">
                 <span className="font-bold text-xs sm:text-sm flex items-start gap-1.5 min-w-0">
                   <AlertTriangle className="size-3.5 sm:size-4 text-rose-600 shrink-0 mt-0.5" />

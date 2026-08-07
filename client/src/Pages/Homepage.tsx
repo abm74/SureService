@@ -4,7 +4,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   Users,
-  UserCheck,
+  CalendarX2,
   ArrowRight,
 } from "lucide-react";
 import PageNav from "@/Components/Header/PageNav";
@@ -23,7 +23,7 @@ export const Homepage: React.FC = () => {
 
       <main className="grow flex flex-col">
         {/* HERO SECTION */}
-        <section className="px-3.5 sm:px-6 py-8 md:py-20 lg:px-20 max-w-7xl mx-auto w-full">
+        <section className="px-3 sm:px-6 py-8 md:py-20 lg:px-20 max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-7 flex flex-col items-start gap-5 sm:gap-6 text-left">
               <div className="inline-flex items-center gap-1.5 bg-surface-soft border border-hairline px-2.5 sm:px-3 py-1 rounded-full shadow-2xs max-w-full">
@@ -42,23 +42,26 @@ export const Homepage: React.FC = () => {
                 SureService ranks electricians, plumbers, cleaners, and tutors across Ethiopia through independently verified performance. Only paying clients can confirm job completion, and provider cancellations trigger automated score penalties.
               </p>
 
-              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-1">
-                <Link to="/marketplace">
-                  <Button
-                    className="rounded-full px-4 sm:px-6 font-bold text-xs h-10 sm:h-11.5 bg-primary hover:bg-brand-primary-active text-white shadow-xs flex items-center gap-1.5 sm:gap-2 cursor-pointer"
-                  >
-                    <span>Browse Verified Providers</span>
-                    <ArrowRight className="size-3.5 sm:size-4" />
-                  </Button>
-                </Link>
-                <Link to="/about">
-                  <Button
-                    variant="outline"
-                    className="rounded-full px-4 sm:px-5.5 font-semibold text-xs h-10 sm:h-11.5 border-hairline hover:border-ink cursor-pointer"
-                  >
-                    How Trust Score Works
-                  </Button>
-                </Link>
+              <div className="flex flex-nowrap items-center gap-1 min-[380px]:gap-1.5 sm:gap-3.5 pt-1 w-full max-w-full">
+                <Button
+                  asChild
+                  className="rounded-full px-2 min-[380px]:px-2.5 sm:px-6 font-bold text-[10px] min-[380px]:text-[10.5px] sm:text-xs h-8.5 min-[380px]:h-9 sm:h-11.5 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer shrink-0"
+                >
+                  <Link to="/marketplace" className="flex items-center gap-1 sm:gap-2 whitespace-nowrap">
+                    <span>Browse <span className="hidden sm:inline">Verified </span>Providers</span>
+                    <ArrowRight className="size-3 sm:size-4 shrink-0" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="secondary"
+                  className="rounded-full px-2 min-[380px]:px-2.5 sm:px-5.5 font-semibold text-[10px] min-[380px]:text-[10.5px] sm:text-xs h-8.5 min-[380px]:h-9 sm:h-11.5 cursor-pointer shrink-0"
+                >
+                  <Link to="/about" className="flex items-center gap-1 sm:gap-2 whitespace-nowrap">
+                    <ShieldCheck className="size-3 sm:size-4 shrink-0" />
+                    <span>How Trust Score Works</span>
+                  </Link>
+                </Button>
               </div>
             </div>
 
@@ -89,30 +92,30 @@ export const Homepage: React.FC = () => {
                   <div className="flex items-center justify-between gap-2 text-ink font-semibold">
                     <span className="flex items-center gap-1.5 min-w-0 text-[11px] sm:text-xs text-body">
                       <ShieldCheck className="size-3.5 sm:size-4 text-primary shrink-0" />
-                      <span>Audited License</span>
+                      <span>Trade License</span>
                     </span>
-                    <span className="text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full text-[10.5px] sm:text-[11px] font-bold shrink-0">Verified</span>
+                    <span className="text-primary bg-primary/10 border border-primary/20 w-16 py-0.5 rounded-full text-[10.5px] sm:text-[11px] font-bold text-center shrink-0">Verified</span>
                   </div>
                   <div className="flex items-center justify-between gap-2 text-ink font-semibold">
                     <span className="flex items-center gap-1.5 min-w-0 text-[11px] sm:text-xs text-body">
                       <CheckCircle2 className="size-3.5 sm:size-4 text-primary shrink-0" />
-                      <span>12 Confirmed Jobs</span>
+                      <span>Completed Jobs</span>
                     </span>
-                    <span className="text-ink font-bold text-[10.5px] sm:text-[11px] shrink-0">100% Rate</span>
+                    <span className="text-ink font-bold text-[10.5px] sm:text-[11px] w-16 text-center shrink-0">12</span>
                   </div>
                   <div className="flex items-center justify-between gap-2 text-ink font-semibold">
                     <span className="flex items-center gap-1.5 min-w-0 text-[11px] sm:text-xs text-body">
                       <Users className="size-3.5 sm:size-4 text-primary shrink-0" />
                       <span>Repeat Clients</span>
                     </span>
-                    <span className="text-ink font-bold text-[10.5px] sm:text-[11px] shrink-0">High Retention</span>
+                    <span className="text-ink font-bold text-[10.5px] sm:text-[11px] w-16 text-center shrink-0">4</span>
                   </div>
                   <div className="flex items-center justify-between gap-2 text-ink font-semibold">
                     <span className="flex items-center gap-1.5 min-w-0 text-[11px] sm:text-xs text-body">
-                      <UserCheck className="size-3.5 sm:size-4 text-primary shrink-0" />
-                      <span>Service Area</span>
+                      <CalendarX2 className="size-3.5 sm:size-4 text-primary shrink-0" />
+                      <span>Cancellation Rate</span>
                     </span>
-                    <span className="text-muted-foreground font-medium text-[10.5px] sm:text-[11px] shrink-0">Bole, Addis</span>
+                    <span className="text-ink font-bold text-[10.5px] sm:text-[11px] w-16 text-center shrink-0">0%</span>
                   </div>
                 </div>
 

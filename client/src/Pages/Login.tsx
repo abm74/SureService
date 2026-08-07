@@ -216,64 +216,43 @@ export const Login: React.FC = () => {
                     </Button>
                   </DropdownMenuTrigger>
 
-                  <DropdownMenuContent align="center" className="w-[calc(100vw-2rem)] sm:w-[350px] max-w-sm p-1.5 sm:p-2 space-y-0.5 sm:space-y-1">
+                  <DropdownMenuContent align="center" className="w-[calc(100vw-2rem)] sm:w-[320px] max-w-sm p-1.5 space-y-0.5">
                     <DropdownMenuLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider py-1 px-2">
-                      Choose a role to test the marketplace:
+                      Demo Accounts
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="my-1" />
 
                     <DropdownMenuItem
                       onClick={() => handleDemoLogin("customer")}
-                      className="flex items-center gap-2.5 p-2 sm:p-2.5 rounded-lg sm:rounded-xl cursor-pointer hover:bg-surface-soft"
+                      className="flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer hover:bg-surface-soft text-xs"
                     >
-                      <div className="size-7 sm:size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 font-bold">
-                        <User className="size-3.5 sm:size-4" />
+                      <div className="flex items-center gap-2.5">
+                        <User className="size-4 text-primary shrink-0" />
+                        <span className="font-medium text-ink">Customer Demo</span>
                       </div>
-                      <div className="flex-1 min-w-0 text-left">
-                        <div className="flex items-center justify-between gap-1.5">
-                          <p className="font-bold text-xs text-ink shrink-0">Customer Demo</p>
-                          <span className="text-[10px] sm:text-[11px] text-primary font-semibold truncate">Bethlehem Girma</span>
-                        </div>
-                        <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight sm:leading-snug truncate sm:whitespace-normal">
-                          Browse marketplace, book trades & mark jobs completed
-                        </p>
-                      </div>
+                      <span className="text-[11px] text-muted-foreground w-[105px] text-left shrink-0 truncate">Bethlehem Girma</span>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
                       onClick={() => handleDemoLogin("provider")}
-                      className="flex items-center gap-2.5 p-2 sm:p-2.5 rounded-lg sm:rounded-xl cursor-pointer hover:bg-surface-soft"
+                      className="flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer hover:bg-surface-soft text-xs"
                     >
-                      <div className="size-7 sm:size-8 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center shrink-0 font-bold">
-                        <Briefcase className="size-3.5 sm:size-4" />
+                      <div className="flex items-center gap-2.5">
+                        <Briefcase className="size-4 text-blue-600 shrink-0" />
+                        <span className="font-medium text-ink">Provider Demo</span>
                       </div>
-                      <div className="flex-1 min-w-0 text-left">
-                        <div className="flex items-center justify-between gap-1.5">
-                          <p className="font-bold text-xs text-ink shrink-0">Provider Demo</p>
-                          <span className="text-[10px] sm:text-[11px] text-blue-600 font-semibold truncate">Abebe Kebede (Master Electrician)</span>
-                        </div>
-                        <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight sm:leading-snug truncate sm:whitespace-normal">
-                          Master electrician, manage requests & live Trust score
-                        </p>
-                      </div>
+                      <span className="text-[11px] text-muted-foreground w-[105px] text-left shrink-0 truncate">Abebe Kebede</span>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
                       onClick={() => handleDemoLogin("admin")}
-                      className="flex items-center gap-2.5 p-2 sm:p-2.5 rounded-lg sm:rounded-xl cursor-pointer hover:bg-surface-soft"
+                      className="flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer hover:bg-surface-soft text-xs"
                     >
-                      <div className="size-7 sm:size-8 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-600 flex items-center justify-center shrink-0 font-bold">
-                        <ShieldAlert className="size-3.5 sm:size-4" />
+                      <div className="flex items-center gap-2.5">
+                        <ShieldAlert className="size-4 text-rose-600 shrink-0" />
+                        <span className="font-medium text-ink">Admin Demo</span>
                       </div>
-                      <div className="flex-1 min-w-0 text-left">
-                        <div className="flex items-center justify-between gap-1.5">
-                          <p className="font-bold text-xs text-ink shrink-0">Admin Demo</p>
-                          <span className="text-[10px] sm:text-[11px] text-rose-600 font-semibold truncate">Dawit Haile</span>
-                        </div>
-                        <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight sm:leading-snug truncate sm:whitespace-normal">
-                          Audit verifications, manage users & bookings
-                        </p>
-                      </div>
+                      <span className="text-[11px] text-muted-foreground w-[105px] text-left shrink-0 truncate">Dawit Haile</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

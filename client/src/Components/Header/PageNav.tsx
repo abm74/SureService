@@ -5,10 +5,10 @@ import { Button } from "@/Components/UI/button";
 import { useAuth } from "@/store/Auth/AuthContext";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `text-xs font-bold transition-colors pb-1 border-b-2 select-none ${
+  `text-xs font-semibold px-3.5 rounded-full transition-colors select-none flex items-center h-9 ${
     isActive
-      ? "text-ink border-primary"
-      : "text-muted-foreground border-transparent hover:text-ink hover:border-hairline"
+      ? "bg-primary text-primary-foreground shadow-2xs"
+      : "text-muted-foreground hover:text-ink hover:bg-surface-soft"
   }`;
 
 export const PageNav: React.FC = () => {
@@ -40,52 +40,50 @@ export const PageNav: React.FC = () => {
       </Link>
 
       {/* Desktop Navigation */}
-      <ul className="hidden sm:flex items-center gap-6 sm:gap-8">
-        <li>
-          <NavLink to="/marketplace" className={linkClass}>
-            Marketplace
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/about" className={linkClass}>
-            About
-          </NavLink>
-        </li>
-        <li>
-          {isAuthenticated ? (
-            <NavLink to={getDashboardPath()}>
-              <Button
-                variant="default"
-                size="sm"
-                className="rounded-full px-5 font-bold text-xs h-9 shadow-xs flex items-center gap-1.5 cursor-pointer"
-              >
-                <span>{getDashboardLabel()}</span>
-                <ArrowRight className="size-3.5" />
-              </Button>
+      <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
+        <NavLink to="/marketplace" className={linkClass}>
+          Marketplace
+        </NavLink>
+        <NavLink to="/about" className={linkClass}>
+          About
+        </NavLink>
+
+        {isAuthenticated ? (
+          <Button
+            asChild
+            variant="default"
+            size="sm"
+            className="rounded-full px-5 font-bold text-xs h-9 shadow-xs cursor-pointer ml-1"
+          >
+            <NavLink to={getDashboardPath()} className="flex items-center gap-1.5">
+              <span>{getDashboardLabel()}</span>
+              <ArrowRight className="size-3.5" />
             </NavLink>
-          ) : (
-            <div className="flex items-center gap-2">
+          </Button>
+        ) : (
+          <>
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="rounded-full px-3.5 font-semibold text-xs h-9 text-muted-foreground hover:text-ink hover:bg-surface-soft cursor-pointer"
+            >
               <NavLink to="/login">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full px-4 font-bold text-xs h-9 border-hairline hover:border-ink cursor-pointer"
-                >
-                  Sign In
-                </Button>
+                Sign In
               </NavLink>
+            </Button>
+            <Button
+              asChild
+              size="sm"
+              className="rounded-full px-4.5 font-bold text-xs h-9 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer ml-1"
+            >
               <NavLink to="/signup">
-                <Button
-                  size="sm"
-                  className="rounded-full px-4 font-bold text-xs h-9 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer"
-                >
-                  Sign Up
-                </Button>
+                Sign Up
               </NavLink>
-            </div>
-          )}
-        </li>
-      </ul>
+            </Button>
+          </>
+        )}
+      </div>
 
       {/* Mobile Hamburger Button */}
       <div className="flex sm:hidden items-center">
@@ -119,35 +117,42 @@ export const PageNav: React.FC = () => {
           </NavLink>
           <div className="pt-2 border-t border-hairline flex flex-col gap-2">
             {isAuthenticated ? (
-              <NavLink to={getDashboardPath()} onClick={() => setIsMobileMenuOpen(false)}>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="w-full rounded-xl font-bold text-xs h-10 shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+              <Button
+                asChild
+                variant="default"
+                size="sm"
+                className="w-full rounded-xl font-bold text-xs h-10 shadow-xs cursor-pointer"
+              >
+                <NavLink
+                  to={getDashboardPath()}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-1.5"
                 >
                   <span>{getDashboardLabel()}</span>
                   <ArrowRight className="size-3.5" />
-                </Button>
-              </NavLink>
+                </NavLink>
+              </Button>
             ) : (
               <div className="grid grid-cols-2 gap-2">
-                <NavLink to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full rounded-xl font-bold text-xs h-10 border-hairline hover:border-ink cursor-pointer"
-                  >
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="w-full rounded-xl font-bold text-xs h-10 border-hairline hover:border-ink cursor-pointer"
+                >
+                  <NavLink to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                     Sign In
-                  </Button>
-                </NavLink>
-                <NavLink to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button
-                    size="sm"
-                    className="w-full rounded-xl font-bold text-xs h-10 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer"
-                  >
+                  </NavLink>
+                </Button>
+                <Button
+                  asChild
+                  size="sm"
+                  className="w-full rounded-xl font-bold text-xs h-10 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer"
+                >
+                  <NavLink to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
                     Sign Up
-                  </Button>
-                </NavLink>
+                  </NavLink>
+                </Button>
               </div>
             )}
           </div>

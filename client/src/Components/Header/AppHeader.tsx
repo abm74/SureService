@@ -3,7 +3,6 @@ import { Link, useNavigate, NavLink } from "react-router-dom";
 import {
   ShieldCheck,
   LogOut,
-  ChevronDown,
   Calendar,
   Store,
   Info,
@@ -167,53 +166,47 @@ export const AppHeader: React.FC = () => {
       <div className="flex items-center gap-3">
         {!isAuthenticated ? (
           <div className="flex items-center gap-2">
-            <Link to="/login">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full text-xs h-9 px-4 border-hairline hover:border-ink cursor-pointer"
-              >
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="rounded-full text-xs h-9 px-3.5 font-semibold text-muted-foreground hover:text-ink hover:bg-surface-soft cursor-pointer"
+            >
+              <Link to="/login">
                 Sign In
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button
-                size="sm"
-                className="rounded-full text-xs h-9 px-4 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer font-bold"
-              >
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="sm"
+              className="rounded-full text-xs h-9 px-4 bg-primary hover:bg-brand-primary-active text-white shadow-xs cursor-pointer font-bold"
+            >
+              <Link to="/signup">
                 Sign Up
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         ) : (
           <div className="relative" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setIsDropdownOpen((prev) => !prev)}
-              className="flex items-center gap-2.5 bg-surface-soft border border-hairline/80 p-1 pr-3 rounded-full shadow-xs hover:bg-surface-hover hover:border-primary/30 transition-all cursor-pointer focus:outline-none group"
+              className={`flex items-center rounded-full p-0.5 transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-2xs group ${
+                isDropdownOpen
+                  ? "ring-2 ring-primary"
+                  : "ring-1 ring-hairline hover:ring-2 hover:ring-primary/40"
+              }`}
               aria-expanded={isDropdownOpen}
+              aria-label="User profile menu"
             >
-              <div className="size-7.5 sm:size-8 rounded-full overflow-hidden ring-1 ring-primary/30 shrink-0">
+              <div className="size-8 sm:size-8.5 rounded-full overflow-hidden ring-1 ring-primary/20 shrink-0">
                 <img
-                  className="size-full object-cover"
+                  className="size-full object-cover group-hover:scale-105 transition-transform"
                   src={profileAvatar}
                   alt={user?.name || "User"}
                   onError={() => setImgError(true)}
                 />
               </div>
-              <div className="text-left hidden sm:block">
-                <p className="text-xs font-bold text-ink max-w-[120px] truncate leading-tight group-hover:text-primary transition-colors">
-                  {user?.name || "User"}
-                </p>
-                <span className="text-[10px] text-muted-foreground capitalize font-medium">
-                  {role}
-                </span>
-              </div>
-              <ChevronDown
-                className={`size-3.5 text-muted-foreground transition-transform duration-200 ${
-                  isDropdownOpen ? "rotate-180 text-primary" : ""
-                }`}
-              />
             </button>
 
             {isDropdownOpen && (
