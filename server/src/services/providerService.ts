@@ -20,7 +20,11 @@ export interface ProviderQueryFilters {
 const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export const getProviders = async (filters: ProviderQueryFilters = {}) => {
-  const query: Record<string, any> = { role: "provider" };
+  const query: Record<string, any> = {
+    role: "provider",
+    isSuspended: { $ne: true },
+    isActive: { $ne: false },
+  };
 
   if (filters.category) {
     query.category = { $regex: new RegExp(`^${escapeRegex(filters.category)}$`, "i") };
@@ -202,6 +206,7 @@ export const updateProviderProfile = async (
     throw Object.assign(new Error("Provider not found"), { statusCode: 404 });
   }
 
+  if (data.name !== undefined && data.name.trim()) provider.name = data.name.trim();
   if (data.bio !== undefined) provider.bio = data.bio;
   if (data.phone !== undefined) provider.phone = data.phone;
   if (data.hourlyRate !== undefined) provider.hourlyRate = Number(data.hourlyRate);

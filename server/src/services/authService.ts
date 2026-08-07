@@ -134,7 +134,23 @@ export const signupUser = async (
     throw Object.assign(new Error("Username already taken"), { statusCode: 409 });
   }
 
-  const initialTrust = role === "provider" ? computeTrustScore({ ...extraProfileData, bio: extraProfileData.bio || "" }) : { trustScore: 15, breakdown: { profileScore: 15, verificationScore: 0, completedJobsScore: 0, repeatBonusScore: 0, cancellationPenalty: 0 } };
+  const initialTrust =
+    role === "provider"
+      ? computeTrustScore({
+          location: { city: "Addis Ababa", subCity: "Bole", address: "" },
+          ...extraProfileData,
+          bio: extraProfileData.bio || "",
+        })
+      : {
+          trustScore: 15,
+          breakdown: {
+            profileScore: 15,
+            verificationScore: 0,
+            completedJobsScore: 0,
+            repeatBonusScore: 0,
+            cancellationPenalty: 0,
+          },
+        };
 
   const user = await UserModel.create({
     name,

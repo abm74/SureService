@@ -8,11 +8,10 @@ export const getCloudinarySignature = async (
 ) => {
   try {
     if (!isCloudinaryConfigured()) {
-      res.status(500).json({
+      return res.status(500).json({
         message:
           "Cloudinary credentials are not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in the server environment.",
       });
-      return;
     }
 
     const timestamp = Math.round(new Date().getTime() / 1000);
@@ -30,7 +29,7 @@ export const getCloudinarySignature = async (
       process.env.CLOUDINARY_API_SECRET!
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       signature,
       timestamp,
       folder,
@@ -38,7 +37,7 @@ export const getCloudinarySignature = async (
       apiKey: process.env.CLOUDINARY_API_KEY,
     });
   } catch (error: any) {
-    res.status(500).json({
+    return res.status(500).json({
       message: error?.message || "Failed to generate Cloudinary signature",
     });
   }

@@ -14,9 +14,9 @@ export const getPendingVerifications = async (
       page ? Number(page) : 1,
       limit ? Number(limit) : 20,
     );
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -29,12 +29,12 @@ export const approveVerification = async (
     const providerId = req.params.providerId as string;
     const provider = await adminService.approveVerification(providerId);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Provider verification approved and verified shield activated",
       provider,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -49,12 +49,12 @@ export const rejectVerification = async (
 
     const provider = await adminService.rejectVerification(providerId, reason);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Provider verification rejected",
       provider,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -86,9 +86,9 @@ export const getUsers = async (
       limit: limit ? Number(limit) : 15,
     });
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -100,9 +100,9 @@ export const getUserById = async (
   try {
     const userId = req.params.userId as string;
     const result = await adminService.getUserById(userId);
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -114,12 +114,12 @@ export const updateUser = async (
   try {
     const userId = req.params.userId as string;
     const updated = await adminService.updateUser(userId, req.body);
-    res.status(200).json({
+    return res.status(200).json({
       message: "User profile updated successfully",
       user: updated,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -132,12 +132,12 @@ export const toggleUserStatus = async (
     const userId = req.params.userId as string;
     const { isSuspended, reason } = req.body || {};
     const updated = await adminService.toggleUserStatus(userId, isSuspended, reason);
-    res.status(200).json({
+    return res.status(200).json({
       message: isSuspended ? "User suspended successfully" : "User reactivated successfully",
       user: updated,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -150,9 +150,9 @@ export const deleteUser = async (
     const userId = req.params.userId as string;
     const requestingAdminId = req.user!.userId;
     const result = await adminService.deleteUser(userId, requestingAdminId);
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -164,9 +164,9 @@ export const getUserBookings = async (
   try {
     const userId = req.params.userId as string;
     const bookings = await adminService.getUserBookings(userId);
-    res.status(200).json({ bookings });
+    return res.status(200).json({ bookings });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -177,9 +177,9 @@ export const getPlatformStats = async (
 ) => {
   try {
     const stats = await adminService.getPlatformStats();
-    res.status(200).json({ stats });
+    return res.status(200).json({ stats });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -201,9 +201,9 @@ export const getAdminBookings = async (
       limit: limit ? Number(limit) : 15,
     });
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -218,12 +218,12 @@ export const cancelAdminBooking = async (
     const adminId = req.user!.userId;
 
     const booking = await bookingService.cancelBooking(bookingId, adminId, "admin", reason);
-    res.status(200).json({
+    return res.status(200).json({
       message: "Booking cancelled successfully by administrator",
       booking,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -235,8 +235,8 @@ export const getAdminBookingById = async (
   try {
     const bookingId = req.params.bookingId as string;
     const booking = await adminService.getAdminBookingById(bookingId);
-    res.status(200).json({ booking });
+    return res.status(200).json({ booking });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };

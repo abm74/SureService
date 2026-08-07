@@ -8,8 +8,8 @@ export const getLocations = async (
 ) => {
   try {
     const locations = await locationService.getAllLocations();
-    res.status(200).json({ locations });
+    return res.status(200).json({ locations });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };

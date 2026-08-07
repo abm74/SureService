@@ -29,8 +29,8 @@ export const signupValidationRules = [
     .withMessage("Password must be at least 6 characters long"),
   body("role")
     .optional()
-    .isIn(["customer", "provider", "admin"])
-    .withMessage("Role must be one of: customer, provider, admin"),
+    .isIn(["customer", "provider"])
+    .withMessage("Role must be one of: customer, provider"),
 ];
 
 export const loginValidationRules = [

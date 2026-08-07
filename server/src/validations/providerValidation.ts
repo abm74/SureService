@@ -4,6 +4,11 @@ import mongoose from "mongoose";
 import { getAllowedVerificationDocTypes } from "../services/configService.js";
 
 export const updateProviderProfileValidationRules = [
+  body("name")
+    .optional()
+    .trim()
+    .isLength({ min: 2 })
+    .withMessage("Name must be at least 2 characters long"),
   body("bio")
     .optional()
     .trim(),

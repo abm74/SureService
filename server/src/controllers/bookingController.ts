@@ -22,12 +22,12 @@ export const createBooking = async (
       notes,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Booking request created successfully",
       booking,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -48,9 +48,9 @@ export const getBookings = async (
       limit: limit ? Number(limit) : undefined,
     });
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -65,9 +65,9 @@ export const getBookingById = async (
     const id = req.params.id as string;
 
     const booking = await bookingService.getBookingById(id, userId, userRole);
-    res.status(200).json({ booking });
+    return res.status(200).json({ booking });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -81,12 +81,12 @@ export const acceptBooking = async (
     const id = req.params.id as string;
 
     const booking = await bookingService.acceptBooking(id, providerId);
-    res.status(200).json({
+    return res.status(200).json({
       message: "Booking accepted successfully",
       booking,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -101,12 +101,12 @@ export const declineBooking = async (
     const { reason } = req.body || {};
 
     const booking = await bookingService.declineBooking(id, providerId, reason);
-    res.status(200).json({
+    return res.status(200).json({
       message: "Booking declined",
       booking,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -120,12 +120,12 @@ export const completeBooking = async (
     const id = req.params.id as string;
 
     const booking = await bookingService.completeBooking(id, customerId);
-    res.status(200).json({
+    return res.status(200).json({
       message: "Job marked as completed. Provider trust score updated.",
       booking,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -141,11 +141,11 @@ export const cancelBooking = async (
     const { reason } = req.body || {};
 
     const booking = await bookingService.cancelBooking(id, userId, userRole, reason);
-    res.status(200).json({
+    return res.status(200).json({
       message: "Booking cancelled successfully",
       booking,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };

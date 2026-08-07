@@ -51,6 +51,13 @@ export const createBooking = async (customerId: string, data: CreateBookingDTO) 
     );
   }
 
+  if (customer.isSuspended || customer.isActive === false) {
+    throw Object.assign(
+      new Error("Your account has been suspended. You cannot create new booking requests."),
+      { statusCode: 403 }
+    );
+  }
+
   if (customerId === data.providerId) {
     throw Object.assign(new Error("You cannot book a service with yourself"), {
       statusCode: 400,
@@ -61,6 +68,12 @@ export const createBooking = async (customerId: string, data: CreateBookingDTO) 
   if (!provider || provider.role !== "provider") {
     throw Object.assign(new Error("Selected provider does not exist or is not a registered provider"), {
       statusCode: 404,
+    });
+  }
+
+  if (provider.isSuspended || provider.isActive === false) {
+    throw Object.assign(new Error("Selected provider is currently suspended and cannot accept bookings"), {
+      statusCode: 400,
     });
   }
 
@@ -160,6 +173,13 @@ export const acceptBooking = async (bookingId: string, providerId: string) => {
 
   if (booking.provider.toString() !== providerId) {
     throw Object.assign(new Error("Only the assigned service provider can accept this booking"), {
+      statusCode: 403,
+    });
+  }
+
+  const providerUser = await UserModel.findById(providerId);
+  if (providerUser?.isSuspended || providerUser?.isActive === false) {
+    throw Object.assign(new Error("Suspended provider accounts cannot accept booking requests"), {
       statusCode: 403,
     });
   }

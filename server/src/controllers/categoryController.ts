@@ -8,8 +8,8 @@ export const getCategories = async (
 ) => {
   try {
     const categories = await categoryService.getAllCategories();
-    res.status(200).json({ categories });
+    return res.status(200).json({ categories });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };

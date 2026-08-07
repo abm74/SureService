@@ -22,7 +22,7 @@ bookingRouter.use(authenticateToken);
 
 bookingRouter.post(
   "/",
-  requireRole("customer", "admin"),
+  requireRole("customer"),
   createBookingValidationRules,
   validateBookingRequest,
   createBooking,

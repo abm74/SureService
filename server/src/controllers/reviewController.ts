@@ -18,12 +18,12 @@ export const createReview = async (
       comment,
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Review submitted successfully",
       review,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -42,8 +42,8 @@ export const getProviderReviews = async (
       limit ? Number(limit) : 20,
     );
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };

@@ -34,9 +34,9 @@ export const getProviders = async (
       limit: limit ? Number(limit) : undefined,
     });
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -51,9 +51,9 @@ export const getProviderById = async (
     const currentUserRole = req.user?.role;
 
     const result = await providerService.getProviderById(id, currentUserId, currentUserRole);
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -66,12 +66,12 @@ export const updateProviderProfile = async (
     const providerId = req.user!.userId;
     const updatedProvider = await providerService.updateProviderProfile(providerId, req.body);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Provider profile updated successfully",
       provider: updatedProvider,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -90,12 +90,12 @@ export const submitVerification = async (
       verificationDocType,
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Verification submitted for admin review",
       provider,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -106,8 +106,8 @@ export const getCategories = async (
 ) => {
   try {
     const categories = await providerService.getCategories();
-    res.status(200).json({ categories });
+    return res.status(200).json({ categories });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
