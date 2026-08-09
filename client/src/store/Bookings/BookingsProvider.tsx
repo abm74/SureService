@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import BookingsContext from "./BookingsContext";
 import type { Booking, CreateBookingPayload } from "../../types";
 import { useQueryClient } from "@tanstack/react-query";
@@ -9,19 +9,27 @@ import {
   getBookingById as fetchBookingByIdService,
 } from "../../services/bookingService";
 import {
+  useCustomerBookings,
+  useProviderBookings,
   useCreateBooking,
   useAcceptBooking,
   useDeclineBooking,
   useCompleteBooking,
   useCancelBooking,
 } from "../../hooks/useBookings";
+import { useAuth } from "../Auth/AuthContext";
 import { getErrorMessage } from "../../utils/helpers";
 
 export const BookingsProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const isProvider = user?.role === "provider";
+
+  const customerQuery = useCustomerBookings(Boolean(isAuthenticated && !isProvider));
+  const providerQuery = useProviderBookings(Boolean(isAuthenticated && isProvider));
+
+  const activeQuery = isProvider ? providerQuery : customerQuery;
 
   const createBookingMutation = useCreateBooking();
   const acceptBookingMutation = useAcceptBooking();
@@ -30,147 +38,84 @@ export const BookingsProvider = ({ children }: { children: React.ReactNode }) =>
   const cancelBookingMutation = useCancelBooking();
 
   const fetchCustomerBookings = useCallback(async (): Promise<Booking[]> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await queryClient.fetchQuery({
-        queryKey: queryKeys.bookings.customer(),
-        queryFn: getCustomerBookings,
-      });
-      setBookings(data);
-      return data;
-    } catch (err: unknown) {
-      const msg = getErrorMessage(err, "Failed to load customer bookings.");
-      setError(msg);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
+    return await queryClient.fetchQuery({
+      queryKey: queryKeys.bookings.customer(),
+      queryFn: getCustomerBookings,
+    });
   }, [queryClient]);
 
   const fetchProviderBookings = useCallback(async (): Promise<Booking[]> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await queryClient.fetchQuery({
-        queryKey: queryKeys.bookings.provider(),
-        queryFn: getProviderBookings,
-      });
-      setBookings(data);
-      return data;
-    } catch (err: unknown) {
-      const msg = getErrorMessage(err, "Failed to load provider bookings.");
-      setError(msg);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
+    return await queryClient.fetchQuery({
+      queryKey: queryKeys.bookings.provider(),
+      queryFn: getProviderBookings,
+    });
   }, [queryClient]);
 
   const getBookingById = useCallback(
     async (id: string): Promise<Booking> => {
-      try {
-        const booking = await queryClient.fetchQuery({
-          queryKey: queryKeys.bookings.detail(id),
-          queryFn: () => fetchBookingByIdService(id),
-        });
-        return booking;
-      } catch (err: unknown) {
-        const msg = getErrorMessage(err, "Failed to load booking details.");
-        setError(msg);
-        throw err;
-      }
+      return await queryClient.fetchQuery({
+        queryKey: queryKeys.bookings.detail(id),
+        queryFn: () => fetchBookingByIdService(id),
+      });
     },
     [queryClient],
   );
 
   const createBooking = useCallback(
     async (payload: CreateBookingPayload): Promise<Booking> => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const newBooking = await createBookingMutation.mutateAsync(payload);
-        setBookings((prev) => [newBooking, ...prev]);
-        return newBooking;
-      } catch (err: unknown) {
-        const msg = getErrorMessage(err, "Failed to create booking request.");
-        setError(msg);
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
+      return await createBookingMutation.mutateAsync(payload);
     },
     [createBookingMutation],
   );
 
   const acceptBooking = useCallback(
     async (id: string): Promise<Booking> => {
-      setError(null);
-      try {
-        const updated = await acceptBookingMutation.mutateAsync(id);
-        setBookings((prev) => prev.map((b) => (b.id === id ? updated : b)));
-        return updated;
-      } catch (err: unknown) {
-        const msg = getErrorMessage(err, "Failed to accept booking.");
-        setError(msg);
-        throw err;
-      }
+      return await acceptBookingMutation.mutateAsync(id);
     },
     [acceptBookingMutation],
   );
 
   const declineBooking = useCallback(
     async (id: string, reason?: string): Promise<Booking> => {
-      setError(null);
-      try {
-        const updated = await declineBookingMutation.mutateAsync({ id, reason });
-        setBookings((prev) => prev.map((b) => (b.id === id ? updated : b)));
-        return updated;
-      } catch (err: unknown) {
-        const msg = getErrorMessage(err, "Failed to decline booking.");
-        setError(msg);
-        throw err;
-      }
+      return await declineBookingMutation.mutateAsync({ id, reason });
     },
     [declineBookingMutation],
   );
 
   const completeBooking = useCallback(
     async (id: string): Promise<Booking> => {
-      setError(null);
-      try {
-        const updated = await completeBookingMutation.mutateAsync(id);
-        setBookings((prev) => prev.map((b) => (b.id === id ? updated : b)));
-        return updated;
-      } catch (err: unknown) {
-        const msg = getErrorMessage(err, "Failed to complete booking.");
-        setError(msg);
-        throw err;
-      }
+      return await completeBookingMutation.mutateAsync(id);
     },
     [completeBookingMutation],
   );
 
   const cancelBooking = useCallback(
     async (id: string, cancellationReason: string = "Cancelled"): Promise<Booking> => {
-      setError(null);
-      try {
-        const updated = await cancelBookingMutation.mutateAsync({ id, reason: cancellationReason });
-        setBookings((prev) => prev.map((b) => (b.id === id ? updated : b)));
-        return updated;
-      } catch (err: unknown) {
-        const msg = getErrorMessage(err, "Failed to cancel booking.");
-        setError(msg);
-        throw err;
-      }
+      return await cancelBookingMutation.mutateAsync({ id, reason: cancellationReason });
     },
     [cancelBookingMutation],
   );
 
+  const isMutating =
+    createBookingMutation.isPending ||
+    acceptBookingMutation.isPending ||
+    declineBookingMutation.isPending ||
+    completeBookingMutation.isPending ||
+    cancelBookingMutation.isPending;
+
+  const mutationError =
+    createBookingMutation.error ||
+    acceptBookingMutation.error ||
+    declineBookingMutation.error ||
+    completeBookingMutation.error ||
+    cancelBookingMutation.error;
+
+  const currentError = activeQuery.error || mutationError;
+
   const value = {
-    bookings,
-    isLoading: isLoading || createBookingMutation.isPending,
-    error,
+    bookings: activeQuery.data ?? [],
+    isLoading: activeQuery.isLoading || isMutating,
+    error: currentError ? getErrorMessage(currentError) : null,
     fetchCustomerBookings,
     fetchProviderBookings,
     getBookingById,

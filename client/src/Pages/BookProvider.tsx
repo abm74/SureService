@@ -24,6 +24,7 @@ import { Textarea } from "@/Components/UI/textarea";
 import { Skeleton } from "@/Components/UI/skeleton";
 import { TrustScoreBadge } from "@/Components/Providers/TrustScoreBadge";
 import { VerificationBadge } from "@/Components/Providers/VerificationBadge";
+import { UserAvatar } from "@/Components/UI/UserAvatar";
 import { getErrorMessage } from "@/utils/helpers";
 import type { CreateBookingPayload } from "@/types";
 
@@ -81,6 +82,11 @@ export const BookProvider: React.FC = () => {
       return;
     }
 
+    if (!provider.category) {
+      setFormError("The selected provider does not have an assigned category.");
+      return;
+    }
+
     if (!serviceDate) {
       setFormError("Please select a valid service date.");
       return;
@@ -93,7 +99,7 @@ export const BookProvider: React.FC = () => {
 
     const payload: CreateBookingPayload = {
       providerId: provider.id,
-      category: provider.category || "General Service",
+      category: provider.category,
       serviceDate,
       timeSlot,
       address: address.trim(),
@@ -155,9 +161,6 @@ export const BookProvider: React.FC = () => {
       </div>
     );
   }
-
-  const defaultAvatar = "/default-avatar.jpg";
-  const avatarUrl = provider.avatar || defaultAvatar;
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
@@ -426,18 +429,11 @@ export const BookProvider: React.FC = () => {
             <div className="lg:col-span-4 space-y-3 lg:sticky lg:top-24 min-w-0 w-full">
               <div className="rounded-xl sm:rounded-2xl border border-hairline bg-card p-3 sm:p-4 shadow-xs space-y-3 min-w-0 overflow-hidden">
                 <div className="flex items-center gap-2.5 pb-2.5 border-b border-hairline min-w-0">
-                  <div className="size-10 sm:size-11 rounded-full overflow-hidden ring-1.5 ring-hairline shrink-0">
-                    <img
-                      src={avatarUrl}
-                      alt={provider.name}
-                      className="size-full object-cover"
-                      onError={(e) => {
-                        const target = e.currentTarget as HTMLImageElement;
-                        target.onerror = null;
-                        target.src = defaultAvatar;
-                      }}
-                    />
-                  </div>
+                  <UserAvatar
+                    src={provider.avatar}
+                    name={provider.name}
+                    className="size-10 sm:size-11 ring-1.5 ring-hairline shrink-0"
+                  />
                   <div className="min-w-0 flex-1">
                     <h3 className="text-xs sm:text-sm font-bold text-ink truncate">{provider.name}</h3>
                     <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate">{provider.category}</p>

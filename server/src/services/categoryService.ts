@@ -66,7 +66,23 @@ export const getAllCategories = async (): Promise<CategoryWithCount[]> => {
   return result;
 };
 
-export const getCategoryNames = async (): Promise<string[]> => {
+let cachedCategoryNames: { data: string[]; timestamp: number } | null = null;
+const CATEGORY_NAMES_CACHE_TTL_MS = 60 * 1000;
+
+export const clearCategoryNamesCache = (): void => {
+  cachedCategoryNames = null;
+};
+
+export const getCategoryNames = async (forceRefresh = false): Promise<string[]> => {
+  const now = Date.now();
+  if (
+    !forceRefresh &&
+    cachedCategoryNames &&
+    now - cachedCategoryNames.timestamp < CATEGORY_NAMES_CACHE_TTL_MS
+  ) {
+    return [...cachedCategoryNames.data];
+  }
+
   const [categoryDocs, userCategories] = await Promise.all([
     CategoryModel.distinct("name"),
     UserModel.distinct("category", { role: "provider", category: { $ne: "" } }),
@@ -76,5 +92,7 @@ export const getCategoryNames = async (): Promise<string[]> => {
   categoryDocs.forEach((c) => c && set.add(c));
   userCategories.forEach((c) => c && set.add(c));
 
-  return Array.from(set).sort();
+  const sorted = Array.from(set).sort();
+  cachedCategoryNames = { data: sorted, timestamp: now };
+  return [...sorted];
 };

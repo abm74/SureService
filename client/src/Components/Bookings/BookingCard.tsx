@@ -19,6 +19,7 @@ import { Badge } from "@/Components/UI/badge";
 import { Modal } from "@/Components/UI/Modal";
 import { Textarea } from "@/Components/UI/textarea";
 import { TrustScoreBadge } from "../Providers/TrustScoreBadge";
+import { UserAvatar } from "@/Components/UI/UserAvatar";
 
 interface BookingCardProps {
   booking: Booking;
@@ -51,7 +52,6 @@ export const BookingCard: React.FC<BookingCardProps> = ({
 
   const otherPerson = isCustomer ? providerObj : customerObj;
   const otherPersonName = otherPerson?.name || (isCustomer ? "Service Provider" : "Customer");
-  const otherPersonAvatar = otherPerson?.avatar || "/default-avatar.jpg";
   const otherPersonPhone = otherPerson?.phone;
   const otherPersonEmail = otherPerson?.email;
 
@@ -135,18 +135,11 @@ export const BookingCard: React.FC<BookingCardProps> = ({
       <div className="rounded-xl sm:rounded-2xl border border-hairline bg-card p-3.5 sm:p-4 md:p-5 text-card-foreground shadow-xs transition-all duration-200 hover:border-primary/40 hover:shadow-md">
         <div className="flex items-start justify-between gap-2.5 pb-2.5 sm:pb-3.5 border-b border-hairline">
           <div className="flex items-start sm:items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
-            <div className="size-8.5 sm:size-11 shrink-0 rounded-full overflow-hidden ring-1 ring-hairline mt-0.5 sm:mt-0">
-              <img
-                src={otherPersonAvatar}
-                alt={otherPersonName}
-                className="size-full object-cover"
-                onError={(e) => {
-                  const target = e.currentTarget as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = "/default-avatar.jpg";
-                }}
-              />
-            </div>
+            <UserAvatar
+              src={otherPerson?.avatar}
+              name={otherPersonName}
+              className="size-8.5 sm:size-11 shrink-0 ring-1 ring-hairline mt-0.5 sm:mt-0"
+            />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 min-w-0">
                 {isCustomer && providerObj ? (

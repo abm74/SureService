@@ -18,6 +18,7 @@ import { Skeleton } from "@/Components/UI/skeleton";
 import { TrustScoreBadge } from "@/Components/Providers/TrustScoreBadge";
 import { TrustScoreGauge } from "@/Components/Providers/TrustScoreGauge";
 import { VerificationBadge } from "@/Components/Providers/VerificationBadge";
+import { UserAvatar } from "@/Components/UI/UserAvatar";
 import { getErrorMessage } from "@/utils/helpers";
 
 export const ProviderProfile: React.FC = () => {
@@ -140,18 +141,12 @@ export const ProviderProfile: React.FC = () => {
         <div className="rounded-2xl sm:rounded-3xl border border-hairline bg-card p-4 sm:p-6 md:p-8 shadow-sm min-w-0 overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 sm:gap-6">
             <div className="flex flex-row items-start sm:items-center gap-3.5 sm:gap-5 min-w-0">
-              <div className="relative size-16 sm:size-22 md:size-28 shrink-0 rounded-full overflow-hidden ring-3 sm:ring-4 ring-hairline shadow-md">
-                <img
-                  src={provider.avatar || "/default-avatar.jpg"}
-                  alt={provider.name}
-                  className="size-full object-cover"
-                  onError={(e) => {
-                    const target = e.currentTarget as HTMLImageElement;
-                    target.onerror = null;
-                    target.src = "/default-avatar.jpg";
-                  }}
-                />
-              </div>
+              <UserAvatar
+                src={provider.avatar}
+                name={provider.name}
+                className="size-16 sm:size-22 md:size-28 shrink-0 ring-3 sm:ring-4 ring-hairline shadow-md"
+                fallbackClassName="text-lg sm:text-2xl md:text-3xl"
+              />
 
               <div className="space-y-1.5 sm:space-y-2 min-w-0 flex-1">
                 <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
@@ -357,7 +352,6 @@ export const ProviderProfile: React.FC = () => {
               {reviews.map((rev) => {
                 const reviewerObj = typeof rev.customer === "object" ? rev.customer : null;
                 const reviewerName = reviewerObj?.name || "Verified Customer";
-                const reviewerAvatar = reviewerObj?.avatar || "/default-avatar.jpg";
 
                 return (
                   <div
@@ -366,18 +360,11 @@ export const ProviderProfile: React.FC = () => {
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                        <div className="size-7 sm:size-8 rounded-full overflow-hidden ring-1 ring-hairline shrink-0">
-                          <img
-                            src={reviewerAvatar}
-                            alt={reviewerName}
-                            className="size-full object-cover"
-                            onError={(e) => {
-                              const target = e.currentTarget as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = "/default-avatar.jpg";
-                            }}
-                          />
-                        </div>
+                        <UserAvatar
+                          src={reviewerObj?.avatar}
+                          name={reviewerName}
+                          className="size-7 sm:size-8 shrink-0 ring-1 ring-hairline"
+                        />
                         <div className="min-w-0">
                           <p className="text-xs font-bold text-ink truncate">{reviewerName}</p>
                           <p className="text-[10px] text-muted-foreground">

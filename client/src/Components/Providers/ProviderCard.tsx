@@ -5,6 +5,7 @@ import type { User } from "@/types";
 import { TrustScoreBadge } from "./TrustScoreBadge";
 import { VerificationBadge } from "./VerificationBadge";
 import { Button } from "@/Components/UI/button";
+import { UserAvatar } from "@/Components/UI/UserAvatar";
 
 interface ProviderCardProps {
   provider: User & { averageRating?: number; reviewCount?: number };
@@ -18,26 +19,16 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
     ? `${provider.location.subCity ? provider.location.subCity + ", " : ""}${provider.location.city || "Ethiopia"}`
     : "Addis Ababa, Ethiopia";
 
-  const defaultAvatar = "/default-avatar.jpg";
-  const avatarUrl = provider.avatar || defaultAvatar;
-
   return (
     <div className="group relative flex flex-col justify-between rounded-xl sm:rounded-2xl border border-hairline bg-card p-2.5 sm:p-4 md:p-5 text-card-foreground shadow-xs transition-all duration-200 hover:border-primary/40 hover:shadow-md">
       <div>
         <div className="flex items-start justify-between gap-1.5 sm:gap-2.5 mb-2 sm:mb-3.5">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="relative size-9 sm:size-12 md:size-13 shrink-0 rounded-full overflow-hidden ring-2 ring-hairline group-hover:ring-primary/40 transition-all">
-              <img
-                src={avatarUrl}
-                alt={provider.name}
-                className="size-full object-cover"
-                onError={(e) => {
-                  const target = e.currentTarget as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = defaultAvatar;
-                }}
-              />
-            </div>
+            <UserAvatar
+              src={provider.avatar}
+              name={provider.name}
+              className="size-9 sm:size-12 md:size-13 shrink-0 ring-2 ring-hairline group-hover:ring-primary/40 transition-all"
+            />
             <div className="min-w-0">
               <div className="flex items-center gap-1 flex-wrap">
                 <Link

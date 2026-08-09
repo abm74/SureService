@@ -2,6 +2,7 @@ import { body, param, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import { getAllowedVerificationDocTypes } from "../services/configService.js";
+import { getCategoryNames } from "../services/categoryService.js";
 
 export const updateProviderProfileValidationRules = [
   body("name")
@@ -16,8 +17,20 @@ export const updateProviderProfileValidationRules = [
     .optional()
     .trim(),
   body("category")
-    .optional()
-    .trim(),
+    .optional({ values: "null" })
+    .isString()
+    .withMessage("Service category must be a string")
+    .trim()
+    .notEmpty()
+    .withMessage("Service category cannot be empty")
+    .custom(async (val) => {
+      if (typeof val !== "string") return false;
+      const allowed = await getCategoryNames();
+      if (allowed.length > 0 && !allowed.some((c) => c.toLowerCase() === val.toLowerCase())) {
+        throw new Error("Invalid service category");
+      }
+      return true;
+    }),
   body("hourlyRate")
     .optional()
     .isNumeric()
@@ -33,7 +46,16 @@ export const updateProviderProfileValidationRules = [
   body("skills")
     .optional()
     .isArray()
-    .withMessage("Skills must be an array of strings"),
+    .withMessage("Skills must be an array of strings")
+    .custom((arr) => {
+      if (!Array.isArray(arr)) return true;
+      for (const item of arr) {
+        if (typeof item !== "string" || !item.trim()) {
+          throw new Error("Each skill must be a non-empty string");
+        }
+      }
+      return true;
+    }),
   body("location")
     .optional()
     .isObject()

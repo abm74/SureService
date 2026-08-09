@@ -1,6 +1,7 @@
 import { body, param, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
+import { getCategoryNames } from "../services/categoryService.js";
 
 export const createBookingValidationRules = [
   body("providerId")
@@ -9,9 +10,19 @@ export const createBookingValidationRules = [
     .custom((value) => mongoose.Types.ObjectId.isValid(value))
     .withMessage("Invalid Provider ID format"),
   body("category")
+    .isString()
+    .withMessage("Service category must be a string")
     .trim()
     .notEmpty()
-    .withMessage("Service category is required"),
+    .withMessage("Service category is required")
+    .custom(async (val) => {
+      if (typeof val !== "string") return false;
+      const allowed = await getCategoryNames();
+      if (allowed.length > 0 && !allowed.some((c) => c.toLowerCase() === val.toLowerCase())) {
+        throw new Error("Invalid service category");
+      }
+      return true;
+    }),
   body("serviceDate")
     .trim()
     .notEmpty()

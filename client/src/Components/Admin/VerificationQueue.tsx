@@ -16,6 +16,7 @@ import { Modal } from "@/Components/UI/Modal";
 import { Textarea } from "@/Components/UI/textarea";
 import { Skeleton } from "@/Components/UI/skeleton";
 import { TrustScoreBadge } from "../Providers/TrustScoreBadge";
+import { UserAvatar } from "@/Components/UI/UserAvatar";
 import { getErrorMessage } from "@/utils/helpers";
 
 interface VerificationQueueProps {
@@ -154,18 +155,11 @@ export const VerificationQueue: React.FC<VerificationQueueProps> = ({
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-3.5 md:gap-4 min-w-0">
                 <div className="flex items-start gap-2 sm:gap-3.5 min-w-0 flex-1">
-                  <div className="size-9 sm:size-10 md:size-12 rounded-full overflow-hidden ring-1 ring-hairline shrink-0">
-                    <img
-                      src={provider.avatar || "/default-avatar.jpg"}
-                      alt={provider.name}
-                      className="size-full object-cover"
-                      onError={(e) => {
-                        const target = e.currentTarget as HTMLImageElement;
-                        target.onerror = null;
-                        target.src = "/default-avatar.jpg";
-                      }}
-                    />
-                  </div>
+                  <UserAvatar
+                    src={provider.avatar}
+                    name={provider.name}
+                    className="size-9 sm:size-10 md:size-12 rounded-full ring-1 ring-hairline shrink-0"
+                  />
 
                   <div className="min-w-0 flex-1 space-y-0.5 sm:space-y-1">
                     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">

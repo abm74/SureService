@@ -16,6 +16,7 @@ import { useProviderBookings } from "@/hooks/useBookings";
 import { usePendingVerifications } from "@/hooks/useAdmin";
 import { Button } from "@/Components/UI/button";
 import { Badge } from "@/Components/UI/badge";
+import { UserAvatar } from "@/Components/UI/UserAvatar";
 
 export const AppHeader: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -29,7 +30,6 @@ export const AppHeader: React.FC = () => {
   const pendingRequestsCount = providerBookings.filter((b) => b.status === "pending").length;
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [imgError, setImgError] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,9 +55,6 @@ export const AppHeader: React.FC = () => {
     await logout();
     navigate("/");
   };
-
-  const defaultAvatar = "/default-avatar.jpg";
-  const profileAvatar = user?.avatar && !imgError ? user.avatar : defaultAvatar;
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
@@ -199,24 +196,21 @@ export const AppHeader: React.FC = () => {
               aria-expanded={isDropdownOpen}
               aria-label="User profile menu"
             >
-              <div className="size-8 sm:size-8.5 rounded-full overflow-hidden ring-1 ring-primary/20 shrink-0">
-                <img
-                  className="size-full object-cover group-hover:scale-105 transition-transform"
-                  src={profileAvatar}
-                  alt={user?.name || "User"}
-                  onError={() => setImgError(true)}
-                />
-              </div>
+              <UserAvatar
+                src={user?.avatar}
+                name={user?.name}
+                className="size-8 sm:size-8.5 ring-1 ring-primary/20 shrink-0 group-hover:scale-105 transition-transform"
+              />
             </button>
 
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2.5 w-[calc(100vw-2rem)] sm:w-72 max-w-xs bg-background border border-hairline rounded-2xl shadow-xl p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-md">
                 <div className="p-3 bg-surface-soft/70 rounded-xl border border-hairline/60 mb-1">
                   <div className="flex items-center gap-2.5 mb-1.5">
-                    <img
-                      className="size-10 rounded-full object-cover ring-1 ring-primary/40 shadow-xs"
-                      src={profileAvatar}
-                      alt={user?.name || "User"}
+                    <UserAvatar
+                      src={user?.avatar}
+                      name={user?.name}
+                      className="size-10 ring-1 ring-primary/40 shadow-xs shrink-0"
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-bold text-ink truncate">{user?.name}</p>
